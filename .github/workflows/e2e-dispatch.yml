@@ -1,0 +1,26 @@
+name: E2E Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to run E2E against (branch or SHA)'
+        required: true
+        default: 'chore/e2e-sentry-checklist'
+
+jobs:
+  run-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Start services
+        run: docker-compose up -d redis
+      - name: Run E2E (headless)
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          runTests: true

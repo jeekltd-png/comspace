@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Start infrastructure (Docker Compose)
+        run: docker-compose up -d
+
+      - name: Typecheck & lint
+        run: |
+          npm --prefix backend run build
+          npm run lint --workspaces
+
+      - name: Start backend (CI)
+        run: |
+          nohup npm --prefix backend run start:ci > backend-server.log 2>&1 &
+          n=0
+          until curl -sS --fail http://localhost:5000/health || [ $n -ge 30 ]; do n=$((n+1)); sleep 1; done
+          cat backend-server.log
+
+      - name: Smoke tests
+        run: npm --prefix backend run smoke

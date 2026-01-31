@@ -1,0 +1,61 @@
+{
+  "common": {
+    "appName": "ComSpace",
+    "welcome": "እንኳን ደህና መጡ",
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት ተከስቷል",
+    "success": "ተሳክቷል!",
+    "cancel": "ሰርዝ",
+    "confirm": "አረጋግጥ",
+    "save": "አስቀምጥ",
+    "delete": "ሰርዝ",
+    "edit": "አርትዕ",
+    "search": "ፈልግ",
+    "filter": "አጣራ",
+    "sort": "ደርድር"
+  },
+  "auth": {
+    "login": "ግባ",
+    "signup": "ይመዝገቡ",
+    "logout": "ውጣ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "forgotPassword": "የይለፍ ቃልዎን ረስተዋል?",
+    "resetPassword": "የይለፍ ቃል ዳግም አስጀምር",
+    "confirmPassword": "የይለፍ ቃል አረጋግጥ",
+    "firstName": "የመጀመሪያ ስም",
+    "lastName": "የአያት ስም",
+    "phoneNumber": "ስልክ ቁጥር",
+    "createAccount": "መለያ ይፍጠሩ",
+    "alreadyHaveAccount": "መለያ አለህ?",
+    "dontHaveAccount": "መለያ የለህም?",
+    "orContinueWith": "ወይም ቀጥል ከ",
+    "googleSignIn": "በGoogle ግባ",
+    "appleSignIn": "በApple ግባ"
+  },
+  "nav": {
+    "home": "መነሻ",
+    "products": "ምርቶች",
+    "categories": "ምድቦች",
+    "cart": "ጋሪ",
+    "account": "መለያ",
+    "orders": "ትዕዛዞች",
+    "wishlist": "የምኞት ዝርዝር",
+    "settings": "ቅንብሮች"
+  },
+  "product": {
+    "addToCart": "ወደ ጋሪ ጨምር",
+    "buyNow": "አሁን ግዛ",
+    "inStock": "በአክሲዮን ውስጥ",
+    "outOfStock": "ከአክሲዮን ውጭ"
+  },
+  "cart": {
+    "title": "ጋሪዬ",
+    "empty": "ጋሪዎ ባዶ ነው",
+    "checkout": "ወደ ክፍያ ይሂዱ"
+  },
+  "order": {
+    "title": "ትዕዛዞቼ",
+    "trackOrder": "ትዕዛዝ ይከታተሉ"
+  }
+}

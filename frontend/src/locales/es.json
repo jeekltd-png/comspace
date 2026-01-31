@@ -1,0 +1,179 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "categories": "Categorías",
+    "cart": "Carrito",
+    "account": "Cuenta",
+    "login": "Iniciar Sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar Sesión"
+  },
+  "home": {
+    "hero": {
+      "title": "Bienvenido a ComSpace",
+      "subtitle": "Tu Tienda Todo en Uno",
+      "shopNow": "Comprar Ahora",
+      "learnMore": "Más Información"
+    },
+    "featured": {
+      "title": "Productos Destacados",
+      "viewAll": "Ver Todos los Productos"
+    },
+    "categories": {
+      "title": "Comprar por Categoría",
+      "viewAll": "Ver Todas las Categorías"
+    }
+  },
+  "product": {
+    "details": "Detalles del Producto",
+    "price": "Precio",
+    "description": "Descripción",
+    "reviews": "Reseñas",
+    "addToCart": "Añadir al Carrito",
+    "buyNow": "Comprar Ahora",
+    "inStock": "En Stock",
+    "outOfStock": "Agotado",
+    "quantity": "Cantidad",
+    "sku": "SKU",
+    "category": "Categoría",
+    "relatedProducts": "Productos Relacionados"
+     ,
+    "help": {
+      "price": "Establezca el precio del producto en la moneda seleccionada. Tenga en cuenta impuestos y envío al fijar el precio.",
+      "description": "Escriba una descripción clara que destaque características, materiales e instrucciones de cuidado.",
+      "sku": "Unidad de mantenimiento de existencias — identificador único para rastrear inventario.",
+      "category": "Seleccione la categoría que mejor encaje con este producto para que los clientes lo encuentren fácilmente.",
+      "inventory": "Número de artículos disponibles para la venta. Ponga 0 para marcar como agotado.",
+      "images": "Suba imágenes de alta calidad (recomendado 800x800px). Varias vistas ayudan a convertir mejor."
+    }
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "empty": "Tu carrito está vacío",
+    "continueShopping": "Continuar Comprando",
+    "subtotal": "Subtotal",
+    "tax": "Impuestos",
+    "shipping": "Envío",
+    "total": "Total",
+    "checkout": "Proceder al Pago",
+    "remove": "Eliminar",
+    "updateCart": "Actualizar Carrito"
+  },
+  "checkout": {
+    "title": "Pago",
+    "shippingAddress": "Dirección de Envío",
+    "billingAddress": "Dirección de Facturación",
+    "paymentMethod": "Método de Pago",
+    "orderSummary": "Resumen del Pedido",
+    "placeOrder": "Realizar Pedido",
+    "deliveryMethod": "Método de Entrega",
+    "delivery": "Entrega a Domicilio",
+    "pickup": "Recoger en Tienda",
+    "selectStore": "Seleccionar Tienda",
+    "cardNumber": "Número de Tarjeta",
+    "expiryDate": "Fecha de Vencimiento",
+    "cvv": "CVV"
+  },
+  "account": {
+    "profile": "Perfil",
+    "orders": "Mis Pedidos",
+    "addresses": "Direcciones",
+    "settings": "Configuración",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "editProfile": "Editar Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "addAddress": "Añadir Dirección",
+    "deleteAccount": "Eliminar Cuenta"
+  },
+  "order": {
+    "orderNumber": "Número de Pedido",
+    "orderDate": "Fecha del Pedido",
+    "status": "Estado",
+    "pending": "Pendiente",
+    "processing": "Procesando",
+    "shipped": "Enviado",
+    "delivered": "Entregado",
+    "cancelled": "Cancelado",
+    "trackOrder": "Rastrear Pedido",
+    "cancelOrder": "Cancelar Pedido",
+    "viewDetails": "Ver Detalles"
+  },
+  "auth": {
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Número de Teléfono",
+    "forgotPassword": "¿Olvidaste tu Contraseña?",
+    "rememberMe": "Recuérdame",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "signInWithApple": "Iniciar sesión con Apple",
+    "resetPassword": "Restablecer Contraseña",
+     "backToLogin": "Volver al Inicio de Sesión",
+    "help": {
+      "email": "Ingrese una dirección de correo válida. La usaremos para confirmaciones de pedido y restablecimiento de contraseña.",
+      "password": "Elija una contraseña segura (mínimo 8 caracteres). Use letras, números y símbolos para mantener su cuenta segura.",
+      "confirmPassword": "Repita exactamente su contraseña para evitar errores de tipeo durante el registro.",
+      "firstName": "Su nombre. Aparecerá en recibos y correos electrónicos a clientes.",
+      "lastName": "Su apellido. Ayuda a personalizar comunicaciones y facturas.",
+      "phone": "Un número de teléfono para actualizaciones de entrega y verificación de la cuenta.",
+      "forgotPassword": "Si olvida su contraseña, enviaremos un enlace de restablecimiento a su correo registrado."
+    }
+   },
+
+   "whiteLabel": {
+     "branding": "Branding",
+     "domain": "Domain",
+     "contactEmail": "Contact Email",
+     "features": "Features",
+    "help": {
+      "branding": "Suba su logotipo y elija colores que reflejen su marca en la tienda y los correos.",
+      "domain": "Use un dominio personalizado (recomendado) o un subdominio. Para dominios personalizados, actualice los registros DNS.",
+      "payment": "Conecte su cuenta de Stripe para recibir pagos directamente. Asegúrese de que los datos de su empresa coincidan con la verificación de Stripe.",
+      "features": "Active o desactive funciones como entrega, recogida, reseñas e inicio de sesión social según las necesidades de su tienda.",
+      "contactEmail": "Esta información de contacto aparece en la página de contacto y en los correos a los clientes."
+    }
+   }
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar"
+  },
+  "footer": {
+    "company": "Empresa",
+    "aboutUs": "Sobre Nosotros",
+    "contactUs": "Contáctanos",
+    "careers": "Carreras",
+    "support": "Soporte",
+    "helpCenter": "Centro de Ayuda",
+    "faq": "Preguntas Frecuentes",
+    "shippingInfo": "Información de Envío",
+    "returns": "Devoluciones",
+    "legal": "Legal",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "followUs": "Síguenos",
+    "allRightsReserved": "Todos los derechos reservados"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "cart": "Carrito",
+    "profile": "Perfil",
+    "orders": "Pedidos"
+  },
+  "home": {
+    "welcome": "Bienvenido a ComSpace",
+    "searchPlaceholder": "Buscar productos...",
+    "categories": "Categorías",
+    "featured": "Productos Destacados",
+    "deals": "Ofertas del Día"
+  },
+  "product": {
+    "details": "Detalles del Producto",
+    "price": "Precio",
+    "addToCart": "Añadir al Carrito",
+    "buyNow": "Comprar Ahora",
+    "inStock": "En Stock",
+    "outOfStock": "Agotado",
+    "reviews": "Reseñas",
+    "description": "Descripción",
+    "specifications": "Especificaciones"
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "empty": "Tu carrito está vacío",
+    "subtotal": "Subtotal",
+    "shipping": "Envío",
+    "tax": "Impuestos",
+    "total": "Total",
+    "checkout": "Pagar",
+    "continueShopping": "Continuar Comprando",
+    "remove": "Eliminar"
+  },
+  "profile": {
+    "myAccount": "Mi Cuenta",
+    "orders": "Mis Pedidos",
+    "addresses": "Direcciones",
+    "settings": "Configuración",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "logout": "Cerrar Sesión",
+    "editProfile": "Editar Perfil",
+    "changePassword": "Cambiar Contraseña"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "signup": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "forgotPassword": "¿Olvidaste tu Contraseña?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "signInWithApple": "Iniciar sesión con Apple"
+  },
+  "checkout": {
+    "title": "Pago",
+    "shippingAddress": "Dirección de Envío",
+    "paymentMethod": "Método de Pago",
+    "orderSummary": "Resumen del Pedido",
+    "placeOrder": "Realizar Pedido",
+    "deliveryMethod": "Método de Entrega",
+    "delivery": "Entrega a Domicilio",
+    "pickup": "Recoger en Tienda"
+  },
+  "order": {
+    "orderNumber": "Pedido #",
+    "orderDate": "Fecha del Pedido",
+    "status": "Estado",
+    "pending": "Pendiente",
+    "processing": "Procesando",
+    "shipped": "Enviado",
+    "delivered": "Entregado",
+    "cancelled": "Cancelado",
+    "trackOrder": "Rastrear Pedido",
+    "cancelOrder": "Cancelar Pedido",
+    "viewDetails": "Ver Detalles"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "ok": "OK"
+  }
+}

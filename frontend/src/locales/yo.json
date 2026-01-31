@@ -1,0 +1,101 @@
+{
+  "nav": {
+    "home": "Ile",
+    "products": "Awọn ọja",
+    "categories": "Awọn ẹka",
+    "cart": "Apoti",
+    "account": "Akọọlẹ",
+    "login": "Wọle",
+    "signup": "Forukọsilẹ",
+    "logout": "Jade"
+  },
+  "home": {
+    "hero": {
+      "title": "Kaabo si ComSpace",
+      "subtitle": "Ile itaja rẹ fun gbogbo nkan",
+      "shopNow": "Ra Bayi",
+      "learnMore": "Kọ ẹkọ Diẹ Sii"
+    },
+    "featured": {
+      "title": "Awọn ọja pataki",
+      "viewAll": "Wo Gbogbo Awọn ọja"
+    },
+    "categories": {
+      "title": "Ra nipasẹ ẹka",
+      "viewAll": "Wo Gbogbo Awọn ẹka"
+    }
+  },
+  "product": {
+    "details": "Awọn alaye ọja",
+    "price": "Idiyele",
+    "description": "Apejuwe",
+    "reviews": "Awọn atunyẹwo",
+    "addToCart": "Fi kun Apoti",
+    "buyNow": "Ra Bayi",
+    "inStock": "Wa nile",
+    "outOfStock": "Ko si nile",
+    "quantity": "Iye",
+    "sku": "SKU",
+    "category": "Ẹka",
+    "relatedProducts": "Awọn ọja ti o jọra"
+    ,
+    "help": {
+      "price": "Ṣeto owo ọja ni owo ti a yan. Ronu nipa owo-ori ati gbigbe nigba siseto owo.",
+      "description": "Kọ apejuwe kedere ti o ṣe afihan awọn ẹya pataki, awọn ohun elo, ati awọn ilana itọju.",
+      "sku": "Ẹya idanimọ iṣura — idanimọ alailẹgbẹ ti o lo lati tọpinpin iṣura.",
+      "category": "Yan ẹka ti o dara julọ fun ọja yii ki awọn alabara le rii ni rọọrun.",
+      "inventory": "Iye awọn nkan to wa fun tita. Ṣeto si 0 lati samisi bi aini ọja.",
+      "images": "Po awọn aworan didara-giga (a gba 800x800px). Awọn igun lọpọlọpọ ṣe iranlọwọ fun iyipada."
+    }
+  },
+  "cart": {
+    "title": "Apoti Rira",
+    "empty": "Apoti rẹ ṣofo",
+    "continueShopping": "Tẹsiwaju Rira",
+    "subtotal": "Apapọ kekere",
+    "tax": "Owo-ori",
+    "shipping": "Gbigbe",
+    "total": "Lapapọ",
+    "checkout": "Lọ si Isanwo",
+    "remove": "Yọ kuro",
+    "updateCart": "Ṣe imudojuiwọn Apoti",
+    "auth": {
+      "email": "Imeeli",
+      "password": "Ọrọ igbaniwọle",
+      "confirmPassword": "Jẹrisi Ọrọ igbaniwọle",
+      "firstName": "Orukọ Akọkọ",
+      "lastName": "Orukọ Idile",
+      "phone": "Nọmba foonu",
+      "forgotPassword": "Gbagbe ọrọ igbaniwọle?",
+      "rememberMe": "Ranti Mi",
+      "dontHaveAccount": "Ko ni akọọlẹ?",
+      "alreadyHaveAccount": "Ṣe o ti ni akọọlẹ tẹlẹ?",
+      "signInWithGoogle": "Wọle pẹlu Google",
+      "signInWithApple": "Wọle pẹlu Apple",
+      "resetPassword": "Tun ọrọ igbaniwọle ṣe",
+      "backToLogin": "Pada si Wọle",
+      "help": {
+        "email": "Enter a valid email address. We'll use this to send order confirmations and password resets.",
+        "password": "Choose a strong password (minimum 8 characters). Use letters, numbers and symbols to keep your account secure.",
+        "confirmPassword": "Repeat your password exactly. This ensures you didn't mistype your password when registering.",
+        "firstName": "Your given name. This appears on customer receipts and emails.",
+        "lastName": "Your family name. Helps personalize communications and invoices.",
+        "phone": "A phone number we can use for delivery updates and account verification.",
+        "forgotPassword": "If you forget your password, we'll send a reset link to your registered email address."
+      }
+    },
+    "whiteLabel": {
+      "branding": "Branding",
+      "domain": "Domain",
+      "contactEmail": "Contact Email",
+      "features": "Features",
+      "help": {
+        "branding": "Upload your logo and choose colors to reflect your brand across the storefront and emails.",
+        "domain": "Use a custom domain (recommended) or a platform subdomain. For custom domains, update your DNS records.",
+        "payment": "Connect your Stripe account to receive payments directly. Ensure your business details match Stripe verification.",
+        "features": "Toggle features like delivery, pickup, reviews and social login based on your store needs.",
+        "contactEmail": "This contact information appears on the store's contact page and in customer emails."
+      }
+    }
+  }
+}

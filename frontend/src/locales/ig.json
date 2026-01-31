@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "home": "Ụlọ",
+    "products": "Ngwaahịa",
+    "categories": "Ụdị",
+    "cart": "Nkata",
+    "account": "Akaụntụ",
+    "login": "Banye",
+    "signup": "Debanye aha",
+    "logout": "Pụọ"
+  },
+  "home": {
+    "hero": {
+      "title": "Nnọọ na ComSpace",
+      "subtitle": "Ụlọ ahịa gị maka ihe niile",
+      "shopNow": "Zụọ Ugbu a",
+      "learnMore": "Mụtakwuo"
+    },
+    "featured": {
+      "title": "Ngwaahịa Pụrụ Iche",
+      "viewAll": "Lee Ngwaahịa Niile"
+    },
+    "categories": {
+      "title": "Zụọ Site na Ụdị",
+      "viewAll": "Lee Ụdị Niile"
+    }
+  },
+  "product": {
+    "details": "Nkọwa Ngwaahịa",
+    "price": "Ọnụahịa",
+    "description": "Nkọwa",
+    "reviews": "Nyocha",
+    "addToCart": "Tinye na Nkata",
+    "buyNow": "Zụọ Ugbu a",
+    "inStock": "Dị na Stock",
+    "outOfStock": "Agwụla",
+    "quantity": "Ọnụọgụ",
+    "sku": "SKU",
+    "category": "Ụdị",
+    "relatedProducts": "Ngwaahịa Metụtara"
+    ,
+    "help": {
+      "price": "Tinye ọnụahịa ngwaahịa na ego a họọrọ. Chee maka ụtụ na mbupu mgbe ị na-atụ ọnụahịa.",
+      "description": "Dee nkọwa doro anya na-egosipụta isi atụmatụ, ihe eji mee ya, na ntuziaka nlekọta.",
+      "sku": "Stock Keeping Unit — akara pụrụ iche i ji eso ngwongwo.",
+      "category": "Họrọ ngalaba kachasị dabara adabara ngwaahịa a ka ndị ahịa wee nwee ike ịchọta ya ngwa ngwa.",
+      "inventory": "Ọnụọgụ ihe dị maka ire. Tọọ ya na 0 iji gosipụta na ọ gaghị adị.",
+      "images": "Bulite foto dị elu (tọrọ ntọala 800x800px). Ụdị anya dị iche iche na-enyere mgbanwe aka."
+    }
+  },
+  "cart": {
+    "title": "Nkata Ịzụrụ Ahịa",
+    "empty": "Nkata gị tọgbọrọ chakoo",
+    "continueShopping": "Gaa n'ihu Ịzụrụ Ahịa",
+    "subtotal": "Nchịkọta",
+    "tax": "Ụtụ",
+    "shipping": "Mbupu",
+    "total": "Mkpokọta",
+    "checkout": "Gaa n'ihu Ịkwụ Ụgwọ",
+    "remove": "Wepu",
+    "updateCart": "Melite Nkata"
+  }
+
+  ,
+  "auth": {
+    "email": "Email",
+    "password": "Okwuntughe",
+    "confirmPassword": "Kwenye Okwuntughe",
+    "firstName": "Aha Mbụ",
+    "lastName": "Aha Ikpeazụ",
+    "phone": "Nọmba ekwentị",
+    "forgotPassword": "Chefuru okwuntughe?",
+    "rememberMe": "Cheta M",
+    "dontHaveAccount": "Enweghị akaụntụ?",
+    "alreadyHaveAccount": "Ị nwere akaụntụ?",
+    "signInWithGoogle": "Banye na Google",
+    "signInWithApple": "Banye na Apple",
+    "resetPassword": "Tọgharịa okwuntughe",
+    "backToLogin": "Laghachi banye",
+    "help": {
+      "email": "Enter a valid email address. We'll use this to send order confirmations and password resets.",
+      "password": "Choose a strong password (minimum 8 characters). Use letters, numbers and symbols to keep your account secure.",
+      "confirmPassword": "Repeat your password exactly. This ensures you didn't mistype your password when registering.",
+      "firstName": "Your given name. This appears on customer receipts and emails.",
+      "lastName": "Your family name. Helps personalize communications and invoices.",
+      "phone": "A phone number we can use for delivery updates and account verification.",
+      "forgotPassword": "If you forget your password, we'll send a reset link to your registered email address."
+    }
+  },
+
+  "whiteLabel": {
+    "branding": "Branding",
+    "domain": "Domain",
+    "contactEmail": "Contact Email",
+    "features": "Features",
+    "help": {
+      "branding": "Upload your logo and choose colors to reflect your brand across the storefront and emails.",
+      "domain": "Use a custom domain (recommended) or a platform subdomain. For custom domains, update your DNS records.",
+      "payment": "Connect your Stripe account to receive payments directly. Ensure your business details match Stripe verification.",
+      "features": "Toggle features like delivery, pickup, reviews and social login based on your store needs.",
+      "contactEmail": "This contact information appears on the store's contact page and in customer emails."
+    }
+  }
+}

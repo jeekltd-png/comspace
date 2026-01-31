@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "cart": "Warenkorb",
+    "profile": "Profil",
+    "orders": "Bestellungen"
+  },
+  "home": {
+    "welcome": "Willkommen bei ComSpace",
+    "searchPlaceholder": "Produkte suchen...",
+    "categories": "Kategorien",
+    "featured": "Empfohlene Produkte",
+    "deals": "Tagesangebote"
+  },
+  "product": {
+    "details": "Produktdetails",
+    "price": "Preis",
+    "addToCart": "In den Warenkorb",
+    "buyNow": "Jetzt Kaufen",
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "reviews": "Bewertungen",
+    "description": "Beschreibung",
+    "specifications": "Spezifikationen"
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "empty": "Ihr Warenkorb ist leer",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versand",
+    "tax": "Steuer",
+    "total": "Gesamt",
+    "checkout": "Zur Kasse",
+    "continueShopping": "Einkaufen Fortsetzen",
+    "remove": "Entfernen"
+  },
+  "profile": {
+    "myAccount": "Mein Konto",
+    "orders": "Meine Bestellungen",
+    "addresses": "Adressen",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "currency": "Währung",
+    "logout": "Abmelden",
+    "editProfile": "Profil Bearbeiten",
+    "changePassword": "Passwort Ändern"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort Bestätigen",
+    "forgotPassword": "Passwort Vergessen?",
+    "dontHaveAccount": "Noch kein Konto?",
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "signInWithGoogle": "Mit Google Anmelden",
+    "signInWithApple": "Mit Apple Anmelden"
+  },
+  "checkout": {
+    "title": "Kasse",
+    "shippingAddress": "Lieferadresse",
+    "paymentMethod": "Zahlungsmethode",
+    "orderSummary": "Bestellübersicht",
+    "placeOrder": "Bestellung Aufgeben",
+    "deliveryMethod": "Liefermethode",
+    "delivery": "Hauslieferung",
+    "pickup": "Abholung im Geschäft"
+  },
+  "order": {
+    "orderNumber": "Bestellung #",
+    "orderDate": "Bestelldatum",
+    "status": "Status",
+    "pending": "Ausstehend",
+    "processing": "In Bearbeitung",
+    "shipped": "Versandt",
+    "delivered": "Zugestellt",
+    "cancelled": "Storniert",
+    "trackOrder": "Bestellung Verfolgen",
+    "cancelOrder": "Bestellung Stornieren",
+    "viewDetails": "Details Anzeigen"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "retry": "Wiederholen",
+    "close": "Schließen",
+    "ok": "OK"
+  }
+}

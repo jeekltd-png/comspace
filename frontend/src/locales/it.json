@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Prodotti",
+    "categories": "Categorie",
+    "cart": "Carrello",
+    "account": "Account",
+    "login": "Accedi",
+    "signup": "Registrati",
+    "logout": "Esci"
+  },
+  "home": {
+    "hero": {
+      "title": "Benvenuto su ComSpace",
+      "subtitle": "Il tuo negozio per tutto",
+      "shopNow": "Acquista Ora",
+      "learnMore": "Scopri di Più"
+    },
+    "featured": {
+      "title": "Prodotti in Evidenza",
+      "viewAll": "Vedi Tutti i Prodotti"
+    },
+    "categories": {
+      "title": "Acquista per Categoria",
+      "viewAll": "Vedi Tutte le Categorie"
+    }
+  },
+  "product": {
+    "details": "Dettagli Prodotto",
+    "price": "Prezzo",
+    "description": "Descrizione",
+    "reviews": "Recensioni",
+    "addToCart": "Aggiungi al Carrello",
+    "buyNow": "Acquista Ora",
+    "inStock": "Disponibile",
+    "outOfStock": "Esaurito",
+    "quantity": "Quantità",
+    "sku": "SKU",
+    "category": "Categoria",
+    "relatedProducts": "Prodotti Correlati",
+    "help": {
+      "price": "Imposta il prezzo del prodotto nella valuta selezionata. Considera tasse e spedizione nella determinazione del prezzo.",
+      "description": "Scrivi una descrizione chiara evidenziando caratteristiche, materiali e istruzioni di cura.",
+      "sku": "Unità di gestione del magazzino — identificatore univoco per tracciare l'inventario.",
+      "category": "Seleziona la categoria più adatta a questo prodotto affinché i clienti lo trovino facilmente.",
+      "inventory": "Numero di articoli disponibili per la vendita. Imposta 0 per indicare esaurito.",
+      "images": "Carica immagini di alta qualità (consigliato 800x800px). Più angolazioni migliorano le conversioni."
+    }
+  },
+  "cart": {
+    "title": "Carrello degli Acquisti",
+    "empty": "Il tuo carrello è vuoto",
+    "continueShopping": "Continua gli Acquisti",
+    "subtotal": "Subtotale",
+    "tax": "Tasse",
+    "shipping": "Spedizione",
+    "total": "Totale",
+    "checkout": "Vai alla Cassa",
+    "remove": "Rimuovi",
+    "updateCart": "Aggiorna Carrello"
+  },
+
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "phone": "Numero di Telefono",
+    "forgotPassword": "Password Dimenticata?",
+    "rememberMe": "Ricordami",
+    "dontHaveAccount": "Non hai un account?",
+    "alreadyHaveAccount": "Hai già un account?",
+    "signInWithGoogle": "Accedi con Google",
+    "signInWithApple": "Accedi con Apple",
+    "resetPassword": "Reimposta Password",
+    "backToLogin": "Torna al Login",
+    "help": {
+      "email": "Inserisci un indirizzo email valido. Lo useremo per conferme d'ordine e reset della password.",
+      "password": "Scegli una password robusta (minimo 8 caratteri). Usa lettere, numeri e simboli per la sicurezza.",
+      "confirmPassword": "Ripeti esattamente la password per evitare errori di digitazione durante la registrazione.",
+      "firstName": "Il tuo nome. Appare su ricevute ed email ai clienti.",
+      "lastName": "Il tuo cognome. Aiuta a personalizzare comunicazioni e fatture.",
+      "phone": "Numero di telefono per aggiornamenti di consegna e verifica dell'account.",
+      "forgotPassword": "Se dimentichi la password, invieremo un link di reset all'email registrata."
+    }
+  },
+
+  "whiteLabel": {
+    "branding": "Branding",
+    "domain": "Domain",
+    "contactEmail": "Contact Email",
+    "features": "Features",
+    "help": {
+      "branding": "Carica il tuo logo e scegli colori che riflettano il tuo brand nel negozio e nelle email.",
+      "domain": "Usa un dominio personalizzato (consigliato) o un sottodominio. Per domini personalizzati aggiorna i record DNS.",
+      "payment": "Collega il tuo account Stripe per ricevere pagamenti direttamente. Verifica che i dati aziendali corrispondano alla verifica Stripe.",
+      "features": "Attiva/disattiva funzionalità come consegna, ritiro, recensioni e login social in base alle esigenze del negozio.",
+      "contactEmail": "Queste informazioni di contatto appaiono nella pagina contatti del negozio e nelle email ai clienti."
+    }
+  }
+}

@@ -14,7 +14,11 @@ jobs:
         image: redis:7
         ports: ['6379:6379']
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Checkout the PR head branch so the workflow sees the branch files (avoids merge refs missing files)
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - name: Install
         run: npm ci
       - name: Start services and app

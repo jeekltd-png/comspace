@@ -23,4 +23,9 @@ router.get('/products', getProductsList);
 router.get('/reports/sales', generateSalesReport);
 router.get('/reports/inventory', generateInventoryReport);
 
+// Admin-only docs (admin role only)
+import { listAdminDocs, getAdminDoc } from '../controllers/admin-docs.controller';
+router.get('/docs', authorize('admin'), listAdminDocs);
+router.get('/docs/:name', authorize('admin'), getAdminDoc);
+
 export default router;

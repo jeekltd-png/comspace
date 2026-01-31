@@ -1,0 +1,32 @@
+name: Admin Approval Check
+
+on:
+  pull_request:
+    types: [opened, edited, labeled, unlabeled, synchronize]
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  check-admin-approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR changes for admin-only docs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setOutput('result','no-pr');
+              return;
+            }
+            // List changed files
+            const files = await github.paginate(github.rest.pulls.listFiles, { owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number });
+            const changedAdmin = files.some(f => f.filename.startsWith('docs/ADMIN_ONLY/'));
+            const labels = pr.labels.map(l => l.name);
+            if (changedAdmin && !labels.includes('admin-approved')) {
+              core.setFailed('PR modifies admin-only docs. Add the `admin-approved` label or request an admin CodeOwner review.');
+            } else {
+              core.info('Admin approval not required or satisfied.');
+            }

@@ -1,0 +1,4 @@
+# CODEOWNERS: require admin/team review for admin-only docs
+# Edit the team/handles to match your org (e.g., @your-org/admins)
+
+/docs/ADMIN_ONLY/ @comspace-admins

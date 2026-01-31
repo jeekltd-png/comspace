@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "Kaabo",
+    "error": "Aṣiṣe",
+    "success": "Aṣeyọri",
+    "loading": "N ṣiṣẹ...",
+    "save": "Fi pamọ",
+    "cancel": "Fagilee",
+    "delete": "Pa rẹ",
+    "edit": "Ṣatunkọ",
+    "create": "Ṣẹda",
+    "update": "Ṣe imudojuiwọn",
+    "search": "Wa",
+    "filter": "Ṣe àṣẹ",
+    "sort": "Ṣeto",
+    "notFound": "Ko ri",
+    "unauthorized": "Ko ni aṣẹ",
+    "forbidden": "Eewọ",
+    "serverError": "Aṣiṣe olupin"
+  },
+  "auth": {
+    "loginSuccess": "Wiwọle aṣeyọri",
+    "loginFailed": "Wiwọle kuna",
+    "logoutSuccess": "Jade aṣeyọri",
+    "registerSuccess": "Iforukọsilẹ aṣeyọri",
+    "registerFailed": "Iforukọsilẹ kuna",
+    "invalidCredentials": "Imeeli tabi ọrọ igbaniwọle ti ko tọ",
+    "emailAlreadyExists": "Imeeli ti wa tẹlẹ",
+    "passwordResetSent": "Imeeli atunṣeto ọrọ igbaniwọle ti firanṣẹ",
+    "passwordResetSuccess": "Atunṣeto ọrọ igbaniwọle aṣeyọri",
+    "tokenExpired": "Ami ti pari",
+    "tokenInvalid": "Ami ti ko tọ",
+    "emailVerificationSent": "Imeeli ijẹrisi ti firanṣẹ",
+    "emailVerified": "Imeeli ti jẹrisi aṣeyọri",
+    "accountLocked": "Akọọlẹ ti wa ni titiipa nitori igbiyanju pipọ pupọ"
+  },
+  "product": {
+    "created": "Ọja ti ṣẹda aṣeyọri",
+    "updated": "Ọja ti ṣe imudojuiwọn aṣeyọri",
+    "deleted": "Ọja ti pa aṣeyọri",
+    "notFound": "Ko ri ọja",
+    "outOfStock": "Ọja ti pari",
+    "insufficientStock": "Ọja ko to",
+    "addedToCart": "Ọja ti fi kun apoti rira",
+    "removedFromCart": "Ọja ti yọ kuro ninu apoti rira",
+    "priceUpdated": "Idiyele ti ṣe imudojuiwọn",
+    "reviewAdded": "Atunyẹwo ti fikun aṣeyọri",
+    "reviewUpdated": "Atunyẹwo ti ṣe imudojuiwọn aṣeyọri"
+  },
+  "cart": {
+    "empty": "Apoti rira rẹ ṣofo",
+    "itemAdded": "Ohun ti fikun sinu apoti rira",
+    "itemRemoved": "Ohun ti yọ kuro ninu apoti rira",
+    "itemUpdated": "Ohun apoti rira ti ṣe imudojuiwọn",
+    "cleared": "Apoti rira ti nu",
+    "invalidQuantity": "Iye ti ko tọ",
+    "checkoutSuccess": "Isanwo aṣeyọri"
+  },
+  "order": {
+    "created": "Aṣẹ ti ṣẹda aṣeyọri",
+    "updated": "Aṣẹ ti ṣe imudojuiwọn aṣeyọri",
+    "cancelled": "Aṣẹ ti fagilee aṣeyọri",
+    "notFound": "Ko ri aṣẹ",
+    "cannotCancel": "Ko le fagilee aṣẹ",
+    "statusUpdated": "Ipo aṣẹ ti ṣe imudojuiwọn",
+    "paymentPending": "Isanwo ti nduro",
+    "paymentFailed": "Isanwo kuna",
+    "paymentSuccess": "Isanwo aṣeyọri",
+    "shipped": "Aṣẹ ti firanṣẹ",
+    "delivered": "Aṣẹ ti fi",
+    "refunded": "Aṣẹ ti da pada"
+  },
+  "payment": {
+    "processing": "N ṣiṣẹ isanwo...",
+    "success": "Isanwo aṣeyọri",
+    "failed": "Isanwo kuna",
+    "invalidAmount": "Iye isanwo ti ko tọ",
+    "cardDeclined": "Kaadi ti kọ",
+    "insufficientFunds": "Owo ko to",
+    "refundProcessing": "N ṣiṣẹ idasile...",
+    "refundSuccess": "Idasile aṣeyọri",
+    "refundFailed": "Idasile kuna"
+  },
+  "user": {
+    "profileUpdated": "Profaili ti ṣe imudojuiwọn aṣeyọri",
+    "addressAdded": "Adirẹsi ti fikun aṣeyọri",
+    "addressUpdated": "Adirẹsi ti ṣe imudojuiwọn aṣeyọri",
+    "addressDeleted": "Adirẹsi ti pa aṣeyọri",
+    "passwordChanged": "Ọrọ igbaniwọle ti yipada aṣeyọri",
+    "accountDeleted": "Akọọlẹ ti pa aṣeyọri",
+    "notFound": "Ko ri olumulo"
+  },
+  "admin": {
+    "accessDenied": "Wiwọle alakoso kọ",
+    "userPromoted": "Olumulo ti gbega si alakoso",
+    "userDemoted": "Olumulo ti dinku lati alakoso",
+    "settingsUpdated": "Eto ti ṣe imudojuiwọn aṣeyọri",
+    "reportGenerated": "Ijabọ ti ṣẹda aṣeyọri"
+  },
+  "validation": {
+    "required": "Aaye yii jẹ dandan",
+    "invalidEmail": "Adirẹsi imeeli ti ko tọ",
+    "invalidPhone": "Nọmba foonu ti ko tọ",
+    "passwordTooShort": "Ọrọ igbaniwọle gbọdọ jẹ o kere ju lẹta 8",
+    "passwordMismatch": "Awọn ọrọ igbaniwọle ko baamu",
+    "invalidFormat": "Ọna kikọ ti ko tọ",
+    "minLength": "Ipari ti o kere ju ni awọn lẹta {{min}}",
+    "maxLength": "Ipari ti o pọ julọ ni awọn lẹta {{max}}",
+    "minValue": "Iye ti o kere ju ni {{min}}",
+    "maxValue": "Iye ti o pọ julọ ni {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Kaabo si ComSpace!",
+      "orderConfirmation": "Ijẹrisi Aṣẹ - #{{orderNumber}}",
+      "orderShipped": "Aṣẹ Rẹ Ti Firanṣẹ",
+      "orderDelivered": "Aṣẹ Rẹ Ti Fi",
+      "passwordReset": "Ibeere Atunṣeto Ọrọ Igbaniwọle",
+      "emailVerification": "Jẹrisi Adirẹsi Imeeli Rẹ"
+    },
+    "greeting": "Bawo {{name}},",
+    "footer": "O ṣeun fun rira pẹlu ComSpace!"
+  }
+}

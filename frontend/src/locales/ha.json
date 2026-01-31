@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "home": "Gida",
+    "products": "Samfura",
+    "categories": "Nau'o'i",
+    "cart": "Kati",
+    "account": "Asusun",
+    "login": "Shiga",
+    "signup": "Rajista",
+    "logout": "Fita"
+  },
+  "home": {
+    "hero": {
+      "title": "Barka da zuwa ComSpace",
+      "subtitle": "Kantin ku na kowane abu",
+      "shopNow": "Sayi Yanzu",
+      "learnMore": "Kara Koyi"
+    },
+    "featured": {
+      "title": "Samfuran da Aka Zaɓa",
+      "viewAll": "Duba Duk Samfura"
+    },
+    "categories": {
+      "title": "Sayi ta Nau'in",
+      "viewAll": "Duba Duk Nau'o'i"
+    }
+  },
+  "product": {
+    "details": "Bayanan Samfur",
+    "price": "Farashi",
+    "description": "Bayani",
+    "reviews": "Sharhi",
+    "addToCart": "Ƙara zuwa Kati",
+    "buyNow": "Sayi Yanzu",
+    "inStock": "Akwai a Stock",
+    "outOfStock": "Ya Ƙare",
+    "quantity": "Adadi",
+    "sku": "SKU",
+    "category": "Nau'in",
+    "relatedProducts": "Samfuran da Suka Dace"
+    ,
+    "help": {
+      "price": "Saita farashin samfur a cikin kuɗin da aka zaɓa. Yi la'akari da haraji da kuɗin jigilar kaya lokacin saita farashi.",
+      "description": "Rubuta cikakken bayani wanda ke haskaka manyan siffofi, kayan da aka yi amfani da su, da umarnin kulawa.",
+      "sku": "Stock Keeping Unit — takamaiman maɓalli don bin diddigin kayan ajiya.",
+      "category": "Zaɓi rukunin da ya fi dacewa da wannan samfurin don abokan ciniki su sami sauƙin ganowa.",
+      "inventory": "Adadin abubuwan da ake da su don siyarwa. Saita zuwa 0 don nuna babu kaya.",
+      "images": "Dakata da hotuna masu inganci (ana ba da shawarar 800x800px). Angles da yawa suna taimakawa canzawa."
+    }
+  },
+  "cart": {
+    "title": "Katin Sayayya",
+    "empty": "Katin ku babu komai",
+    "continueShopping": "Ci gaba da Sayayya",
+    "subtotal": "Jimilla Ƙanana",
+    "tax": "Haraji",
+    "shipping": "Jigilar Kaya",
+    "total": "Jimilla",
+    "checkout": "Ci gaba da Biya",
+    "remove": "Cire",
+    "updateCart": "Sabunta Kati"
+  }
+
+  ,
+  "auth": {
+    "email": "Imel",
+    "password": "Kalmar shiga",
+    "confirmPassword": "Tabbatar da Kalmar shiga",
+    "firstName": "Sunan Farko",
+    "lastName": "Sunan Karshe",
+    "phone": "Lambar waya",
+    "forgotPassword": "Kun manta kalmar shiga?",
+    "rememberMe": "Ka tuna da ni",
+    "dontHaveAccount": "Babu asusu?",
+    "alreadyHaveAccount": "Kuna da asusu?",
+    "signInWithGoogle": "Shiga tare da Google",
+    "signInWithApple": "Shiga tare da Apple",
+    "resetPassword": "Sake saita Kalmar shiga",
+    "backToLogin": "Komawa shiga",
+    "help": {
+      "email": "Enter a valid email address. We'll use this to send order confirmations and password resets.",
+      "password": "Choose a strong password (minimum 8 characters). Use letters, numbers and symbols to keep your account secure.",
+      "confirmPassword": "Repeat your password exactly. This ensures you didn't mistype your password when registering.",
+      "firstName": "Your given name. This appears on customer receipts and emails.",
+      "lastName": "Your family name. Helps personalize communications and invoices.",
+      "phone": "A phone number we can use for delivery updates and account verification.",
+      "forgotPassword": "If you forget your password, we'll send a reset link to your registered email address."
+    }
+  },
+
+  "whiteLabel": {
+    "branding": "Branding",
+    "domain": "Domain",
+    "contactEmail": "Contact Email",
+    "features": "Features",
+    "help": {
+      "branding": "Upload your logo and choose colors to reflect your brand across the storefront and emails.",
+      "domain": "Use a custom domain (recommended) or a platform subdomain. For custom domains, update your DNS records.",
+      "payment": "Connect your Stripe account to receive payments directly. Ensure your business details match Stripe verification.",
+      "features": "Toggle features like delivery, pickup, reviews and social login based on your store needs.",
+      "contactEmail": "This contact information appears on the store's contact page and in customer emails."
+    }
+  }
+}

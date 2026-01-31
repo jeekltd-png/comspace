@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "home": "Nyumbani",
+    "products": "Bidhaa",
+    "categories": "Makundi",
+    "cart": "Kikapu",
+    "account": "Akaunti",
+    "login": "Ingia",
+    "signup": "Jisajili",
+    "logout": "Toka"
+  },
+  "home": {
+    "hero": {
+      "title": "Karibu ComSpace",
+      "subtitle": "Duka lako kwa kila kitu",
+      "shopNow": "Nunua Sasa",
+      "learnMore": "Jifunze Zaidi"
+    },
+    "featured": {
+      "title": "Bidhaa Maarufu",
+      "viewAll": "Angalia Bidhaa Zote"
+    },
+    "categories": {
+      "title": "Nunua kwa Kundi",
+      "viewAll": "Angalia Makundi Yote"
+    }
+  },
+  "product": {
+    "details": "Maelezo ya Bidhaa",
+    "price": "Bei",
+    "description": "Maelezo",
+    "reviews": "Mapitio",
+    "addToCart": "Ongeza kwa Kikapu",
+    "buyNow": "Nunua Sasa",
+    "inStock": "Ipo",
+    "outOfStock": "Haipo",
+    "quantity": "Idadi",
+    "sku": "SKU",
+    "category": "Kundi",
+    "relatedProducts": "Bidhaa Zinazohusiana"
+    ,
+    "help": {
+      "price": "Weka bei ya bidhaa kwa sarafu iliyochaguliwa. Zingatia kodi na usafirishaji wakati wa kuweka bei.",
+      "description": "Andika maelezo wazi yanayosisitiza vipengele muhimu, vifaa na maagizo ya utunzaji.",
+      "sku": "Kitengo cha Kudhibiti Hisa — kitambulisho cha kipekee kinachotumika kufuatilia hesabu.",
+      "category": "Chagua kategoria inayofaa zaidi kwa bidhaa hii ili wateja waiweze kupata kwa urahisi.",
+      "inventory": "Idadi ya vitu vinavyopatikana kwa kuuza. Weka 0 kuonyesha imeisha hisa.",
+      "images": "Pakia picha za ubora wa juu (inayopendekezwa 800x800px). Picha za pembe tofauti zinaongeza ubadilishaji."
+    }
+  },
+  "cart": {
+    "title": "Kikapu cha Ununuzi",
+    "empty": "Kikapu chako ni tupu",
+    "continueShopping": "Endelea Kununua",
+    "subtotal": "Jumla Ndogo",
+    "tax": "Kodi",
+    "shipping": "Usafirishaji",
+    "total": "Jumla",
+    "checkout": "Endelea kwa Malipo",
+    "remove": "Ondoa",
+    "updateCart": "Sasisha Kikapu"
+  }
+
+  ,
+  "auth": {
+    "email": "Barua pepe",
+    "password": "Nenosiri",
+    "confirmPassword": "Thibitisha Nenosiri",
+    "firstName": "Jina la Kwanza",
+    "lastName": "Jina la Mwisho",
+    "phone": "Nambari ya Simu",
+    "forgotPassword": "Umesahau Nenosiri?",
+    "rememberMe": "Nikumbuke",
+    "dontHaveAccount": "Huna akaunti?",
+    "alreadyHaveAccount": "Tayari una akaunti?",
+    "signInWithGoogle": "Ingia na Google",
+    "signInWithApple": "Ingia na Apple",
+    "resetPassword": "Weka upya Nenosiri",
+    "backToLogin": "Rudi kwenye Ingia",
+    "help": {
+      "email": "Weka barua pepe halali. Tutaitumia kwa kuthibitisha maagizo na kuweka upya nenosiri.",
+      "password": "Chagua nenosiri thabiti (chini ya tarakimu 8). Tumia herufi, nambari na alama za kusalia salama.",
+      "confirmPassword": "Rudia nenosiri lako kwa usahihi ili kuhakikisha haukutandika vibaya wakati wa usajili.",
+      "firstName": "Jina lako la kwanza. Linaonekana kwenye risiti na barua pepe kwa wateja.",
+      "lastName": "Jina lako la ukoo. Husaidia kubinafsisha mawasiliano na ankara.",
+      "phone": "Nambari ya simu tunayotumia kwa taarifa za usafirishaji na uthibitisho wa akaunti.",
+      "forgotPassword": "Ukisahau nenosiri, tutatuma kiungo cha kuweka upya kwa barua pepe uliyojiandikisha."
+    }
+  },
+
+  "whiteLabel": {
+    "branding": "Branding",
+    "domain": "Domain",
+    "contactEmail": "Contact Email",
+    "features": "Features",
+    "help": {
+      "branding": "Pakia nembo yako na chagua rangi zinazomuonyesha chapa yako kwenye duka na barua pepe.",
+      "domain": "Tumia jina la kikoa maalum (inayopendekezwa) au subdomain ya jukwaa. Kwa vikoa maalum, sasisha rekodi zako za DNS.",
+      "payment": "Unganisha akaunti yako ya Stripe kupokea malipo moja kwa moja. Hakikisha maelezo yako ya biashara yanalingana na ukaguzi wa Stripe.",
+      "features": "Zima au washa vipengele kama usafirishaji, kuchukua, mapitio na kuingia kwa jamii kulingana na mahitaji ya duka.",
+      "contactEmail": "Taarifa hizi za mawasiliano zinaonekana kwenye ukurasa wa mawasiliano wa duka na katika barua pepe za wateja."
+    }
+  }
+}

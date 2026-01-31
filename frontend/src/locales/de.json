@@ -1,0 +1,177 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "categories": "Kategorien",
+    "cart": "Warenkorb",
+    "account": "Konto",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden"
+  },
+  "home": {
+    "hero": {
+      "title": "Willkommen bei ComSpace",
+      "subtitle": "Ihr Alles-in-Einem-Shop",
+      "shopNow": "Jetzt Einkaufen",
+      "learnMore": "Mehr Erfahren"
+    },
+    "featured": {
+      "title": "Empfohlene Produkte",
+      "viewAll": "Alle Produkte Anzeigen"
+    },
+    "categories": {
+      "title": "Nach Kategorie Einkaufen",
+      "viewAll": "Alle Kategorien Anzeigen"
+    }
+  },
+  "product": {
+    "details": "Produktdetails",
+    "price": "Preis",
+    "description": "Beschreibung",
+    "reviews": "Bewertungen",
+    "addToCart": "In den Warenkorb",
+    "buyNow": "Jetzt Kaufen",
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "quantity": "Menge",
+    "sku": "SKU",
+    "category": "Kategorie",
+    "relatedProducts": "Verwandte Produkte"
+    ,
+    "help": {
+      "price": "Geben Sie den Produktpreis in der gewählten Währung an. Berücksichtigen Sie Steuern und Versandkosten.",
+      "description": "Schreiben Sie eine klare Beschreibung mit wichtigen Merkmalen, Materialien und Pflegehinweisen.",
+      "sku": "Lagerhaltungseinheit — eine eindeutige Kennung zur Nachverfolgung des Inventars.",
+      "category": "Wählen Sie die Kategorie, die am besten zu diesem Produkt passt, damit Kunden es leicht finden.",
+      "inventory": "Anzahl der zum Verkauf verfügbaren Artikel. Setzen Sie 0 für ausverkauft.",
+      "images": "Laden Sie hochqualitative Bilder hoch (empfohlen 800x800px). Mehrere Blickwinkel verbessern die Conversion."
+    }
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "empty": "Ihr Warenkorb ist leer",
+    "continueShopping": "Einkaufen Fortsetzen",
+    "subtotal": "Zwischensumme",
+    "tax": "Steuer",
+    "shipping": "Versand",
+    "total": "Gesamt",
+    "checkout": "Zur Kasse",
+    "remove": "Entfernen",
+    "updateCart": "Warenkorb Aktualisieren"
+  },
+  "checkout": {
+    "title": "Kasse",
+    "shippingAddress": "Lieferadresse",
+    "billingAddress": "Rechnungsadresse",
+    "paymentMethod": "Zahlungsmethode",
+    "orderSummary": "Bestellübersicht",
+    "placeOrder": "Bestellung Aufgeben",
+    "deliveryMethod": "Liefermethode",
+    "delivery": "Hauslieferung",
+    "pickup": "Abholung im Geschäft",
+    "selectStore": "Geschäft Auswählen",
+    "cardNumber": "Kartennummer",
+    "expiryDate": "Ablaufdatum",
+    "cvv": "CVV"
+  },
+  "account": {
+    "profile": "Profil",
+    "orders": "Meine Bestellungen",
+    "addresses": "Adressen",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "currency": "Währung",
+    "editProfile": "Profil Bearbeiten",
+    "changePassword": "Passwort Ändern",
+    "addAddress": "Adresse Hinzufügen",
+    "deleteAccount": "Konto Löschen"
+  },
+  "order": {
+    "orderNumber": "Bestellnummer",
+    "orderDate": "Bestelldatum",
+    "status": "Status",
+    "pending": "Ausstehend",
+    "processing": "In Bearbeitung",
+    "shipped": "Versandt",
+    "delivered": "Zugestellt",
+    "cancelled": "Storniert",
+    "trackOrder": "Bestellung Verfolgen",
+    "cancelOrder": "Bestellung Stornieren",
+    "viewDetails": "Details Anzeigen"
+  },
+  "auth": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort Bestätigen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "phone": "Telefonnummer",
+    "forgotPassword": "Passwort Vergessen?",
+    "rememberMe": "Angemeldet Bleiben",
+    "dontHaveAccount": "Noch kein Konto?",
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "signInWithGoogle": "Mit Google Anmelden",
+    "signInWithApple": "Mit Apple Anmelden",
+    "resetPassword": "Passwort Zurücksetzen",
+    "backToLogin": "Zurück zur Anmeldung",
+    "help": {
+      "email": "Geben Sie eine gültige E-Mail-Adresse ein. Wir verwenden sie für Bestellbestätigungen und Passwortzurücksetzungen.",
+      "password": "Wählen Sie ein sicheres Passwort (mindestens 8 Zeichen). Verwenden Sie Buchstaben, Zahlen und Symbole.",
+      "confirmPassword": "Wiederholen Sie Ihr Passwort genau, um Tippfehler bei der Registrierung zu vermeiden.",
+      "firstName": "Ihr Vorname. Er erscheint auf Quittungen und in E-Mails an Kunden.",
+      "lastName": "Ihr Nachname. Hilft, Kommunikation und Rechnungen zu personalisieren.",
+      "phone": "Eine Telefonnummer für Lieferupdates und Kontoverifizierung.",
+      "forgotPassword": "Wenn Sie Ihr Passwort vergessen, senden wir einen Link zur Zurücksetzung an Ihre registrierte E‑Mail-Adresse."
+    }
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "yes": "Ja",
+    "no": "Nein",
+    "confirm": "Bestätigen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "submit": "Absenden"
+  },
+  "whiteLabel": {
+    "branding": "Branding",
+    "domain": "Domain",
+    "contactEmail": "Contact Email",
+    "features": "Features",
+    "help": {
+      "branding": "Laden Sie Ihr Logo hoch und wählen Sie Farben, die Ihre Marke im Shop und in E‑Mails widerspiegeln.",
+      "domain": "Verwenden Sie eine benutzerdefinierte Domain (empfohlen) oder ein Subdomain. Für benutzerdefinierte Domains aktualisieren Sie Ihre DNS‑Einträge.",
+      "payment": "Verbinden Sie Ihr Stripe‑Konto, um Zahlungen direkt zu erhalten. Stellen Sie sicher, dass Ihre Firmendaten mit der Stripe‑Verifizierung übereinstimmen.",
+      "features": "Schalten Sie Funktionen wie Lieferung, Abholung, Bewertungen und Social‑Login je nach Shop‑Bedarf ein oder aus.",
+      "contactEmail": "Diese Kontaktinformationen erscheinen auf der Kontaktseite des Shops und in Kunden‑E‑Mails."
+    }
+  }
+  "footer": {
+    "company": "Unternehmen",
+    "aboutUs": "Über Uns",
+    "contactUs": "Kontakt",
+    "careers": "Karriere",
+    "support": "Support",
+    "helpCenter": "Hilfecenter",
+    "faq": "FAQ",
+    "shippingInfo": "Versandinfo",
+    "returns": "Rücksendungen",
+    "legal": "Rechtliches",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "followUs": "Folgen Sie Uns",
+    "allRightsReserved": "Alle Rechte vorbehalten"
+  }
+}

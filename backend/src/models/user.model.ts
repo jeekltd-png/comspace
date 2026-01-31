@@ -1,0 +1,155 @@
+import mongoose, { Schema, Document } from 'mongoose';
+import bcrypt from 'bcryptjs';
+
+export interface IUser extends Document {
+  email: string;
+  password?: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  role: 'customer' | 'admin' | 'merchant';
+  avatar?: string;
+  addresses: Array<{
+    label: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+    isDefault: boolean;
+  }>;
+  preferences: {
+    currency: string;
+    language: string;
+    notifications: {
+      email: boolean;
+      push: boolean;
+      sms: boolean;
+    };
+  };
+  oauth: {
+    google?: string;
+    apple?: string;
+  };
+  tenant: string;
+  isVerified: boolean;
+  isActive: boolean;
+  lastLogin?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+const UserSchema: Schema = new Schema(
+  {
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
+    },
+    password: {
+      type: String,
+      minlength: [8, 'Password must be at least 8 characters'],
+      select: false,
+    },
+    firstName: {
+      type: String,
+      required: [true, 'First name is required'],
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: [true, 'Last name is required'],
+      trim: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    role: {
+      type: String,
+      enum: ['customer', 'admin', 'merchant'],
+      default: 'customer',
+    },
+    avatar: {
+      type: String,
+    },
+    addresses: [
+      {
+        label: { type: String, required: true },
+        street: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        country: { type: String, required: true },
+        postalCode: { type: String, required: true },
+        coordinates: {
+          lat: Number,
+          lng: Number,
+        },
+        isDefault: { type: Boolean, default: false },
+      },
+    ],
+    preferences: {
+      currency: { type: String, default: 'USD' },
+      language: { type: String, default: 'en' },
+      notifications: {
+        email: { type: Boolean, default: true },
+        push: { type: Boolean, default: true },
+        sms: { type: Boolean, default: false },
+      },
+    },
+    oauth: {
+      google: String,
+      apple: String,
+    },
+    tenant: {
+      type: String,
+      default: 'default',
+      index: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    lastLogin: Date,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Hash password before saving
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password') || !this.password) {
+    return next();
+  }
+
+  const salt = (await bcrypt.genSalt(10)) as string;
+  this.password = (await bcrypt.hash(this.password as string, salt)) as string;
+  next();
+});
+
+// Compare password method
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  if (!this.password) return false;
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Index for better query performance
+UserSchema.index({ email: 1, tenant: 1 });
+UserSchema.index({ role: 1 });
+
+export default mongoose.model<IUser>('User', UserSchema);

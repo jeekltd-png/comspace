@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "profile": "Profile",
+    "orders": "Orders"
+  },
+  "home": {
+    "welcome": "Welcome to ComSpace",
+    "searchPlaceholder": "Search products...",
+    "categories": "Categories",
+    "featured": "Featured Products",
+    "deals": "Today's Deals"
+  },
+  "product": {
+    "details": "Product Details",
+    "price": "Price",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "reviews": "Reviews",
+    "description": "Description",
+    "specifications": "Specifications"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total",
+    "checkout": "Checkout",
+    "continueShopping": "Continue Shopping",
+    "remove": "Remove"
+  },
+  "profile": {
+    "myAccount": "My Account",
+    "orders": "My Orders",
+    "addresses": "Addresses",
+    "settings": "Settings",
+    "language": "Language",
+    "currency": "Currency",
+    "logout": "Logout",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithApple": "Sign in with Apple"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingAddress": "Shipping Address",
+    "paymentMethod": "Payment Method",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "deliveryMethod": "Delivery Method",
+    "delivery": "Home Delivery",
+    "pickup": "Store Pickup"
+  },
+  "order": {
+    "orderNumber": "Order #",
+    "orderDate": "Order Date",
+    "status": "Status",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "trackOrder": "Track Order",
+    "cancelOrder": "Cancel Order",
+    "viewDetails": "View Details"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "retry": "Retry",
+    "close": "Close",
+    "ok": "OK"
+  }
+}

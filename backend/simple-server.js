@@ -1,0 +1,11 @@
+const express = require('express');
+const cors = require('cors');
+const PORT = process.env.PORT || 5000;
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.get('/health', (_req, res) => res.json({ status: 'healthy', timestamp: new Date().toISOString() }));
+app.get('/api', (_req, res) => res.json({ message: 'ComSpace API (simple)', version: '1.0.0' }));
+app.get('/api/products', (_req, res) => res.json({ products: [], message: 'API is running!' }));
+app.use((_req, res) => res.status(404).json({ message: 'Route not found' }));
+app.listen(PORT, () => console.log(`Simple server running on http://localhost:${PORT}`));

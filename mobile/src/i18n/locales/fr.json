@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "cart": "Panier",
+    "profile": "Profil",
+    "orders": "Commandes"
+  },
+  "home": {
+    "welcome": "Bienvenue chez ComSpace",
+    "searchPlaceholder": "Rechercher des produits...",
+    "categories": "Catégories",
+    "featured": "Produits en Vedette",
+    "deals": "Offres du Jour"
+  },
+  "product": {
+    "details": "Détails du Produit",
+    "price": "Prix",
+    "addToCart": "Ajouter au Panier",
+    "buyNow": "Acheter Maintenant",
+    "inStock": "En Stock",
+    "outOfStock": "Épuisé",
+    "reviews": "Avis",
+    "description": "Description",
+    "specifications": "Spécifications"
+  },
+  "cart": {
+    "title": "Panier d'Achat",
+    "empty": "Votre panier est vide",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "tax": "Taxe",
+    "total": "Total",
+    "checkout": "Payer",
+    "continueShopping": "Continuer les Achats",
+    "remove": "Retirer"
+  },
+  "profile": {
+    "myAccount": "Mon Compte",
+    "orders": "Mes Commandes",
+    "addresses": "Adresses",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "currency": "Devise",
+    "logout": "Déconnexion",
+    "editProfile": "Modifier le Profil",
+    "changePassword": "Changer le Mot de Passe"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "forgotPassword": "Mot de Passe Oublié?",
+    "dontHaveAccount": "Vous n'avez pas de compte?",
+    "alreadyHaveAccount": "Vous avez déjà un compte?",
+    "signInWithGoogle": "Se Connecter avec Google",
+    "signInWithApple": "Se Connecter avec Apple"
+  },
+  "checkout": {
+    "title": "Paiement",
+    "shippingAddress": "Adresse de Livraison",
+    "paymentMethod": "Méthode de Paiement",
+    "orderSummary": "Récapitulatif de la Commande",
+    "placeOrder": "Passer la Commande",
+    "deliveryMethod": "Méthode de Livraison",
+    "delivery": "Livraison à Domicile",
+    "pickup": "Retrait en Magasin"
+  },
+  "order": {
+    "orderNumber": "Commande #",
+    "orderDate": "Date de Commande",
+    "status": "Statut",
+    "pending": "En Attente",
+    "processing": "En Traitement",
+    "shipped": "Expédié",
+    "delivered": "Livré",
+    "cancelled": "Annulé",
+    "trackOrder": "Suivre la Commande",
+    "cancelOrder": "Annuler la Commande",
+    "viewDetails": "Voir les Détails"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "ok": "OK"
+  }
+}

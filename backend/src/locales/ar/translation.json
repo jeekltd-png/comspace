@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "مرحباً",
+    "error": "خطأ",
+    "success": "نجاح",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "notFound": "غير موجود",
+    "unauthorized": "غير مصرح",
+    "forbidden": "ممنوع",
+    "serverError": "خطأ في الخادم"
+  },
+  "auth": {
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "loginFailed": "فشل تسجيل الدخول",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "registerSuccess": "تم التسجيل بنجاح",
+    "registerFailed": "فشل التسجيل",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "emailAlreadyExists": "البريد الإلكتروني موجود بالفعل",
+    "passwordResetSent": "تم إرسال بريد إعادة تعيين كلمة المرور",
+    "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+    "tokenExpired": "انتهت صلاحية الرمز",
+    "tokenInvalid": "رمز غير صالح",
+    "emailVerificationSent": "تم إرسال بريد التحقق",
+    "emailVerified": "تم التحقق من البريد الإلكتروني بنجاح",
+    "accountLocked": "تم قفل الحساب بسبب كثرة المحاولات الفاشلة"
+  },
+  "product": {
+    "created": "تم إنشاء المنتج بنجاح",
+    "updated": "تم تحديث المنتج بنجاح",
+    "deleted": "تم حذف المنتج بنجاح",
+    "notFound": "المنتج غير موجود",
+    "outOfStock": "المنتج غير متوفر",
+    "insufficientStock": "المخزون غير كافٍ",
+    "addedToCart": "تمت إضافة المنتج إلى السلة",
+    "removedFromCart": "تم إزالة المنتج من السلة",
+    "priceUpdated": "تم تحديث السعر",
+    "reviewAdded": "تمت إضافة المراجعة بنجاح",
+    "reviewUpdated": "تم تحديث المراجعة بنجاح"
+  },
+  "cart": {
+    "empty": "سلة التسوق فارغة",
+    "itemAdded": "تمت إضافة العنصر إلى السلة",
+    "itemRemoved": "تم إزالة العنصر من السلة",
+    "itemUpdated": "تم تحديث عنصر السلة",
+    "cleared": "تم إفراغ السلة",
+    "invalidQuantity": "كمية غير صالحة",
+    "checkoutSuccess": "تم الدفع بنجاح"
+  },
+  "order": {
+    "created": "تم إنشاء الطلب بنجاح",
+    "updated": "تم تحديث الطلب بنجاح",
+    "cancelled": "تم إلغاء الطلب بنجاح",
+    "notFound": "الطلب غير موجود",
+    "cannotCancel": "لا يمكن إلغاء الطلب",
+    "statusUpdated": "تم تحديث حالة الطلب",
+    "paymentPending": "الدفع قيد الانتظار",
+    "paymentFailed": "فشل الدفع",
+    "paymentSuccess": "تم الدفع بنجاح",
+    "shipped": "تم شحن الطلب",
+    "delivered": "تم توصيل الطلب",
+    "refunded": "تم استرداد الطلب"
+  },
+  "payment": {
+    "processing": "جاري معالجة الدفع...",
+    "success": "تم الدفع بنجاح",
+    "failed": "فشل الدفع",
+    "invalidAmount": "مبلغ الدفع غير صالح",
+    "cardDeclined": "تم رفض البطاقة",
+    "insufficientFunds": "رصيد غير كافٍ",
+    "refundProcessing": "جاري معالجة الاسترداد...",
+    "refundSuccess": "تم الاسترداد بنجاح",
+    "refundFailed": "فشل الاسترداد"
+  },
+  "user": {
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح",
+    "addressAdded": "تمت إضافة العنوان بنجاح",
+    "addressUpdated": "تم تحديث العنوان بنجاح",
+    "addressDeleted": "تم حذف العنوان بنجاح",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+    "accountDeleted": "تم حذف الحساب بنجاح",
+    "notFound": "المستخدم غير موجود"
+  },
+  "admin": {
+    "accessDenied": "تم رفض وصول المسؤول",
+    "userPromoted": "تمت ترقية المستخدم إلى مسؤول",
+    "userDemoted": "تم خفض رتبة المستخدم من مسؤول",
+    "settingsUpdated": "تم تحديث الإعدادات بنجاح",
+    "reportGenerated": "تم إنشاء التقرير بنجاح"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+    "invalidPhone": "رقم هاتف غير صالح",
+    "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "passwordMismatch": "كلمات المرور غير متطابقة",
+    "invalidFormat": "تنسيق غير صالح",
+    "minLength": "الحد الأدنى للطول هو {{min}} حرف",
+    "maxLength": "الحد الأقصى للطول هو {{max}} حرف",
+    "minValue": "الحد الأدنى للقيمة هو {{min}}",
+    "maxValue": "الحد الأقصى للقيمة هو {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "مرحباً بك في ComSpace!",
+      "orderConfirmation": "تأكيد الطلب - #{{orderNumber}}",
+      "orderShipped": "تم شحن طلبك",
+      "orderDelivered": "تم توصيل طلبك",
+      "passwordReset": "طلب إعادة تعيين كلمة المرور",
+      "emailVerification": "تحقق من عنوان بريدك الإلكتروني"
+    },
+    "greeting": "مرحباً {{name}}،",
+    "footer": "شكراً لتسوقك مع ComSpace!"
+  }
+}

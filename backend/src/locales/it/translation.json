@@ -1,0 +1,99 @@
+{
+  "common": {
+    "welcome": "Benvenuto",
+    "hello": "Ciao",
+    "goodbye": "Arrivederci",
+    "yes": "Sì",
+    "no": "No",
+    "please": "Per favore",
+    "thank_you": "Grazie",
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore",
+    "success": "Successo!",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina"
+  },
+  "auth": {
+    "login": "Accedi",
+    "signup": "Registrati",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "resetPassword": "Reimposta password",
+    "confirmPassword": "Conferma password",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "phoneNumber": "Numero di telefono",
+    "createAccount": "Crea account",
+    "loginSuccess": "Accesso riuscito"
+  },
+  "product": {
+    "products": "Prodotti",
+    "product": "Prodotto",
+    "name": "Nome",
+    "description": "Descrizione",
+    "price": "Prezzo",
+    "category": "Categoria",
+    "stock": "Scorte",
+    "addToCart": "Aggiungi al carrello",
+    "buyNow": "Acquista ora",
+    "outOfStock": "Esaurito",
+    "inStock": "Disponibile"
+  },
+  "cart": {
+    "cart": "Carrello",
+    "items": "Articoli",
+    "empty": "Il tuo carrello è vuoto",
+    "subtotal": "Subtotale",
+    "total": "Totale",
+    "checkout": "Vai alla cassa",
+    "continueShopping": "Continua gli acquisti",
+    "remove": "Rimuovi"
+  },
+  "order": {
+    "orders": "Ordini",
+    "order": "Ordine",
+    "orderNumber": "Numero ordine",
+    "status": "Stato",
+    "pending": "In attesa",
+    "processing": "In elaborazione",
+    "shipped": "Spedito",
+    "delivered": "Consegnato",
+    "cancelled": "Annullato",
+    "placeOrder": "Effettua ordine",
+    "trackOrder": "Traccia ordine"
+  },
+  "user": {
+    "profile": "Profilo",
+    "account": "Account",
+    "settings": "Impostazioni",
+    "addresses": "Indirizzi",
+    "orders": "I miei ordini"
+  },
+  "payment": {
+    "payment": "Pagamento",
+    "paymentMethod": "Metodo di pagamento",
+    "creditCard": "Carta di credito",
+    "payNow": "Paga ora",
+    "paymentSuccess": "Pagamento riuscito",
+    "paymentFailed": "Pagamento fallito"
+  },
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "invalidEmail": "Email non valida",
+    "passwordTooShort": "Password troppo corta",
+    "passwordsDoNotMatch": "Le password non corrispondono"
+  },
+  "email": {
+    "orderConfirmation": "Conferma ordine",
+    "welcomeEmail": "Benvenuto su ComSpace",
+    "passwordReset": "Reimposta password"
+  }
+}

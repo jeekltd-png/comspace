@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "Barka da zuwa",
+    "error": "Kuskure",
+    "success": "Nasara",
+    "loading": "Ana lodi...",
+    "save": "Ajiye",
+    "cancel": "Soke",
+    "delete": "Share",
+    "edit": "Gyara",
+    "create": "Ƙirƙira",
+    "update": "Sabunta",
+    "search": "Bincika",
+    "filter": "Tace",
+    "sort": "Jera",
+    "notFound": "Ba a samu ba",
+    "unauthorized": "Ba a ba da izini ba",
+    "forbidden": "An haramta",
+    "serverError": "Kuskuren Sabar"
+  },
+  "auth": {
+    "loginSuccess": "Shiga ya yi nasara",
+    "loginFailed": "Shiga ya kasa",
+    "logoutSuccess": "Fita ya yi nasara",
+    "registerSuccess": "Rajista ya yi nasara",
+    "registerFailed": "Rajista ya kasa",
+    "invalidCredentials": "Imel ko kalmar sirri ba daidai ba ce",
+    "emailAlreadyExists": "Imel ya riga ya wanzu",
+    "passwordResetSent": "An aika imel sake saita kalmar sirri",
+    "passwordResetSuccess": "Sake saita kalmar sirri ya yi nasara",
+    "tokenExpired": "Alamar ta kare",
+    "tokenInvalid": "Alamar ba daidai ba ce",
+    "emailVerificationSent": "An aika imel tabbatarwa",
+    "emailVerified": "An tabbatar da imel da nasara",
+    "accountLocked": "An kulle asusun saboda yawan yunƙurin da suka kasa"
+  },
+  "product": {
+    "created": "An ƙirƙiri samfur da nasara",
+    "updated": "An sabunta samfur da nasara",
+    "deleted": "An share samfur da nasara",
+    "notFound": "Ba a sami samfur ba",
+    "outOfStock": "Samfurin ya ƙare",
+    "insufficientStock": "Samfurin bai isa ba",
+    "addedToCart": "An ƙara samfur zuwa kati",
+    "removedFromCart": "An cire samfur daga kati",
+    "priceUpdated": "An sabunta farashi",
+    "reviewAdded": "An ƙara sharhi da nasara",
+    "reviewUpdated": "An sabunta sharhi da nasara"
+  },
+  "cart": {
+    "empty": "Katin ku babu komai",
+    "itemAdded": "An ƙara abu zuwa kati",
+    "itemRemoved": "An cire abu daga kati",
+    "itemUpdated": "An sabunta abin kati",
+    "cleared": "An share kati",
+    "invalidQuantity": "Adadin ba daidai ba ne",
+    "checkoutSuccess": "Biya ya yi nasara"
+  },
+  "order": {
+    "created": "An ƙirƙiri oda da nasara",
+    "updated": "An sabunta oda da nasara",
+    "cancelled": "An soke oda da nasara",
+    "notFound": "Ba a sami oda ba",
+    "cannotCancel": "Ba za a iya soke oda ba",
+    "statusUpdated": "An sabunta matsayin oda",
+    "paymentPending": "Biyan kuɗi yana jira",
+    "paymentFailed": "Biyan kuɗi ya kasa",
+    "paymentSuccess": "Biyan kuɗi ya yi nasara",
+    "shipped": "An aika oda",
+    "delivered": "An isar da oda",
+    "refunded": "An mayar da oda"
+  },
+  "payment": {
+    "processing": "Ana aiwatar da biyan kuɗi...",
+    "success": "Biyan kuɗi ya yi nasara",
+    "failed": "Biyan kuɗi ya kasa",
+    "invalidAmount": "Adadin biyan kuɗi ba daidai ba ne",
+    "cardDeclined": "An ƙi katin",
+    "insufficientFunds": "Kuɗin bai isa ba",
+    "refundProcessing": "Ana aiwatar da mayarwa...",
+    "refundSuccess": "Mayarwa ta yi nasara",
+    "refundFailed": "Mayarwa ta kasa"
+  },
+  "user": {
+    "profileUpdated": "An sabunta bayanan martaba da nasara",
+    "addressAdded": "An ƙara adireshi da nasara",
+    "addressUpdated": "An sabunta adireshi da nasara",
+    "addressDeleted": "An share adireshi da nasara",
+    "passwordChanged": "An canza kalmar sirri da nasara",
+    "accountDeleted": "An share asusun da nasara",
+    "notFound": "Ba a sami mai amfani ba"
+  },
+  "admin": {
+    "accessDenied": "An hana shiga admin",
+    "userPromoted": "An ɗaukaka mai amfani zuwa admin",
+    "userDemoted": "An saukar da mai amfani daga admin",
+    "settingsUpdated": "An sabunta saitunan da nasara",
+    "reportGenerated": "An ƙirƙiri rahoto da nasara"
+  },
+  "validation": {
+    "required": "Ana buƙatar wannan filin",
+    "invalidEmail": "Adireshin imel ba daidai ba ne",
+    "invalidPhone": "Lambar waya ba daidai ba ce",
+    "passwordTooShort": "Kalmar sirri dole ta zama aƙalla haruffa 8",
+    "passwordMismatch": "Kalmomin sirri ba su dace ba",
+    "invalidFormat": "Tsarin ba daidai ba ne",
+    "minLength": "Mafi ƙarancin tsawo shine haruffa {{min}}",
+    "maxLength": "Mafi girman tsawo shine haruffa {{max}}",
+    "minValue": "Mafi ƙarancin ƙima shine {{min}}",
+    "maxValue": "Mafi girman ƙima shine {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Barka da zuwa ComSpace!",
+      "orderConfirmation": "Tabbatar da Oda - #{{orderNumber}}",
+      "orderShipped": "An Aika Odar Ku",
+      "orderDelivered": "An Isar Da Odar Ku",
+      "passwordReset": "Buƙatar Sake Saita Kalmar Sirri",
+      "emailVerification": "Tabbatar da Adireshin Imel Ɗinku"
+    },
+    "greeting": "Sannu {{name}},",
+    "footer": "Na gode da sayayya da ComSpace!"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "common": {
+    "appName": "ComSpace",
+    "welcome": "Benvenuto",
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore",
+    "success": "Successo!",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina"
+  },
+  "auth": {
+    "login": "Accedi",
+    "signup": "Registrati",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "resetPassword": "Reimposta password",
+    "confirmPassword": "Conferma password",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "phoneNumber": "Numero di telefono",
+    "createAccount": "Crea account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "dontHaveAccount": "Non hai un account?",
+    "orContinueWith": "Oppure continua con",
+    "googleSignIn": "Accedi con Google",
+    "appleSignIn": "Accedi con Apple"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Prodotti",
+    "categories": "Categorie",
+    "cart": "Carrello",
+    "account": "Account",
+    "orders": "Ordini",
+    "wishlist": "Lista desideri",
+    "settings": "Impostazioni"
+  },
+  "product": {
+    "addToCart": "Aggiungi al carrello",
+    "buyNow": "Acquista ora",
+    "inStock": "Disponibile",
+    "outOfStock": "Esaurito"
+  },
+  "cart": {
+    "title": "Il Mio Carrello",
+    "empty": "Il tuo carrello è vuoto",
+    "checkout": "Vai alla cassa"
+  },
+  "order": {
+    "title": "I Miei Ordini",
+    "trackOrder": "Traccia ordine"
+  }
+}

@@ -1,0 +1,33 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Checkout the PR head branch so the workflow sees the branch files (avoids merge refs missing files)
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+      - name: Install
+        run: npm ci
+      - name: Start services and app
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN_STAGING }}
+          DEBUG_SENTRY: 'true'
+        run: npm run dev & sleep 20
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          runTests: true

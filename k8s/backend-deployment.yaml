@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comspace-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: comspace-backend
+  template:
+    metadata:
+      labels:
+        app: comspace-backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/jeekltd-png/comspace/backend:latest
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

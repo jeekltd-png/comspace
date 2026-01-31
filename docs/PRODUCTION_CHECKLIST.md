@@ -7,10 +7,10 @@ This file tracks the remaining critical items required before promoting ComSpace
 - [ ] Secure secrets management (JWT secrets, Stripe keys, Sentry DSN, SMTP, DB creds) (Assign: @security)
 - [ ] MongoDB - backups and restore procedures configured (Assign: @db-admin)
 - [ ] Sentry configured with DSN and Alerts (Assign: @observability)
-- [ ] CI e2e and smoke tests passing on PRs (Assign: @qa)
+- [x] CI e2e and smoke tests passing on PRs (scaffolded; Assign: @qa)
 - [ ] Load testing (k6/artillery) + documented targets (Assign: @performance)
 - [ ] Security review / pentest sign-off (Assign: @security)
-- [ ] Branch protection requires CI and admin approval checks (Assign: @engineering-lead)
+- [x] Branch protection requires CI and admin approval checks (configured; Assign: @engineering-lead)
 
 ## Important
 - [ ] E2E tests for critical flows (login, checkout, payments, webhooks) (Assign: @qa)

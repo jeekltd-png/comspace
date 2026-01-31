@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "Nnọọ",
+    "error": "Njehie",
+    "success": "Ihe ịga nke ọma",
+    "loading": "Na-ebu...",
+    "save": "Chekwa",
+    "cancel": "Kagbuo",
+    "delete": "Hichapụ",
+    "edit": "Dezie",
+    "create": "Mepụta",
+    "update": "Melite",
+    "search": "Chọọ",
+    "filter": "Nzacha",
+    "sort": "Hazie",
+    "notFound": "Achọtaghị",
+    "unauthorized": "Enweghị ikike",
+    "forbidden": "Amachibidoro",
+    "serverError": "Njehie Server"
+  },
+  "auth": {
+    "loginSuccess": "Nbanye gara nke ọma",
+    "loginFailed": "Nbanye dara ada",
+    "logoutSuccess": "Ịpụ gara nke ọma",
+    "registerSuccess": "Ndebanye aha gara nke ọma",
+    "registerFailed": "Ndebanye aha dara ada",
+    "invalidCredentials": "Email ma ọ bụ paswọọdụ ezighi ezi",
+    "emailAlreadyExists": "Email adịlarị",
+    "passwordResetSent": "Ezigara email ntọgharị paswọọdụ",
+    "passwordResetSuccess": "Ntọgharị paswọọdụ gara nke ọma",
+    "tokenExpired": "Akara ngosi agwụla",
+    "tokenInvalid": "Akara ngosi ezighi ezi",
+    "emailVerificationSent": "Ezigara email nkwenye",
+    "emailVerified": "Email kwadoro nke ọma",
+    "accountLocked": "Emechiri akaụntụ n'ihi ọtụtụ mgbalị dara ada"
+  },
+  "product": {
+    "created": "Emepụtara ngwaahịa nke ọma",
+    "updated": "Emelitere ngwaahịa nke ọma",
+    "deleted": "Ehichapụrụ ngwaahịa nke ọma",
+    "notFound": "Achọtaghị ngwaahịa",
+    "outOfStock": "Ngwaahịa agwụla",
+    "insufficientStock": "Ngwaahịa ezughi",
+    "addedToCart": "Etinyere ngwaahịa na nkata",
+    "removedFromCart": "Ewepụrụ ngwaahịa na nkata",
+    "priceUpdated": "Emelitere ọnụ ahịa",
+    "reviewAdded": "Etinyere nyocha nke ọma",
+    "reviewUpdated": "Emelitere nyocha nke ọma"
+  },
+  "cart": {
+    "empty": "Nkata gị tọgbọrọ chakoo",
+    "itemAdded": "Etinyere ihe na nkata",
+    "itemRemoved": "Ewepụrụ ihe na nkata",
+    "itemUpdated": "Emelitere ihe nkata",
+    "cleared": "Ekpochapụrụ nkata",
+    "invalidQuantity": "Ọnụọgụ ezighi ezi",
+    "checkoutSuccess": "Ịkwụ ụgwọ gara nke ọma"
+  },
+  "order": {
+    "created": "Emepụtara iwu nke ọma",
+    "updated": "Emelitere iwu nke ọma",
+    "cancelled": "Kagburu iwu nke ọma",
+    "notFound": "Achọtaghị iwu",
+    "cannotCancel": "Enweghị ike ịkagbu iwu",
+    "statusUpdated": "Emelitere ọnọdụ iwu",
+    "paymentPending": "Ịkwụ ụgwọ na-echere",
+    "paymentFailed": "Ịkwụ ụgwọ dara ada",
+    "paymentSuccess": "Ịkwụ ụgwọ gara nke ọma",
+    "shipped": "Ezigara iwu",
+    "delivered": "Enyere iwu",
+    "refunded": "Akwụghachiri iwu"
+  },
+  "payment": {
+    "processing": "Na-ahazi ịkwụ ụgwọ...",
+    "success": "Ịkwụ ụgwọ gara nke ọma",
+    "failed": "Ịkwụ ụgwọ dara ada",
+    "invalidAmount": "Ego ịkwụ ụgwọ ezighi ezi",
+    "cardDeclined": "Jụrụ kaadị",
+    "insufficientFunds": "Ego ezughi",
+    "refundProcessing": "Na-ahazi nkwụghachi...",
+    "refundSuccess": "Nkwụghachi gara nke ọma",
+    "refundFailed": "Nkwụghachi dara ada"
+  },
+  "user": {
+    "profileUpdated": "Emelitere profaịlụ nke ọma",
+    "addressAdded": "Etinyere adreesị nke ọma",
+    "addressUpdated": "Emelitere adreesị nke ọma",
+    "addressDeleted": "Ehichapụrụ adreesị nke ọma",
+    "passwordChanged": "Agbanwere paswọọdụ nke ọma",
+    "accountDeleted": "Ehichapụrụ akaụntụ nke ọma",
+    "notFound": "Achọtaghị onye ọrụ"
+  },
+  "admin": {
+    "accessDenied": "Ajụrụ nnweta admin",
+    "userPromoted": "Ebuliri onye ọrụ ka ọ bụrụ admin",
+    "userDemoted": "Ewedara onye ọrụ site na admin",
+    "settingsUpdated": "Emelitere ntọala nke ọma",
+    "reportGenerated": "Emepụtara akụkọ nke ọma"
+  },
+  "validation": {
+    "required": "A chọrọ mpaghara a",
+    "invalidEmail": "Adreesị email ezighi ezi",
+    "invalidPhone": "Nọmba ekwentị ezighi ezi",
+    "passwordTooShort": "Paswọọdụ ga-abụ opekata mpe mkpụrụedemede 8",
+    "passwordMismatch": "Paswọọdụ adabaghị",
+    "invalidFormat": "Ụdị ezighi ezi",
+    "minLength": "Ogologo kacha nta bụ mkpụrụedemede {{min}}",
+    "maxLength": "Ogologo kachasị bụ mkpụrụedemede {{max}}",
+    "minValue": "Uru kacha nta bụ {{min}}",
+    "maxValue": "Uru kachasị bụ {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Nnọọ na ComSpace!",
+      "orderConfirmation": "Nkwenye Iwu - #{{orderNumber}}",
+      "orderShipped": "Ezigara Iwu Gị",
+      "orderDelivered": "Enyere Iwu Gị",
+      "passwordReset": "Arịrịọ Ntọgharị Paswọọdụ",
+      "emailVerification": "Nyochaa Adreesị Email Gị"
+    },
+    "greeting": "Ndewo {{name}},",
+    "footer": "Daalụ maka ịzụrụ ahịa na ComSpace!"
+  }
+}

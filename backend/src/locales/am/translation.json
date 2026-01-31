@@ -1,0 +1,99 @@
+{
+  "common": {
+    "welcome": "እንኳን ደህና መጡ",
+    "hello": "ሰላም",
+    "goodbye": "ደህና ሁን",
+    "yes": "አዎ",
+    "no": "አይ",
+    "please": "እባክዎ",
+    "thank_you": "አመሰግናለሁ",
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት ተከስቷል",
+    "success": "ተሳክቷል!",
+    "cancel": "ሰርዝ",
+    "confirm": "አረጋግጥ",
+    "save": "አስቀምጥ",
+    "delete": "ሰርዝ",
+    "edit": "አርትዕ",
+    "search": "ፈልግ",
+    "filter": "አጣራ",
+    "sort": "ደርድር"
+  },
+  "auth": {
+    "login": "ግባ",
+    "signup": "ይመዝገቡ",
+    "logout": "ውጣ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "forgotPassword": "የይለፍ ቃልዎን ረስተዋል?",
+    "resetPassword": "የይለፍ ቃል ዳግም አስጀምር",
+    "confirmPassword": "የይለፍ ቃል አረጋግጥ",
+    "firstName": "የመጀመሪያ ስም",
+    "lastName": "የአያት ስም",
+    "phoneNumber": "ስልክ ቁጥር",
+    "createAccount": "መለያ ይፍጠሩ",
+    "loginSuccess": "በተሳካ ሁኔታ ገብተዋል"
+  },
+  "product": {
+    "products": "ምርቶች",
+    "product": "ምርት",
+    "name": "ስም",
+    "description": "መግለጫ",
+    "price": "ዋጋ",
+    "category": "ምድብ",
+    "stock": "አክሲዮን",
+    "addToCart": "ወደ ጋሪ ጨምር",
+    "buyNow": "አሁን ግዛ",
+    "outOfStock": "ከአክሲዮን ውጭ",
+    "inStock": "በአክሲዮን ውስጥ"
+  },
+  "cart": {
+    "cart": "ጋሪ",
+    "items": "እቃዎች",
+    "empty": "ጋሪዎ ባዶ ነው",
+    "subtotal": "ንዑስ ድምር",
+    "total": "ጠቅላላ",
+    "checkout": "ወደ ክፍያ ይሂዱ",
+    "continueShopping": "ግዢ ይቀጥሉ",
+    "remove": "አስወግድ"
+  },
+  "order": {
+    "orders": "ትዕዛዞች",
+    "order": "ትዕዛዝ",
+    "orderNumber": "የትዕዛዝ ቁጥር",
+    "status": "ሁኔታ",
+    "pending": "በመጠባበቅ ላይ",
+    "processing": "በሂደት ላይ",
+    "shipped": "ተልኳል",
+    "delivered": "ተደርሷል",
+    "cancelled": "ተሰርዟል",
+    "placeOrder": "ትዕዛዝ ያስቀምጡ",
+    "trackOrder": "ትዕዛዝ ይከታተሉ"
+  },
+  "user": {
+    "profile": "መገለጫ",
+    "account": "መለያ",
+    "settings": "ቅንብሮች",
+    "addresses": "አድራሻዎች",
+    "orders": "ትዕዛዞቼ"
+  },
+  "payment": {
+    "payment": "ክፍያ",
+    "paymentMethod": "የክፍያ ዘዴ",
+    "creditCard": "የክሬዲት ካርድ",
+    "payNow": "አሁን ይክፈሉ",
+    "paymentSuccess": "ክፍያ ተሳክቷል",
+    "paymentFailed": "ክፍያ አልተሳካም"
+  },
+  "validation": {
+    "required": "ይህ መስክ ያስፈልጋል",
+    "invalidEmail": "ልክ ያልሆነ ኢሜይል",
+    "passwordTooShort": "የይለፍ ቃል በጣም አጭር ነው",
+    "passwordsDoNotMatch": "የይለፍ ቃሎች አይዛመዱም"
+  },
+  "email": {
+    "orderConfirmation": "የትዕዛዝ ማረጋገጫ",
+    "welcomeEmail": "እንኳን ወደ ComSpace በደህና መጡ",
+    "passwordReset": "የይለፍ ቃል ዳግም አስጀምር"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "common": {
+    "welcome": "Karibu",
+    "hello": "Habari",
+    "goodbye": "Kwaheri",
+    "yes": "Ndiyo",
+    "no": "Hapana",
+    "please": "Tafadhali",
+    "thank_you": "Asante",
+    "loading": "Inapakia...",
+    "error": "Kosa limefanyika",
+    "success": "Imefaulu!",
+    "cancel": "Futa",
+    "confirm": "Thibitisha",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "search": "Tafuta",
+    "filter": "Chuja",
+    "sort": "Panga"
+  },
+  "auth": {
+    "login": "Ingia",
+    "signup": "Jisajili",
+    "logout": "Toka",
+    "email": "Barua pepe",
+    "password": "Nenosiri",
+    "forgotPassword": "Umesahau nenosiri?",
+    "resetPassword": "Weka upya nenosiri",
+    "confirmPassword": "Thibitisha nenosiri",
+    "firstName": "Jina la kwanza",
+    "lastName": "Jina la ukoo",
+    "phoneNumber": "Nambari ya simu",
+    "createAccount": "Unda akaunti",
+    "loginSuccess": "Umefanikiwa kuingia"
+  },
+  "product": {
+    "products": "Bidhaa",
+    "product": "Bidhaa",
+    "name": "Jina",
+    "description": "Maelezo",
+    "price": "Bei",
+    "category": "Jamii",
+    "stock": "Hisa",
+    "addToCart": "Ongeza kwenye kikapu",
+    "buyNow": "Nunua sasa",
+    "outOfStock": "Imeisha",
+    "inStock": "Ipo"
+  },
+  "cart": {
+    "cart": "Kikapu",
+    "items": "Vitu",
+    "empty": "Kikapu chako ni tupu",
+    "subtotal": "Jumla ndogo",
+    "total": "Jumla",
+    "checkout": "Malipo",
+    "continueShopping": "Endelea ununuzi",
+    "remove": "Ondoa"
+  },
+  "order": {
+    "orders": "Maagizo",
+    "order": "Agizo",
+    "orderNumber": "Nambari ya agizo",
+    "status": "Hali",
+    "pending": "Inasubiri",
+    "processing": "Inachakatwa",
+    "shipped": "Imetumwa",
+    "delivered": "Imefikishwa",
+    "cancelled": "Imefutwa",
+    "placeOrder": "Weka agizo",
+    "trackOrder": "Fuatilia agizo"
+  },
+  "user": {
+    "profile": "Wasifu",
+    "account": "Akaunti",
+    "settings": "Mipangilio",
+    "addresses": "Anwani",
+    "orders": "Maagizo yangu"
+  },
+  "payment": {
+    "payment": "Malipo",
+    "paymentMethod": "Njia ya malipo",
+    "creditCard": "Kadi ya mkopo",
+    "payNow": "Lipa sasa",
+    "paymentSuccess": "Malipo yamefaulu",
+    "paymentFailed": "Malipo yameshindikana"
+  },
+  "validation": {
+    "required": "Sehemu hii inahitajika",
+    "invalidEmail": "Barua pepe si sahihi",
+    "passwordTooShort": "Nenosiri ni fupi sana",
+    "passwordsDoNotMatch": "Nenosiri hazilingani"
+  },
+  "email": {
+    "orderConfirmation": "Uthibitisho wa agizo",
+    "welcomeEmail": "Karibu kwenye ComSpace",
+    "passwordReset": "Weka upya nenosiri"
+  }
+}

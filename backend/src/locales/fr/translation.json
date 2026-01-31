@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "error": "Erreur",
+    "success": "Succès",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "notFound": "Non Trouvé",
+    "unauthorized": "Non Autorisé",
+    "forbidden": "Interdit",
+    "serverError": "Erreur Serveur"
+  },
+  "auth": {
+    "loginSuccess": "Connexion réussie",
+    "loginFailed": "Échec de la connexion",
+    "logoutSuccess": "Déconnexion réussie",
+    "registerSuccess": "Inscription réussie",
+    "registerFailed": "Échec de l'inscription",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "emailAlreadyExists": "L'email existe déjà",
+    "passwordResetSent": "Email de réinitialisation envoyé",
+    "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
+    "tokenExpired": "Jeton expiré",
+    "tokenInvalid": "Jeton invalide",
+    "emailVerificationSent": "Email de vérification envoyé",
+    "emailVerified": "Email vérifié avec succès",
+    "accountLocked": "Compte verrouillé en raison de trop de tentatives échouées"
+  },
+  "product": {
+    "created": "Produit créé avec succès",
+    "updated": "Produit mis à jour avec succès",
+    "deleted": "Produit supprimé avec succès",
+    "notFound": "Produit non trouvé",
+    "outOfStock": "Produit en rupture de stock",
+    "insufficientStock": "Stock insuffisant",
+    "addedToCart": "Produit ajouté au panier",
+    "removedFromCart": "Produit retiré du panier",
+    "priceUpdated": "Prix mis à jour",
+    "reviewAdded": "Avis ajouté avec succès",
+    "reviewUpdated": "Avis mis à jour avec succès"
+  },
+  "cart": {
+    "empty": "Votre panier est vide",
+    "itemAdded": "Article ajouté au panier",
+    "itemRemoved": "Article retiré du panier",
+    "itemUpdated": "Article du panier mis à jour",
+    "cleared": "Panier vidé",
+    "invalidQuantity": "Quantité invalide",
+    "checkoutSuccess": "Paiement réussi"
+  },
+  "order": {
+    "created": "Commande créée avec succès",
+    "updated": "Commande mise à jour avec succès",
+    "cancelled": "Commande annulée avec succès",
+    "notFound": "Commande non trouvée",
+    "cannotCancel": "La commande ne peut pas être annulée",
+    "statusUpdated": "Statut de la commande mis à jour",
+    "paymentPending": "Paiement en attente",
+    "paymentFailed": "Échec du paiement",
+    "paymentSuccess": "Paiement réussi",
+    "shipped": "Commande expédiée",
+    "delivered": "Commande livrée",
+    "refunded": "Commande remboursée"
+  },
+  "payment": {
+    "processing": "Traitement du paiement...",
+    "success": "Paiement réussi",
+    "failed": "Échec du paiement",
+    "invalidAmount": "Montant de paiement invalide",
+    "cardDeclined": "Carte refusée",
+    "insufficientFunds": "Fonds insuffisants",
+    "refundProcessing": "Traitement du remboursement...",
+    "refundSuccess": "Remboursement réussi",
+    "refundFailed": "Échec du remboursement"
+  },
+  "user": {
+    "profileUpdated": "Profil mis à jour avec succès",
+    "addressAdded": "Adresse ajoutée avec succès",
+    "addressUpdated": "Adresse mise à jour avec succès",
+    "addressDeleted": "Adresse supprimée avec succès",
+    "passwordChanged": "Mot de passe changé avec succès",
+    "accountDeleted": "Compte supprimé avec succès",
+    "notFound": "Utilisateur non trouvé"
+  },
+  "admin": {
+    "accessDenied": "Accès administrateur refusé",
+    "userPromoted": "Utilisateur promu administrateur",
+    "userDemoted": "Utilisateur rétrogradé d'administrateur",
+    "settingsUpdated": "Paramètres mis à jour avec succès",
+    "reportGenerated": "Rapport généré avec succès"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Adresse email invalide",
+    "invalidPhone": "Numéro de téléphone invalide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "invalidFormat": "Format invalide",
+    "minLength": "La longueur minimale est de {{min}} caractères",
+    "maxLength": "La longueur maximale est de {{max}} caractères",
+    "minValue": "La valeur minimale est {{min}}",
+    "maxValue": "La valeur maximale est {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Bienvenue chez ComSpace!",
+      "orderConfirmation": "Confirmation de Commande - #{{orderNumber}}",
+      "orderShipped": "Votre Commande a été Expédiée",
+      "orderDelivered": "Votre Commande a été Livrée",
+      "passwordReset": "Demande de Réinitialisation du Mot de Passe",
+      "emailVerification": "Vérifiez Votre Adresse Email"
+    },
+    "greeting": "Bonjour {{name}},",
+    "footer": "Merci d'avoir fait vos achats avec ComSpace!"
+  }
+}

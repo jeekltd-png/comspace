@@ -1,0 +1,124 @@
+{
+  "common": {
+    "welcome": "Willkommen",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "loading": "Wird geladen...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "notFound": "Nicht Gefunden",
+    "unauthorized": "Nicht Autorisiert",
+    "forbidden": "Verboten",
+    "serverError": "Serverfehler"
+  },
+  "auth": {
+    "loginSuccess": "Anmeldung erfolgreich",
+    "loginFailed": "Anmeldung fehlgeschlagen",
+    "logoutSuccess": "Abmeldung erfolgreich",
+    "registerSuccess": "Registrierung erfolgreich",
+    "registerFailed": "Registrierung fehlgeschlagen",
+    "invalidCredentials": "Ungültige E-Mail oder Passwort",
+    "emailAlreadyExists": "E-Mail existiert bereits",
+    "passwordResetSent": "Passwort-Zurücksetzen-E-Mail gesendet",
+    "passwordResetSuccess": "Passwort erfolgreich zurückgesetzt",
+    "tokenExpired": "Token abgelaufen",
+    "tokenInvalid": "Ungültiger Token",
+    "emailVerificationSent": "Verifizierungs-E-Mail gesendet",
+    "emailVerified": "E-Mail erfolgreich verifiziert",
+    "accountLocked": "Konto aufgrund zu vieler fehlgeschlagener Versuche gesperrt"
+  },
+  "product": {
+    "created": "Produkt erfolgreich erstellt",
+    "updated": "Produkt erfolgreich aktualisiert",
+    "deleted": "Produkt erfolgreich gelöscht",
+    "notFound": "Produkt nicht gefunden",
+    "outOfStock": "Produkt nicht vorrätig",
+    "insufficientStock": "Nicht genügend Lagerbestand",
+    "addedToCart": "Produkt zum Warenkorb hinzugefügt",
+    "removedFromCart": "Produkt aus Warenkorb entfernt",
+    "priceUpdated": "Preis aktualisiert",
+    "reviewAdded": "Bewertung erfolgreich hinzugefügt",
+    "reviewUpdated": "Bewertung erfolgreich aktualisiert"
+  },
+  "cart": {
+    "empty": "Ihr Warenkorb ist leer",
+    "itemAdded": "Artikel zum Warenkorb hinzugefügt",
+    "itemRemoved": "Artikel aus Warenkorb entfernt",
+    "itemUpdated": "Warenkorbartikel aktualisiert",
+    "cleared": "Warenkorb geleert",
+    "invalidQuantity": "Ungültige Menge",
+    "checkoutSuccess": "Kasse erfolgreich"
+  },
+  "order": {
+    "created": "Bestellung erfolgreich erstellt",
+    "updated": "Bestellung erfolgreich aktualisiert",
+    "cancelled": "Bestellung erfolgreich storniert",
+    "notFound": "Bestellung nicht gefunden",
+    "cannotCancel": "Bestellung kann nicht storniert werden",
+    "statusUpdated": "Bestellstatus aktualisiert",
+    "paymentPending": "Zahlung ausstehend",
+    "paymentFailed": "Zahlung fehlgeschlagen",
+    "paymentSuccess": "Zahlung erfolgreich",
+    "shipped": "Bestellung versandt",
+    "delivered": "Bestellung zugestellt",
+    "refunded": "Bestellung erstattet"
+  },
+  "payment": {
+    "processing": "Zahlung wird verarbeitet...",
+    "success": "Zahlung erfolgreich",
+    "failed": "Zahlung fehlgeschlagen",
+    "invalidAmount": "Ungültiger Zahlungsbetrag",
+    "cardDeclined": "Karte abgelehnt",
+    "insufficientFunds": "Nicht genügend Guthaben",
+    "refundProcessing": "Erstattung wird verarbeitet...",
+    "refundSuccess": "Erstattung erfolgreich",
+    "refundFailed": "Erstattung fehlgeschlagen"
+  },
+  "user": {
+    "profileUpdated": "Profil erfolgreich aktualisiert",
+    "addressAdded": "Adresse erfolgreich hinzugefügt",
+    "addressUpdated": "Adresse erfolgreich aktualisiert",
+    "addressDeleted": "Adresse erfolgreich gelöscht",
+    "passwordChanged": "Passwort erfolgreich geändert",
+    "accountDeleted": "Konto erfolgreich gelöscht",
+    "notFound": "Benutzer nicht gefunden"
+  },
+  "admin": {
+    "accessDenied": "Admin-Zugriff verweigert",
+    "userPromoted": "Benutzer zum Admin befördert",
+    "userDemoted": "Benutzer vom Admin degradiert",
+    "settingsUpdated": "Einstellungen erfolgreich aktualisiert",
+    "reportGenerated": "Bericht erfolgreich generiert"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "invalidPhone": "Ungültige Telefonnummer",
+    "passwordTooShort": "Passwort muss mindestens 8 Zeichen lang sein",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "invalidFormat": "Ungültiges Format",
+    "minLength": "Mindestlänge beträgt {{min}} Zeichen",
+    "maxLength": "Maximale Länge beträgt {{max}} Zeichen",
+    "minValue": "Mindestwert ist {{min}}",
+    "maxValue": "Maximalwert ist {{max}}"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Willkommen bei ComSpace!",
+      "orderConfirmation": "Bestellbestätigung - #{{orderNumber}}",
+      "orderShipped": "Ihre Bestellung wurde versandt",
+      "orderDelivered": "Ihre Bestellung wurde zugestellt",
+      "passwordReset": "Anfrage zum Zurücksetzen des Passworts",
+      "emailVerification": "Bestätigen Sie Ihre E-Mail-Adresse"
+    },
+    "greeting": "Hallo {{name}},",
+    "footer": "Vielen Dank für Ihren Einkauf bei ComSpace!"
+  }
+}

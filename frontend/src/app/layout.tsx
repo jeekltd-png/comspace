@@ -3,6 +3,10 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
 import { Toaster } from 'react-hot-toast';
+import { NextIntlClientProvider } from 'next-intl';
+import { defaultLocale } from '@/i18n';
+// Load default messages so pages not under a locale (e.g., /register) still have intl context
+import enMessages from '@/locales/en.json';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,13 +21,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Touch file to trigger Next dev reload when we patch node_modules
+  // (no runtime effect)
+  /* dev-reload: updated */
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          {children}
-          <Toaster position="top-right" />
-        </Providers>
+        {/* Provide a default NextIntl client provider for non-locale routes (e.g., /register) */}
+        <NextIntlClientProvider locale={defaultLocale} messages={enMessages as any}>
+          <Providers>
+            {children}
+            <Toaster position="top-right" />
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -30,7 +30,8 @@
     "sharp": "^0.33.1",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.2.0",
-    "next-intl": "^3.4.5"
+    "next-intl": "^3.4.5",
+    "react-markdown": "^8.0.3"
   },
   "devDependencies": {
     "@types/node": "^20",

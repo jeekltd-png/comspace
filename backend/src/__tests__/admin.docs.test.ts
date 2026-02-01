@@ -1,22 +1,19 @@
 jest.setTimeout(20000);
 process.env.NO_DOCKER = 'true';
-process.env.SKIP_MEMDB = 'true';
+// allow mongodb-memory-server to run so tests use in-memory DB
+delete process.env.SKIP_MEMDB;
 
 import request from 'supertest';
-import mongoose from 'mongoose';
 import User from '../models/user.model';
 import { generateToken } from '../middleware/auth.middleware';
 
-// prevent real mongoose connections in test environment
-jest.spyOn(mongoose, 'connect').mockImplementation(async (..._args: any[]) => {
-  (mongoose as any).connection.readyState = 1;
-  return Promise.resolve(mongoose as any);
-});
 
 let app: any;
 
 beforeAll(async () => {
-  ({ default: app } = await import('../server'));
+  const mod = await import('../server');
+  ({ default: app } = mod);
+  await mod.startServer();
 });
 
 afterAll(async () => {

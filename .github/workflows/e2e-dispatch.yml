@@ -25,6 +25,8 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_STAGING }}
           DEBUG_SENTRY: 'true'
+          DEBUG_EMAIL: 'true'
+          NEXT_PUBLIC_API_URL: 'http://localhost:5000'
         run: npm run dev & sleep 20
       - name: Run E2E (headless)
         uses: cypress-io/github-action@v6

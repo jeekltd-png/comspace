@@ -1,5 +1,4 @@
-process.env.NO_DOCKER = 'true';
-process.env.SKIP_MEMDB = 'true';
+// set NO_DOCKER and SKIP_MEMDB in beforeAll to avoid leaking env to other test suites
 
 import request from 'supertest';
 import mongoose from 'mongoose';
@@ -11,14 +10,29 @@ jest.spyOn(mongoose, 'connect').mockImplementation(async (..._args: any[]) => {
   return Promise.resolve(mongoose as any);
 });
 
-import app, { redisClient } from '../src/server';
+let app: any;
+let redisClient: any;
 
 jest.setTimeout(20000);
 
 describe('NO_DOCKER dev flow', () => {
   beforeAll(async () => {
+    // set NO_DOCKER for this suite only to avoid leaking env vars
+    process.env.NO_DOCKER = 'true';
+
+    // import server AFTER env var set
+    const mod = await import('../src/server');
+    app = mod.default;
+    redisClient = mod.redisClient;
+
+    // start server explicitly (test environment) and wait for it
+    await mod.startServer();
+
+    // re-read redisClient from the module (it is assigned after startup)
+    redisClient = (await import('../src/server')).redisClient;
+
     // small delay to allow server startup in this test environment
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 50));
   });
 
   afterAll(async () => {
@@ -32,6 +46,9 @@ describe('NO_DOCKER dev flow', () => {
     } catch (e) {
       // noop
     }
+
+    // cleanup env vars to avoid affecting other suites
+    delete process.env.NO_DOCKER;
   });
 
   test('GET /health returns healthy', async () => {

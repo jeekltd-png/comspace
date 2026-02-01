@@ -26,3 +26,12 @@ This file tracks the remaining critical items required before promoting ComSpace
 ---
 
 When ready, open a PR titled: "chore: production checklist & e2e scaffolding" and assign reviewers: @engineering-lead, @devops, @qa, @security, @observability.
+
+## Env validation (new)
+- There is a lightweight env validator at `backend/scripts/validate-prod-env.js` and an NPM script `backend` script `check:env` (run with `npm --prefix backend run check:env`).
+- A GitHub Actions workflow `.github/workflows/check-prod-env.yml` runs this check using repository secrets (add `MONGODB_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `FRONTEND_URL` to repo secrets). The workflow will fail the check if required secrets are missing.
+- Use `backend/.env.production.example` as the template for your `.env.production` file.
+
+## Notes
+- Ensure `SENTRY_DSN` is set in staging/production if you want Sentry events; add it as a repo secret for CI as well.
+- Remove any local `node_modules` patches (e.g., temporary edits to `next-intl`) and prefer configuration or package upgrades instead of local edits.

@@ -38,3 +38,6 @@ jobs:
 
       - name: Smoke tests
         run: npm --prefix backend run smoke
+
+      - name: Run RBAC tests
+        run: npm --prefix backend test -- src/__tests__/admin.rbac.test.ts -i --runInBand --silent

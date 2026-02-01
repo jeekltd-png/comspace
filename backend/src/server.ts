@@ -30,6 +30,21 @@ import { configurePassport } from './config/passport.config';
 // Load environment variables
 dotenv.config();
 
+// Validate required env vars when running in production
+const validateRequiredEnv = () => {
+  if (process.env.NODE_ENV !== 'production') return;
+  const required = ['MONGODB_URI', 'JWT_SECRET', 'JWT_REFRESH_SECRET', 'FRONTEND_URL'];
+  const missing = required.filter((k) => !process.env[k]);
+  if (missing.length) {
+    logger.error(`Missing required production environment variables: ${missing.join(', ')}`);
+    process.exit(1);
+  }
+  if (!process.env.REDIS_URL) {
+    logger.warn('REDIS_URL not set; defaulting to redis://localhost:6379');
+  }
+};
+validateRequiredEnv();
+
 // Initialize Sentry if configured
 import { initSentry } from './utils/sentry';
 initSentry();
@@ -54,29 +69,74 @@ const connectDB = async () => {
 // Setup in-memory services for NO_DOCKER
 const setupNoDocker = async () => {
   if (process.env.NO_DOCKER === 'true') {
-    // Allow skipping the in-memory MongoDB creation when tests or environment
-    // cannot load `mongodb-memory-server`. Consumers can set SKIP_MEMDB=true
-    // to avoid the import and provide `MONGODB_URI` themselves.
-    if (process.env.SKIP_MEMDB === 'true') {
+    // Prefer starting an in-memory MongoDB when possible. If the import fails
+    // (e.g., package unavailable) or the environment explicitly requests it via
+    // SKIP_MEMDB, fall back to using a local MongoDB URI and the Redis mock.
+    let mongod: any = null;
+    try {
+      const { MongoMemoryServer } = await import('mongodb-memory-server');
+      mongod = await MongoMemoryServer.create();
+      const uri = mongod.getUri();
+      process.env.MONGODB_URI = uri;
+
+      // record the instance so tests can stop it
+      __setMongoDInstance(mongod);
+    } catch (e) {
+      if (process.env.SKIP_MEMDB === 'true') {
+        process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/comspace';
+        // Lightweight Redis mock used in NO_DOCKER mode
+        let RedisMock: any;
+        try {
+          // Prefer require for synchronous load to avoid late dynamic import after test teardown
+          // and handle possible default export shapes
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const mod = require('./utils/redis-mock') as any;
+          RedisMock = mod?.RedisMock || mod?.default || mod;
+        } catch (e2) {
+          // fallback to dynamic import if require fails
+          const mod = await import('./utils/redis-mock') as any;
+          RedisMock = mod?.RedisMock || mod?.default || mod;
+        }
+        redisClient = new RedisMock();
+        logger.info('NO_DOCKER mode: skipped in-memory MongoDB (SKIP_MEMDB=true) and started Redis mock');
+        return;
+      }
+
+      logger.warn('Failed to start in-memory MongoDB; falling back to local MongoDB URI', e);
       process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/comspace';
-      // Lightweight Redis mock used in NO_DOCKER mode
-      const { RedisMock } = await import('./utils/redis-mock');
-      redisClient = new RedisMock();
-      logger.info('NO_DOCKER mode: skipped in-memory MongoDB (SKIP_MEMDB=true) and started Redis mock');
-      return;
     }
 
-    // Start in-memory MongoDB and set MONGODB_URI
-    const { MongoMemoryServer } = await import('mongodb-memory-server');
-    const mongod = await MongoMemoryServer.create();
-    const uri = mongod.getUri();
-    process.env.MONGODB_URI = uri;
-
-    // record the instance so tests can stop it
-    __setMongoDInstance(mongod);
-
     // Lightweight Redis mock used in NO_DOCKER mode
-    const { RedisMock } = await import('./utils/redis-mock');
+    let RedisMock: any;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const mod = require('./utils/redis-mock') as any;
+      RedisMock = mod?.RedisMock || mod?.default || mod;
+      // Handle various module shapes and provide a local fallback if shape is unexpected
+      if (typeof RedisMock !== 'function') {
+        if (typeof mod === 'function') RedisMock = mod;
+        else if (typeof mod?.default === 'function') RedisMock = mod.default;
+        else if (typeof mod?.RedisMock?.default === 'function') RedisMock = mod.RedisMock.default;
+        else {
+          // Local inline fallback
+          RedisMock = class {
+            private store = new Map<string, string>();
+            private timers = new Map<string, NodeJS.Timeout>();
+            public ready = true;
+            async connect(): Promise<void> { this.ready = true; }
+            async quit(): Promise<void> { for (const t of this.timers.values()) clearTimeout(t); this.timers.clear(); this.store.clear(); this.ready = false; }
+            async get(key: string): Promise<string | null> { return this.store.has(key) ? this.store.get(key) as string : null; }
+            async set(key: string, value: string): Promise<'OK'> { this.store.set(key, value); return 'OK'; }
+            async setEx(key: string, ttlSeconds: number, value: string): Promise<'OK'> { this.store.set(key, value); if (this.timers.has(key)) clearTimeout(this.timers.get(key)!); const t = setTimeout(() => { this.store.delete(key); this.timers.delete(key); }, ttlSeconds * 1000); this.timers.set(key, t); return 'OK'; }
+            async del(key: string): Promise<number> { const existed = this.store.delete(key) ? 1 : 0; if (this.timers.has(key)) { clearTimeout(this.timers.get(key)!); this.timers.delete(key); } return existed; }
+            async setex(key: string, ttlSeconds: number, value: string): Promise<'OK'> { return (this as any).setEx(key, ttlSeconds, value); }
+          };
+        }
+      }
+    } catch (e) {
+      const mod = await import('./utils/redis-mock') as any;
+      RedisMock = mod?.RedisMock || mod?.default || mod;
+    }
     redisClient = new RedisMock();
 
     logger.info('NO_DOCKER mode: started in-memory MongoDB and Redis mock');
@@ -114,6 +174,10 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+
+// Serve uploaded files from /uploads in dev and production when using local storage
+import path from 'path';
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Request ID
 app.use(requestIdMiddleware);
@@ -175,6 +239,20 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/currency', currencyRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/white-label', whiteLabelRoutes);
+app.use('/api/pages', require('./routes/pages.routes').default);
+
+// Debug routes for local development and controlled staging. Enable when
+// NODE_ENV !== 'production' (local dev) OR one of DEBUG_* flags is set.
+if (
+  process.env.NODE_ENV !== 'production' ||
+  process.env.DEBUG_SENTRY === 'true' ||
+  process.env.DEBUG_EMAIL === 'true'
+) {
+  // require so we only load debug helpers when appropriate
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const debugRoutes = require('./routes/debug.routes').default;
+  app.use('/__debug', debugRoutes);
+}
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
@@ -204,7 +282,7 @@ const startServer = async () => {
   }
 };
 
-export const stopServer = async () => {
+const stopServer = async () => {
   logger.info('Stop server requested. Cleaning up...');
   try {
     if (serverInstance && serverInstance.close) {
@@ -255,6 +333,14 @@ process.on('SIGTERM', async () => {
 // expose a way for tests to set the mongod instance
 export const __setMongoDInstance = (inst: any) => { _mongodInstance = inst; };
 
-startServer();
+// In production and dev, start automatically. In test environments we
+// avoid auto-start so tests can control startup timing and avoid race
+// conditions with mocked dependencies.
+if (process.env.NODE_ENV !== 'test') {
+  // fire-and-forget startup in non-test environments
+  void startServer();
+}
+
+export { startServer, stopServer };
 
 export default app;

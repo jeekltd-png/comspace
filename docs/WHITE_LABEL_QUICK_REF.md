@@ -227,12 +227,56 @@ All plans: 17 languages, SSL, support
 
 ---
 
-## 📚 **Full Documentation**
+## � **Admin: White‑Label Management (Admin‑only)**
+
+**Who can perform these actions:** **superadmin**, **admin**, **admin1**, **admin2**
+
+**Admin capabilities**
+- Create or update tenant white‑label config (domain, contact, features)
+- Upload brand assets (logo, hero image)
+- Toggle tenant features (delivery, pickup, reviews, wishlist)
+- Add `customCSS` / `customJS` for tenant-specific tweaks
+
+**Key Admin APIs (examples)**
+- Fetch public branding (no auth required):
+  - GET /api/white-label/config
+  - Example:
+    curl -H "X-Tenant-ID: fashion-lagos-2026" http://localhost:5000/api/white-label/config
+
+- Create config (admin only):
+  - POST /api/white-label/config
+  - Requires: Authorization header and tenant (via subdomain or `X-Tenant-ID`)
+
+- Update config (admin only):
+  - PUT /api/white-label/config/:tenantId
+  - Example:
+    curl -X PUT http://localhost:5000/api/white-label/config/fashion-lagos-2026 \
+      -H "Authorization: Bearer <TOKEN>" \
+      -H "Content-Type: application/json" \
+      -d '{"domain":"yourstore.com","contact":{"email":"support@yourstore.com"},"features":{"delivery":true}}'
+
+- Upload asset (admin only):
+  - POST /api/white-label/upload (multipart)
+  - Example:
+    curl -X POST http://localhost:5000/api/white-label/upload \
+      -H "Authorization: Bearer <TOKEN>" \
+      -F "file=@./logo.png"
+
+**Operational notes**
+- GET `/api/white-label/config` is intentionally public so storefronts (customers) can render branding safely.
+- Admin routes are protected with `protect` + `authorize('superadmin','admin','admin1','admin2')`.
+- Tenant selection: subdomain or `X-Tenant-ID` header (use same tenant for admin actions).
+- Use the dev-only helper `POST /__debug/create-admin` or `backend/scripts/seed-admins.js` to create a test admin and get tokens for E2E.
+
+---
+
+## �📚 **Full Documentation**
 
 1. [White Label Complete Guide](./WHITE_LABEL_GUIDE.md) - 50+ pages
 2. [Visual Quick Start](./WHITE_LABEL_VISUAL_GUIDE.md) - With diagrams
 3. [Executive Summary](./WHITE_LABEL_SUMMARY.md) - Overview
 4. [Admin Manual](./ADMIN_MANUAL.md) - Store management
+5. [Demo tenant: Quick seed & run](./ADMIN_ONLY/WHITE_LABEL_DEMO.md) - Seed and run a demo tenant locally
 
 ---
 

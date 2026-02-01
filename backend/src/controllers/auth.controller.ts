@@ -9,6 +9,7 @@ import {
 } from '../middleware/auth.middleware';
 import { sendEmail } from '../utils/email';
 import passport from 'passport';
+import { redisClient } from '../server';
 import jwt from 'jsonwebtoken';
 
 export const register: RequestHandler = async (req, res, next) => {
@@ -35,7 +36,9 @@ export const register: RequestHandler = async (req, res, next) => {
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     // Store token in Redis with 24h expiry
-    // await redisClient.setEx(`verify:${verificationToken}`, 86400, user._id.toString());
+    if (redisClient && redisClient.setEx) {
+      await redisClient.setEx(`verify:${verificationToken}`, 86400, user._id.toString());
+    }
 
     // Send verification email
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
@@ -177,7 +180,9 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
     // Store in Redis with 1h expiry
-    // await redisClient.setEx(`reset:${resetToken}`, 3600, user._id.toString());
+    if (redisClient && redisClient.setEx) {
+      await redisClient.setEx(`reset:${resetToken}`, 3600, user._id.toString());
+    }
 
     // Send reset email
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
@@ -202,10 +207,14 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     const { password } = req.body;
 
     // Get userId from Redis
-    // const userId = await redisClient.get(`reset:${token}`);
+    let userId: string | null = null;
+    if (redisClient && redisClient.get) {
+      userId = await redisClient.get(`reset:${token}`);
+    }
 
-    // For now, decode from token (in production, use Redis)
-    const userId = token; // Placeholder
+    if (!userId) {
+      return next(new CustomError('Invalid or expired reset token', 400));
+    }
 
     const user = await User.findById(userId);
 
@@ -217,7 +226,9 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     await user.save();
 
     // Delete reset token from Redis
-    // await redisClient.del(`reset:${token}`);
+    if (redisClient && redisClient.del) {
+      await redisClient.del(`reset:${token}`);
+    }
 
     res.status(200).json({
       success: true,
@@ -233,10 +244,14 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     const { token } = req.params;
 
     // Get userId from Redis
-    // const userId = await redisClient.get(`verify:${token}`);
+    let userId: string | null = null;
+    if (redisClient && redisClient.get) {
+      userId = await redisClient.get(`verify:${token}`);
+    }
 
-    // For now, placeholder
-    const userId = token;
+    if (!userId) {
+      return next(new CustomError('Invalid or expired verification token', 400));
+    }
 
     const user = await User.findById(userId);
 
@@ -248,7 +263,9 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     await user.save();
 
     // Delete verification token
-    // await redisClient.del(`verify:${token}`);
+    if (redisClient && redisClient.del) {
+      await redisClient.del(`verify:${token}`);
+    }
 
     res.status(200).json({
       success: true,
@@ -296,17 +313,15 @@ export const getCurrentUser: RequestHandler = async (req, res, next) => {
 export const updateProfile: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const { firstName, lastName, phone, avatar, preferences } = req.body;
+    // allow updating common profile fields including addresses
+    const { firstName, lastName, phone, avatar, preferences, addresses } = req.body;
+
+    const update: any = { firstName, lastName, phone, avatar, preferences };
+    if (addresses) update.addresses = addresses;
 
     const user = await User.findByIdAndUpdate(
       authReq.user!._id,
-      {
-        firstName,
-        lastName,
-        phone,
-        avatar,
-        preferences,
-      },
+      update,
       { new: true, runValidators: true }
     );
 
@@ -314,6 +329,29 @@ export const updateProfile: RequestHandler = async (req, res, next) => {
       success: true,
       data: { user },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return next(new CustomError('currentPassword and newPassword required', 400));
+    }
+
+    const user = await User.findById(authReq.user!._id).select('+password');
+    if (!user || !(await user.comparePassword(currentPassword))) {
+      return next(new CustomError('Current password incorrect', 401));
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password changed' });
   } catch (error) {
     next(error);
   }

@@ -1,0 +1,19 @@
+name: Smoke test staging
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      STAGING_URL: ${{ secrets.STAGING_URL }}
+    steps:
+      - name: Wait for app
+        run: |
+          if [ -z "${STAGING_URL}" ]; then echo "STAGING_URL not set"; exit 1; fi
+      - name: Check /health endpoint
+        run: |
+          set -e
+          echo "Testing ${STAGING_URL}/health"
+          curl --fail --silent --show-error -H 'Accept: application/json' ${STAGING_URL}/health | jq .

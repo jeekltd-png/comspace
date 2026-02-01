@@ -1,0 +1,26 @@
+name: Check production env
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  check-prod-env:
+    runs-on: ubuntu-latest
+    env:
+      # These should be provided in repository/environemnt secrets for the job to pass
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install backend dependencies
+        run: npm --prefix backend ci
+      - name: Run production env check
+        run: npm --prefix backend run check:env

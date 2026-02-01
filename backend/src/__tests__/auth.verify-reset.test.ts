@@ -1,21 +1,18 @@
 jest.setTimeout(20000);
 process.env.NO_DOCKER = 'true';
-process.env.SKIP_MEMDB = 'true';
+// allow mongodb-memory-server to run so tests use in-memory DB
+delete process.env.SKIP_MEMDB;
 
 import request from 'supertest';
-import mongoose from 'mongoose';
 import User from '../models/user.model';
 
-// prevent real mongoose connections in test environment
-jest.spyOn(mongoose, 'connect').mockImplementation(async (..._args: any[]) => {
-  (mongoose as any).connection.readyState = 1;
-  return Promise.resolve(mongoose as any);
-});
 
 let app: any;
 
 beforeAll(async () => {
-  ({ default: app } = await import('../server'));
+  const mod = await import('../server');
+  ({ default: app } = mod);
+  await mod.startServer();
 });
 
 afterAll(async () => {
@@ -39,7 +36,7 @@ describe('verify email and reset password flows (Redis-backed)', () => {
     const token = 'test-verify-token';
     await redisClient.setEx(`verify:${token}`, 60, user._id.toString());
 
-    const res = await request(app).get(`/api/auth/verify/${token}`);
+    const res = await request(app).get(`/api/auth/verify-email/${token}`);
     expect(res.status).toBe(200);
 
     const updated = await User.findById(user._id);
@@ -59,7 +56,7 @@ describe('verify email and reset password flows (Redis-backed)', () => {
     const token = 'test-reset-token';
     await redisClient.setEx(`reset:${token}`, 60, user._id.toString());
 
-    const res = await request(app).post(`/api/auth/reset/${token}`).send({ password: 'NewPass123!' });
+    const res = await request(app).post(`/api/auth/reset-password/${token}`).send({ password: 'NewPass123!' });
     expect(res.status).toBe(200);
 
     const updated = await User.findById(user._id).select('+password');

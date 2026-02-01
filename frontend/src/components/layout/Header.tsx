@@ -70,7 +70,8 @@ export function Header() {
                   >
                     Orders
                   </Link>
-                  {user?.role === 'admin' && (
+                  {/* Show admin panel link for admin-like roles */}
+                  {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || (user?.role && user.role.startsWith && user.role.startsWith('admin'))) && (
                     <Link
                       href="/admin"
                       className="block px-4 py-2 hover:bg-gray-100"
@@ -87,12 +88,20 @@ export function Header() {
                 </div>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Login
-              </Link>
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/register"
+                  className="text-gray-700 px-3 py-2 rounded-lg hover:text-blue-600"
+                >
+                  Sign Up
+                </Link>
+                <Link
+                  href="/login"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Login
+                </Link>
+              </div>
             )}
           </nav>
 
@@ -122,6 +131,11 @@ export function Header() {
                 <Link href="/orders" className="block py-2 hover:text-blue-600">
                   Orders
                 </Link>
+                {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || (user?.role && user.role.startsWith && user.role.startsWith('admin'))) && (
+                  <Link href="/admin" className="block py-2 hover:text-blue-600">
+                    Admin Panel
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left py-2 text-red-600"
@@ -130,9 +144,14 @@ export function Header() {
                 </button>
               </>
             ) : (
-              <Link href="/login" className="block py-2 hover:text-blue-600">
-                Login
-              </Link>
+              <>
+                <Link href="/register" className="block py-2 hover:text-blue-600">
+                  Sign Up
+                </Link>
+                <Link href="/login" className="block py-2 hover:text-blue-600">
+                  Login
+                </Link>
+              </>
             )}
           </div>
         )}

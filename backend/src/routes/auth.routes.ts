@@ -11,7 +11,10 @@ import {
   googleAuthCallback,
   getCurrentUser,
   updateProfile,
+  changePassword,
 } from '../controllers/auth.controller';
+
+// Protected change password route added below
 import { protect } from '../middleware/auth.middleware';
 import { authLimiter } from '../middleware/rate-limit.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
@@ -38,5 +41,6 @@ router.use(protect);
 router.post('/logout', logout);
 router.get('/me', getCurrentUser);
 router.put('/profile', updateProfile);
+router.post('/change-password', changePassword);
 
 export default router;

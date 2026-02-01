@@ -71,6 +71,23 @@ const WhiteLabelSchema: Schema = new Schema(
       secondaryColor: { type: String, default: '#10B981' },
       accentColor: { type: String, default: '#F59E0B' },
       fontFamily: { type: String, default: 'Inter, sans-serif' },
+      // New asset metadata for richer image info
+      assets: {
+        logo: {
+          url: String,
+          storage: { type: String, enum: ['local','s3'], default: 'local' },
+          width: Number,
+          height: Number,
+          alt: String,
+        },
+        heroImage: {
+          url: String,
+          storage: { type: String, enum: ['local','s3'], default: 'local' },
+          width: Number,
+          height: Number,
+          alt: String,
+        }
+      }
     },
     features: {
       delivery: { type: Boolean, default: true },

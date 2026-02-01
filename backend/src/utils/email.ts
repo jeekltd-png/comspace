@@ -30,22 +30,48 @@ const createTransporter = () => {
   });
 };
 
-export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  try {
-    const transporter = createTransporter();
+export const testSentEmails: Array<{ to: string; subject: string; text: string; html?: string; timestamp: string }> = [];
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@comspace.com',
-      to: options.to,
-      subject: options.subject,
-      text: options.text,
-      html: options.html || options.text,
-    };
+export const getSentEmails = () => testSentEmails;
+export const clearSentEmails = () => { testSentEmails.length = 0; };
+
+export const sendEmail = async (options: EmailOptions): Promise<void> => {
+  const transporter = createTransporter();
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || 'noreply@comspace.com',
+    to: options.to,
+    subject: options.subject,
+    text: options.text,
+    html: options.html || options.text,
+  };
+
+  // Record emails in-memory for debug/test environments
+  try {
+    if (process.env.DEBUG_EMAIL === 'true' || process.env.NODE_ENV === 'test') {
+      testSentEmails.push({
+        to: mailOptions.to as string,
+        subject: mailOptions.subject as string,
+        text: mailOptions.text as string,
+        html: mailOptions.html as string,
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     await transporter.sendMail(mailOptions);
     logger.info(`Email sent to ${options.to}`);
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     logger.error('Email sending failed:', error);
+    // still record the failed attempt for debugging
+    if (process.env.DEBUG_EMAIL === 'true' || process.env.NODE_ENV === 'test') {
+      testSentEmails.push({
+        to: mailOptions.to as string,
+        subject: `[FAILED] ${mailOptions.subject}` as string,
+        text: `${mailOptions.text}\n\n[ERROR] ${error?.message || String(error)}`,
+        html: mailOptions.html as string,
+        timestamp: new Date().toISOString(),
+      });
+    }
     throw error;
   }
 };

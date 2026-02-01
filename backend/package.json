@@ -8,10 +8,16 @@
     "dev:no-docker": "cross-env NO_DOCKER=true nodemon --exec ts-node src/server.ts",
     "seed:sample": "node scripts/seed-sample.js",
     "seed:demo": "node scripts/seed-demo.js",
+    "seed:demo-tenant": "node scripts/seed-demo-tenant.js",
     "build": "tsc",
+    "check:env": "node scripts/validate-prod-env.js",
+    "create:prod-env": "node scripts/create-prod-env.js",
+    "seed:admins": "node scripts/seed-admins.js",
     "start": "node dist/server.js",
+    "start:prod": "cross-env NODE_ENV=production node dist/server.js",
     "start:ci": "ts-node --files src/server.ts",
     "smoke": "node scripts/smoke-test.js",
+    "smoke:staging": "node scripts/smoke-health.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts",
@@ -48,7 +54,8 @@
     "@sentry/node": "^8.0.0",
     "i18next": "^23.7.16",
     "i18next-http-middleware": "^3.5.0",
-    "i18next-fs-backend": "^2.3.1"
+    "i18next-fs-backend": "^2.3.1",
+    "@aws-sdk/client-s3": "^3.500.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

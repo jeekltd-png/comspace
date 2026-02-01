@@ -19,7 +19,8 @@ router.get('/search', searchProducts);
 router.get('/:id', getProduct);
 
 router.use(protect);
-router.use(authorize('admin', 'merchant'));
+// Allow admin-like roles (including superadmin and seeded admin1/admin2) and merchants
+router.use(authorize('admin', 'merchant', 'superadmin', 'admin1', 'admin2'));
 
 router.post('/', createProduct);
 router.put('/:id', updateProduct);

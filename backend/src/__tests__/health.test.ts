@@ -1,6 +1,4 @@
 jest.setTimeout(30000);
-process.env.NO_DOCKER = 'true';
-process.env.SKIP_MEMDB = 'true';
 
 import request from 'supertest';
 import { stopServer } from '../server';
@@ -15,12 +13,21 @@ jest.spyOn(mongoose, 'connect').mockImplementation(async (..._args: any[]) => {
 let app: any;
 
 beforeAll(async () => {
-  // require server after mocks are in place
-  ({ default: app } = await import('../server'));
+  // set NO_DOCKER and SKIP_MEMDB for this suite only
+  process.env.NO_DOCKER = 'true';
+  process.env.SKIP_MEMDB = 'true';
+
+  // require server after mocks are in place and wait for startup
+  const mod = await import('../server');
+  ({ default: app } = mod);
+  await mod.startServer();
 });
 
 afterAll(async () => {
   await stopServer();
+
+  delete process.env.NO_DOCKER;
+  delete process.env.SKIP_MEMDB;
 });
 
 describe('GET /health', () => {

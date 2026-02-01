@@ -7,7 +7,9 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   phone?: string;
-  role: 'customer' | 'admin' | 'merchant';
+  // Roles: 'superadmin' has global access; 'admin1' and 'admin2' are tiered admin roles
+  // 'admin' kept for backward compatibility; 'merchant' manages tenant-level resources.
+  role: 'customer' | 'admin' | 'admin1' | 'admin2' | 'superadmin' | 'merchant';
   avatar?: string;
   addresses: Array<{
     label: string;
@@ -75,7 +77,7 @@ const UserSchema: Schema = new Schema(
     },
     role: {
       type: String,
-      enum: ['customer', 'admin', 'merchant'],
+      enum: ['customer', 'admin', 'admin1', 'admin2', 'superadmin', 'merchant'],
       default: 'customer',
     },
     avatar: {

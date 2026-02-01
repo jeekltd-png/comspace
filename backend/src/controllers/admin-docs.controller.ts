@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { CustomError } from '../middleware/error.middleware';
 
-const ADMIN_DOCS_DIR = path.join(__dirname, '../../docs/ADMIN_ONLY');
+const ADMIN_DOCS_DIR = path.join(__dirname, '../../..', 'docs', 'ADMIN_ONLY');
 
 export const listAdminDocs: RequestHandler = async (_req, res, next) => {
   try {

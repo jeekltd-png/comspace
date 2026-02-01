@@ -14,7 +14,8 @@ const router = Router();
 
 router.use(tenantMiddleware);
 router.use(protect);
-router.use(authorize('admin', 'merchant'));
+// Allow global and tiered admins and merchants to access the admin area
+router.use(authorize('superadmin', 'admin', 'admin1', 'admin2', 'merchant'));
 
 router.get('/dashboard', getDashboardStats);
 router.get('/users', getUsers);
@@ -23,9 +24,9 @@ router.get('/products', getProductsList);
 router.get('/reports/sales', generateSalesReport);
 router.get('/reports/inventory', generateInventoryReport);
 
-// Admin-only docs (admin role only)
+// Admin docs (accessible to tiered admins and superadmins)
 import { listAdminDocs, getAdminDoc } from '../controllers/admin-docs.controller';
-router.get('/docs', authorize('admin'), listAdminDocs);
-router.get('/docs/:name', authorize('admin'), getAdminDoc);
+router.get('/docs', authorize('superadmin', 'admin', 'admin1', 'admin2'), listAdminDocs);
+router.get('/docs/:name', authorize('superadmin', 'admin', 'admin1', 'admin2'), getAdminDoc);
 
 export default router;

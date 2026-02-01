@@ -1,0 +1,8 @@
+Upstream PR / Issue drafts
+
+1) next-intl missing config fallback
+- Title: fix(next-intl): don't throw when request config missing locale — fallback to default locale
+- Body: See docs/next-intl-draft-pr.md
+- Files to include: upstream/next-intl-repro/repro.js (reproduction), suggested code change in PR description, unit tests.
+
+2) (if scan finds any local patches) - TODO: create an issue per file with context and suggested fix.

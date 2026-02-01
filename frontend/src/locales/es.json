@@ -123,8 +123,7 @@
       "lastName": "Su apellido. Ayuda a personalizar comunicaciones y facturas.",
       "phone": "Un número de teléfono para actualizaciones de entrega y verificación de la cuenta.",
       "forgotPassword": "Si olvida su contraseña, enviaremos un enlace de restablecimiento a su correo registrado."
-    }
-   },
+    },
 
    "whiteLabel": {
      "branding": "Branding",

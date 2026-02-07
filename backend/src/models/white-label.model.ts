@@ -42,7 +42,6 @@ export interface IWhiteLabel extends Document {
     keywords: string[];
   };
   customCSS?: string;
-  customJS?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -119,7 +118,6 @@ const WhiteLabelSchema: Schema = new Schema(
       keywords: [String],
     },
     customCSS: String,
-    customJS: String,
     isActive: {
       type: Boolean,
       default: true,

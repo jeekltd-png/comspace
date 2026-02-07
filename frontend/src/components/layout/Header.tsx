@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
 import { FiShoppingCart, FiUser, FiMenu, FiSearch } from 'react-icons/fi';
+import type { IconBaseProps } from 'react-icons';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,11 +19,11 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-blue-600">
+          <Link href="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             ComSpace
           </Link>
 
@@ -39,10 +41,11 @@ export function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/products" className="hover:text-blue-600">
+            <Link href="/products" className="hover:text-blue-600 dark:hover:text-blue-400">
               Products
             </Link>
-            <Link href="/cart" className="relative hover:text-blue-600">
+            <ThemeToggle />
+            <Link href="/cart" className="relative hover:text-blue-600 dark:hover:text-blue-400">
               <FiShoppingCart className="text-2xl" />
               {items.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">

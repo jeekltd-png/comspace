@@ -18,6 +18,16 @@ import {
 import { protect } from '../middleware/auth.middleware';
 import { authLimiter } from '../middleware/rate-limit.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
+import {
+  validate,
+  registerValidation,
+  loginValidation,
+  refreshTokenValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation,
+  changePasswordValidation,
+  updateProfileValidation,
+} from '../middleware/validate.middleware';
 
 const router = Router();
 
@@ -25,11 +35,11 @@ const router = Router();
 router.use(tenantMiddleware);
 
 // Public routes
-router.post('/register', authLimiter, register);
-router.post('/login', authLimiter, login);
-router.post('/refresh-token', refreshToken);
-router.post('/forgot-password', authLimiter, forgotPassword);
-router.post('/reset-password/:token', resetPassword);
+router.post('/register', authLimiter, validate(registerValidation), register);
+router.post('/login', authLimiter, validate(loginValidation), login);
+router.post('/refresh-token', validate(refreshTokenValidation), refreshToken);
+router.post('/forgot-password', authLimiter, validate(forgotPasswordValidation), forgotPassword);
+router.post('/reset-password/:token', validate(resetPasswordValidation), resetPassword);
 router.get('/verify-email/:token', verifyEmail);
 
 // OAuth routes
@@ -40,7 +50,7 @@ router.get('/google/callback', googleAuthCallback);
 router.use(protect);
 router.post('/logout', logout);
 router.get('/me', getCurrentUser);
-router.put('/profile', updateProfile);
-router.post('/change-password', changePassword);
+router.put('/profile', validate(updateProfileValidation), updateProfile);
+router.post('/change-password', validate(changePasswordValidation), changePassword);
 
 export default router;

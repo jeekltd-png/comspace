@@ -1,7 +1,43 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 import { FiFacebook, FiTwitter, FiInstagram, FiMail } from 'react-icons/fi';
 
 export function Footer() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('✅ ' + data.message);
+        setEmail('');
+      } else {
+        setMessage('❌ ' + data.message);
+      }
+    } catch (error) {
+      setMessage('❌ Failed to subscribe. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white mt-auto">
       <div className="container mx-auto px-4 py-12">
@@ -75,16 +111,31 @@ export function Footer() {
             <p className="text-gray-400 mb-4">
               Subscribe to get special offers and updates.
             </p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-2 rounded-l-lg flex-1 text-gray-900"
-              />
-              <button className="bg-blue-600 px-4 py-2 rounded-r-lg hover:bg-blue-700">
-                <FiMail />
-              </button>
-            </div>
+            <form onSubmit={handleSubscribe}>
+              <div className="flex">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  className="px-4 py-2 rounded-l-lg flex-1 text-gray-900"
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-blue-600 px-4 py-2 rounded-r-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FiMail />
+                </button>
+              </div>
+              {message && (
+                <p className={`text-sm mt-2 ${message.startsWith('✅') ? 'text-green-400' : 'text-red-400'}`}>
+                  {message}
+                </p>
+              )}
+            </form>
             <div className="flex space-x-4 mt-6">
               <a href="#" className="hover:text-blue-400">
                 <FiFacebook className="text-2xl" />

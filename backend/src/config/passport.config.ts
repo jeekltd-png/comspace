@@ -5,10 +5,13 @@ import User from '../models/user.model';
 
 export const configurePassport = (passport: PassportStatic) => {
   // JWT Strategy
-  const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret';
+  if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+    throw new Error('FATAL: JWT_SECRET environment variable is required in production');
+  }
+  const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_' + Date.now();
   if (!process.env.JWT_SECRET) {
     // eslint-disable-next-line no-console
-    console.warn('JWT_SECRET not set — using development fallback secret');
+    console.warn('⚠️  JWT_SECRET not set — using random development fallback (tokens will not persist across restarts)');
   }
 
   const jwtOptions = {

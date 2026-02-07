@@ -12,7 +12,10 @@ export const tenantMiddleware: RequestHandler = async (req, _res, next) => {
     const host = req.get('host');
     if (host) {
       // Check if it's a custom domain
-      const cachedTenant = await redisClient.get(`tenant:domain:${host}`);
+      let cachedTenant: string | null = null;
+      try {
+        cachedTenant = await redisClient?.get(`tenant:domain:${host}`);
+      } catch (_) { /* redis may be unavailable */ }
 
       if (cachedTenant) {
         tenantId = cachedTenant;
@@ -21,15 +24,39 @@ export const tenantMiddleware: RequestHandler = async (req, _res, next) => {
         if (whiteLabel) {
           tenantId = whiteLabel.tenantId;
           // Cache for 1 hour
-          await redisClient.setEx(`tenant:domain:${host}`, 3600, tenantId);
+          try {
+            await redisClient?.setEx(`tenant:domain:${host}`, 3600, tenantId);
+          } catch (_) { /* ignore cache write failure */ }
         }
       }
     }
 
-    // Also check header (useful for mobile apps)
+    // Also check header (useful for mobile apps) — validate against DB
     const headerTenant = req.get('X-Tenant-ID');
-    if (headerTenant) {
-      tenantId = headerTenant;
+    if (headerTenant && headerTenant !== 'default') {
+      // Only allow known tenant IDs — check cache first, then DB
+      let valid = false;
+      try {
+        const cachedValid = await redisClient?.get(`tenant:valid:${headerTenant}`);
+        if (cachedValid === '1') {
+          valid = true;
+        }
+      } catch (_) { /* ignore */ }
+
+      if (!valid) {
+        const exists = await WhiteLabel.findOne({ tenantId: headerTenant, isActive: true });
+        if (exists) {
+          valid = true;
+          try {
+            await redisClient?.setEx(`tenant:valid:${headerTenant}`, 3600, '1');
+          } catch (_) { /* ignore */ }
+        }
+      }
+
+      if (valid) {
+        tenantId = headerTenant;
+      }
+      // If not valid, ignore the header and keep the domain-resolved or default tenant
     }
 
     authReq.tenant = tenantId;

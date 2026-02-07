@@ -18,6 +18,8 @@ import adminRoutes from './routes/admin.routes';
 import currencyRoutes from './routes/currency.routes';
 import locationRoutes from './routes/location.routes';
 import whiteLabelRoutes from './routes/white-label.routes';
+import newsletterRoutes from './routes/newsletter.routes';
+import reviewRoutes from './routes/review.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -49,20 +51,34 @@ validateRequiredEnv();
 import { initSentry } from './utils/sentry';
 initSentry();
 
+// Initialize Email Service
+import { initEmailService } from './utils/email.service';
+initEmailService();
+
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
 // Redis client (created at runtime to support NO_DOCKER fallback)
 export let redisClient: any;
 
-// Database connection
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/comspace');
-    logger.info('MongoDB connected successfully');
-  } catch (error) {
-    logger.error('MongoDB connection error:', error);
-    process.exit(1);
+// Database connection with retry logic
+const connectDB = async (retries = 5, delay = 3000) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/comspace');
+      logger.info('MongoDB connected successfully');
+      return;
+    } catch (error) {
+      logger.error(`MongoDB connection attempt ${attempt}/${retries} failed:`, error);
+      if (attempt === retries) {
+        logger.error('All MongoDB connection attempts exhausted. Exiting.');
+        process.exit(1);
+      }
+      // Exponential backoff
+      const waitTime = delay * Math.pow(2, attempt - 1);
+      logger.info(`Retrying MongoDB connection in ${waitTime / 1000}s...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
   }
 };
 
@@ -167,8 +183,17 @@ const connectRedis = async () => {
 import { requestIdMiddleware } from './middleware/request-id.middleware';
 app.use(helmet());
 app.use(compression());
+
+// CORS: never allow wildcard in production
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',')
+  : process.env.FRONTEND_URL
+    ? [process.env.FRONTEND_URL]
+    : process.env.NODE_ENV === 'production'
+      ? [] // no origins allowed if not configured in production
+      : ['http://localhost:3000'];
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || '*',
+  origin: allowedOrigins.length > 0 ? allowedOrigins : false,
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -239,6 +264,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/currency', currencyRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/white-label', whiteLabelRoutes);
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
 
 // Debug routes for local development and controlled staging. Enable when
@@ -318,8 +345,10 @@ const stopServer = async () => {
 };
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err: Error) => {
+process.on('unhandledRejection', async (err: Error) => {
   logger.error('Unhandled Rejection:', err);
+  // Graceful shutdown instead of hard crash
+  await stopServer();
   process.exit(1);
 });
 

@@ -5,6 +5,7 @@ import { Providers } from '@/components/Providers';
 import { Toaster } from 'react-hot-toast';
 import { NextIntlClientProvider } from 'next-intl';
 import { defaultLocale } from '@/i18n';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 // Load default messages so pages not under a locale (e.g., /register) still have intl context
 import enMessages from '@/locales/en.json';
 
@@ -29,10 +30,12 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* Provide a default NextIntl client provider for non-locale routes (e.g., /register) */}
         <NextIntlClientProvider locale={defaultLocale} messages={enMessages as any}>
-          <Providers>
-            {children}
-            <Toaster position="top-right" />
-          </Providers>
+          <ThemeProvider>
+            <Providers>
+              {children}
+              <Toaster position="top-right" />
+            </Providers>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

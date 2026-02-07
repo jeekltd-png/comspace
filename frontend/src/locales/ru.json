@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "cart": "Cart",
+    "account": "Account",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero": {
+      "title": "Welcome to ComSpace",
+      "subtitle": "Your One-Stop Shop for Everything",
+      "shopNow": "Shop Now",
+      "learnMore": "Learn More"
+    },
+    "featured": {
+      "title": "Featured Products",
+      "viewAll": "View All Products"
+    },
+    "categories": {
+      "title": "Shop by Category",
+      "viewAll": "View All Categories"
+    }
+  },
+  "product": {
+    "details": "Product Details",
+    "price": "Price",
+    "description": "Description",
+    "reviews": "Reviews",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "quantity": "Quantity",
+    "sku": "SKU",
+    "category": "Category",
+    "relatedProducts": "Related Products"
+    ,
+    "help": {
+      "price": "Set the product price in the selected currency. Consider tax and shipping when pricing.",
+      "description": "Write a clear description highlighting key features, materials, and care instructions.",
+      "sku": "Stock Keeping Unit — a unique identifier you use to track inventory.",
+      "category": "Select the category that best fits this product so customers can find it easily.",
+      "inventory": "Number of items available for sale. Set to 0 to mark as out of stock.",
+      "images": "Upload high-quality images (recommended 800x800px). Multiple angles help conversions."
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "updateCart": "Update Cart"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingAddress": "Shipping Address",
+    "billingAddress": "Billing Address",
+    "paymentMethod": "Payment Method",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "deliveryMethod": "Delivery Method",
+    "delivery": "Home Delivery",
+    "pickup": "Store Pickup",
+    "selectStore": "Select Store",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "cvv": "CVV"
+  },
+  "account": {
+    "profile": "Profile",
+    "orders": "My Orders",
+    "addresses": "Addresses",
+    "settings": "Settings",
+    "language": "Language",
+    "currency": "Currency",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "addAddress": "Add Address",
+    "deleteAccount": "Delete Account"
+  },
+  "order": {
+    "orderNumber": "Order Number",
+    "orderDate": "Order Date",
+    "status": "Status",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "trackOrder": "Track Order",
+    "cancelOrder": "Cancel Order",
+    "viewDetails": "View Details"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone Number",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithApple": "Sign in with Apple",
+    "resetPassword": "Reset Password",
+    "backToLogin": "Back to Login"
+    ,
+    "help": {
+      "email": "Enter a valid email address. We'll use this to send order confirmations and password resets.",
+      "password": "Choose a strong password (minimum 8 characters). Use letters, numbers and symbols to keep your account secure.",
+      "confirmPassword": "Repeat your password exactly. This ensures you didn't mistype your password when registering.",
+      "firstName": "Your given name. This appears on customer receipts and emails.",
+      "lastName": "Your family name. Helps personalize communications and invoices.",
+      "phone": "A phone number we can use for delivery updates and account verification.",
+      "forgotPassword": "If you forget your password, we'll send a reset link to your registered email address."
+    }
+  },
+    "whiteLabel": {
+      "branding": "Branding",
+      "domain": "Domain",
+      "contact": "Contact",
+      "contactEmail": "Contact Email",
+      "features": "Features",
+      "help": {
+        "branding": "Upload your logo and choose colors to reflect your brand across the storefront and emails.",
+        "domain": "Use a custom domain (recommended) or a platform subdomain. For custom domains, update your DNS records.",
+        "payment": "Connect your Stripe account to receive payments directly. Ensure your business details match Stripe verification.",
+        "features": "Toggle features like delivery, pickup, reviews and social login based on your store needs.",
+        "contact": "This contact information appears on the store's contact page and in customer emails.",
+        "contactEmail": "This contact information appears on the store's contact page and in customer emails."
+      }
+    },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit"
+  },
+  "footer": {
+    "company": "Company",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "careers": "Careers",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "faq": "FAQ",
+    "shippingInfo": "Shipping Info",
+    "returns": "Returns",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "followUs": "Follow Us",
+    "allRightsReserved": "All rights reserved"
+  }
+}

@@ -2,6 +2,7 @@ import { Request, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/user.model';
 import { CustomError } from './error.middleware';
+import { redisClient } from '../server';
 
 export interface AuthRequest extends Request {
   user?: IUser;
@@ -22,8 +23,24 @@ export const protect: RequestHandler = async (req, _res, next) => {
       return next(new CustomError('Not authorized to access this route', 401));
     }
 
+    // Check if token is blacklisted (logged-out)
+    try {
+      if (redisClient) {
+        const blacklisted = await redisClient.get(`bl:${token}`);
+        if (blacklisted) {
+          return next(new CustomError('Token has been revoked', 401));
+        }
+      }
+    } catch (_) {
+      // If Redis is down, skip blacklist check rather than block all auth
+    }
+
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string; tenant: string };
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      return next(new CustomError('Server configuration error', 500));
+    }
+    const decoded = jwt.verify(token, jwtSecret) as { id: string; tenant: string };
 
     // Get user from token
     const user = await User.findById(decoded.id).select('+password');
@@ -53,13 +70,17 @@ export const authorize = (...roles: string[]): RequestHandler => {
 };
 
 export const generateToken = (userId: string, tenant: string = 'default'): string => {
-  return jwt.sign({ id: userId, tenant }, process.env.JWT_SECRET! as jwt.Secret, {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_SECRET is not configured');
+  return jwt.sign({ id: userId, tenant }, secret as jwt.Secret, {
     expiresIn: process.env.JWT_EXPIRE || '7d',
   } as jwt.SignOptions);
 };
 
 export const generateRefreshToken = (userId: string, tenant: string = 'default'): string => {
-  return jwt.sign({ id: userId, tenant }, process.env.JWT_REFRESH_SECRET! as jwt.Secret, {
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret) throw new Error('JWT_REFRESH_SECRET is not configured');
+  return jwt.sign({ id: userId, tenant }, secret as jwt.Secret, {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d',
   } as jwt.SignOptions);
 };

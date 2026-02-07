@@ -40,13 +40,13 @@ export const register: RequestHandler = async (req, res, next) => {
       await redisClient.setEx(`verify:${verificationToken}`, 86400, user._id.toString());
     }
 
-    // Send verification email
+    // Send verification email (non-blocking)
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
-    await sendEmail({
+    sendEmail({
       to: user.email,
       subject: 'Verify Your Email',
       text: `Please click this link to verify your email: ${verificationUrl}`,
-    });
+    }).catch(err => console.log('Email send failed:', err.message));
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
@@ -120,9 +120,26 @@ export const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const logout: RequestHandler = async (_req, res, next) => {
+export const logout: RequestHandler = async (req, res, next) => {
   try {
-    // In a real application, you might want to blacklist the token
+    // Blacklist the current token so it can't be reused
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const decoded = jwt.decode(token) as { exp?: number } | null;
+        if (decoded?.exp && redisClient) {
+          // Store in blacklist until the token's natural expiry
+          const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+          if (ttl > 0) {
+            await redisClient.setEx(`bl:${token}`, ttl, '1');
+          }
+        }
+      } catch (_) {
+        // If decode fails, still proceed with logout
+      }
+    }
+
     res.status(200).json({
       success: true,
       message: 'Logged out successfully',

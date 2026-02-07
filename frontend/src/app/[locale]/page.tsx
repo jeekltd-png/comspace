@@ -1,8 +1,10 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 
-export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
-  const t = useTranslations();
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations();
 
   const safe = (fn: () => string, fallback: string) => {
     try {
@@ -33,12 +35,18 @@ export default function HomePage({ params: { locale } }: { params: { locale: str
         <h2 className="text-5xl font-bold mb-4">{safe(() => t('home.hero.title'), 'Welcome to ComSpace')}</h2>
         <p className="text-xl text-gray-600 mb-8">{safe(() => t('home.hero.subtitle'), 'Your One-Stop Shop for Everything')}</p>
         <div className="space-x-4">
-          <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <Link
+            href="/products"
+            className="inline-block px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
             {safe(() => t('home.hero.shopNow'), 'Shop Now')}
-          </button>
-          <button className="px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+          </Link>
+          <Link
+            href="/about"
+            className="inline-block px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             {safe(() => t('home.hero.learnMore'), 'Learn More')}
-          </button>
+          </Link>
         </div>
       </section>
 

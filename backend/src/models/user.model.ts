@@ -10,6 +10,16 @@ export interface IUser extends Document {
   // Roles: 'superadmin' has global access; 'admin1' and 'admin2' are tiered admin roles
   // 'admin' kept for backward compatibility; 'merchant' manages tenant-level resources.
   role: 'customer' | 'admin' | 'admin1' | 'admin2' | 'superadmin' | 'merchant';
+  // Account classification: what type of entity is this user
+  accountType: 'individual' | 'business' | 'association';
+  organization?: {
+    name: string;
+    registrationNumber?: string;
+    taxId?: string;
+    industry?: string;
+    mission?: string;
+    estimatedMembers?: number;
+  };
   avatar?: string;
   addresses: Array<{
     label: string;
@@ -78,6 +88,19 @@ const UserSchema: Schema = new Schema(
       type: String,
       enum: ['customer', 'admin', 'admin1', 'admin2', 'superadmin', 'merchant'],
       default: 'customer',
+    },
+    accountType: {
+      type: String,
+      enum: ['individual', 'business', 'association'],
+      default: 'individual',
+    },
+    organization: {
+      name: { type: String, trim: true },
+      registrationNumber: { type: String, trim: true },
+      taxId: { type: String, trim: true },
+      industry: { type: String, trim: true },
+      mission: { type: String, trim: true },
+      estimatedMembers: { type: Number },
     },
     avatar: {
       type: String,
@@ -152,5 +175,6 @@ UserSchema.methods.comparePassword = async function (
 // Compound unique index: email unique PER TENANT (not globally)
 UserSchema.index({ email: 1, tenant: 1 }, { unique: true });
 UserSchema.index({ role: 1 });
+UserSchema.index({ accountType: 1, tenant: 1 });
 
 export default mongoose.model<IUser>('User', UserSchema);

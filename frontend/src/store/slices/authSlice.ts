@@ -20,6 +20,7 @@ interface User {
   firstName: string;
   lastName: string;
   role: string;
+  accountType?: 'individual' | 'business' | 'association';
   avatar?: string;
 }
 

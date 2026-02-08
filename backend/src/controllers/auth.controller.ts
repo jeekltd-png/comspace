@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import crypto from 'crypto';
 import User from '../models/user.model';
+import WhiteLabel from '../models/white-label.model';
 import { CustomError } from '../middleware/error.middleware';
 import {
   generateToken,
@@ -15,12 +16,71 @@ import jwt from 'jsonwebtoken';
 export const register: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const { email, password, firstName, lastName, phone } = req.body;
+    const { email, password, firstName, lastName, phone, accountType, organization } = req.body;
+
+    // Validate accountType-specific fields
+    const acctType = accountType || 'individual';
+    if (!['individual', 'business', 'association'].includes(acctType)) {
+      return next(new CustomError('Invalid account type', 400));
+    }
+    if ((acctType === 'business' || acctType === 'association') && (!organization || !organization.name)) {
+      return next(new CustomError('Organization name is required for business and association accounts', 400));
+    }
 
     // Check if user exists
     const existingUser = await User.findOne({ email, tenant: authReq.tenant });
     if (existingUser) {
       return next(new CustomError('User already exists with this email', 400));
+    }
+
+    // Determine role based on account type
+    let role: string = 'customer';
+    let tenantId = authReq.tenant || 'default';
+
+    if (acctType === 'association' || acctType === 'business') {
+      // Create a new tenant (white-label) for this organization
+      const slug = organization.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .substring(0, 40);
+      const uniqueTenantId = `${slug}-${Date.now().toString(36)}`;
+
+      await WhiteLabel.create({
+        tenantId: uniqueTenantId,
+        name: organization.name,
+        domain: `${slug}.comspace.app`,
+        branding: {
+          logo: '/logo.svg',
+          primaryColor: '#7C3AED',
+          secondaryColor: '#10B981',
+          accentColor: '#F59E0B',
+          fontFamily: 'Inter, sans-serif',
+        },
+        features: {
+          delivery: acctType === 'business',
+          pickup: acctType === 'business',
+          reviews: true,
+          wishlist: acctType === 'business',
+          chat: false,
+          socialLogin: true,
+        },
+        payment: {
+          stripeAccountId: '',
+          supportedMethods: ['card'],
+          currencies: ['USD'],
+        },
+        contact: { email, phone: phone || '', address: '' },
+        seo: {
+          title: organization.name,
+          description: `${organization.name} — powered by ComSpace`,
+          keywords: [],
+        },
+        isActive: true,
+      });
+
+      tenantId = uniqueTenantId;
+      role = acctType === 'association' ? 'admin' : 'merchant';
     }
 
     // Create user
@@ -30,7 +90,17 @@ export const register: RequestHandler = async (req, res, next) => {
       firstName,
       lastName,
       phone,
-      tenant: authReq.tenant,
+      role,
+      accountType: acctType,
+      organization: (acctType !== 'individual' && organization) ? {
+        name: organization.name,
+        registrationNumber: organization.registrationNumber,
+        taxId: organization.taxId,
+        industry: organization.industry,
+        mission: organization.mission,
+        estimatedMembers: organization.estimatedMembers,
+      } : undefined,
+      tenant: tenantId,
     });
 
     // Generate verification token
@@ -62,6 +132,7 @@ export const register: RequestHandler = async (req, res, next) => {
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
+          accountType: user.accountType,
         },
         token,
         refreshToken,
@@ -109,6 +180,7 @@ export const login: RequestHandler = async (req, res, next) => {
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
+          accountType: user.accountType,
           avatar: user.avatar,
         },
         token,

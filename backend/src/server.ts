@@ -20,6 +20,7 @@ import locationRoutes from './routes/location.routes';
 import whiteLabelRoutes from './routes/white-label.routes';
 import newsletterRoutes from './routes/newsletter.routes';
 import reviewRoutes from './routes/review.routes';
+import membershipRoutes from './routes/membership.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -279,6 +280,7 @@ app.use('/api/location', locationRoutes);
 app.use('/api/white-label', whiteLabelRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/membership', membershipRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
 
 // Debug routes: NEVER in production. Only in development/test with explicit flag.

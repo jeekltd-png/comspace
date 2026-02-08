@@ -1,5 +1,15 @@
 export const dynamic = 'force-dynamic';
 
+import Link from 'next/link';
+
+const navLinks = [
+  { href: '/admin', label: 'Overview' },
+  { href: '/admin/members', label: 'Members' },
+  { href: '/admin/dues', label: 'Dues' },
+  { href: '/admin/products', label: 'Products' },
+  { href: '/admin/orders', label: 'Orders' },
+];
+
 export default function AdminLayout({
   children,
 }: {
@@ -15,6 +25,17 @@ export default function AdminLayout({
               ← Back to Store
             </a>
           </div>
+          <nav className="flex items-center gap-1 mt-3 -mb-3 overflow-x-auto">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 border-b-2 border-transparent hover:border-brand-500 transition-colors whitespace-nowrap"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
       {children}

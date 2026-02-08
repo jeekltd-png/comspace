@@ -14,14 +14,16 @@ const nextConfig = {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   },
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
     return [
       {
         source: '/(.*)',
         headers: [
-          {
+          // X-Frame-Options: DENY blocks VS Code Simple Browser & dev iframes
+          ...(isDev ? [] : [{
             key: 'X-Frame-Options',
-            value: 'DENY',
-          },
+            value: 'SAMEORIGIN',
+          }]),
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
@@ -42,7 +44,8 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
           },
-          {
+          // Only set CSP in production — dev needs flexibility
+          ...(isDev ? [] : [{
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
@@ -52,11 +55,12 @@ const nextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://api.stripe.com " + (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'),
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+              "frame-ancestors 'self'",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
             ].join('; '),
-          },
+          }]),
         ],
       },
     ];

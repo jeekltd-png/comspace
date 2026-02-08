@@ -305,11 +305,37 @@ app.use(errorHandler);
 // Start server
 let serverInstance: any = null;
 let _mongodInstance: any = null;
+let _seedingInProgress = false;
+
+const waitForSeeding = async (timeoutMs = 120_000) => {
+  if (!_seedingInProgress) return;
+  logger.info('Waiting for seed operation to complete before shutdown...');
+  const start = Date.now();
+  while (_seedingInProgress && Date.now() - start < timeoutMs) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  if (_seedingInProgress) {
+    logger.warn('Seed operation timed out — proceeding with shutdown');
+  }
+};
 
 const startServer = async () => {
   await setupNoDocker();
   await connectDB();
   await connectRedis();
+
+  // Auto-seed development data when DB is empty (NO_DOCKER / dev mode)
+  if (process.env.NODE_ENV !== 'test') {
+    try {
+      _seedingInProgress = true;
+      const { seedDevData } = await import('./seeds/dev-seed');
+      await seedDevData();
+    } catch (e) {
+      logger.warn('Dev seed skipped or failed:', e);
+    } finally {
+      _seedingInProgress = false;
+    }
+  }
 
   // In test environment we don't bind to a TCP port (supertest uses the app directly),
   // this prevents EADDRINUSE when Jest runs tests in parallel workers.
@@ -324,6 +350,7 @@ const startServer = async () => {
 
 const stopServer = async () => {
   logger.info('Stop server requested. Cleaning up...');
+  await waitForSeeding();
   try {
     if (serverInstance && serverInstance.close) {
       await new Promise<void>((resolve, reject) => serverInstance.close((err: any) => err ? reject(err) : resolve()));

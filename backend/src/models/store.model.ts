@@ -94,7 +94,9 @@ const StoreSchema: Schema = new Schema(
   }
 );
 
-StoreSchema.index({ coordinates: '2dsphere' });
+// NOTE: coordinates use { lat, lng } — not GeoJSON, so no 2dsphere index.
+// If geospatial queries are needed in future, convert to GeoJSON format:
+//   location: { type: { type: String, enum: ['Point'] }, coordinates: [Number] } }
 StoreSchema.index({ code: 1, tenant: 1 }, { unique: true });
 
 export default mongoose.model<IStore>('Store', StoreSchema);

@@ -1,5 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// SSR-safe localStorage helpers
+const getStorage = (key: string): string | null => {
+  if (typeof window === 'undefined') return null;
+  try { return localStorage.getItem(key); } catch { return null; }
+};
+const setStorage = (key: string, value: string): void => {
+  if (typeof window === 'undefined') return;
+  try { localStorage.setItem(key, value); } catch { /* skip */ }
+};
+const removeStorage = (key: string): void => {
+  if (typeof window === 'undefined') return;
+  try { localStorage.removeItem(key); } catch { /* skip */ }
+};
+
 interface User {
   id: string;
   email: string;
@@ -19,9 +33,9 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: null,
-  refreshToken: null,
-  isAuthenticated: false,
+  token: getStorage('token'),
+  refreshToken: getStorage('refreshToken'),
+  isAuthenticated: !!getStorage('token'),
   loading: false,
 };
 
@@ -37,16 +51,16 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('refreshToken', action.payload.refreshToken);
+      setStorage('token', action.payload.token);
+      setStorage('refreshToken', action.payload.refreshToken);
     },
     logout: state => {
       state.user = null;
       state.token = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
+      removeStorage('token');
+      removeStorage('refreshToken');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

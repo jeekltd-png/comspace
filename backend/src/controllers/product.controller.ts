@@ -66,12 +66,16 @@ export const getProduct: RequestHandler = async (req, res, next) => {
     const { id } = req.params;
 
     // Try cache first
-    const cached = await redisClient.get(`product:${id}`);
-    if (cached) {
-      return res.status(200).json({
-        success: true,
-        data: { product: JSON.parse(cached) },
-      });
+    if (redisClient) {
+      try {
+        const cached = await redisClient.get(`product:${id}`);
+        if (cached) {
+          return res.status(200).json({
+            success: true,
+            data: { product: JSON.parse(cached) },
+          });
+        }
+      } catch (_) { /* Redis unavailable, skip cache */ }
     }
 
     const product = await Product.findOne({
@@ -85,7 +89,9 @@ export const getProduct: RequestHandler = async (req, res, next) => {
     }
 
     // Cache for 5 minutes
-    await redisClient.setEx(`product:${id}`, 300, JSON.stringify(product));
+    if (redisClient) {
+      try { await redisClient.setEx(`product:${id}`, 300, JSON.stringify(product)); } catch (_) { /* skip */ }
+    }
 
     res.status(200).json({
       success: true,
@@ -99,11 +105,22 @@ export const getProduct: RequestHandler = async (req, res, next) => {
 export const createProduct: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const productData = {
-      ...req.body,
+    // Whitelist allowed product fields to prevent injection
+    const allowedFields = [
+      'name', 'description', 'shortDescription', 'sku', 'category', 'subcategory',
+      'basePrice', 'currency', 'prices', 'images', 'stock', 'lowStockThreshold',
+      'isUnlimited', 'dimensions', 'tags', 'variants', 'seo',
+      'isFeatured', 'isOnSale', 'salePrice', 'saleStartDate', 'saleEndDate',
+    ];
+    const productData: Record<string, any> = {
       tenant: authReq.tenant,
       createdBy: authReq.user!._id,
     };
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        productData[key] = req.body[key];
+      }
+    }
 
     const product = await Product.create(productData);
 
@@ -121,9 +138,23 @@ export const updateProduct: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    // Whitelist allowed update fields
+    const allowedFields = [
+      'name', 'description', 'shortDescription', 'sku', 'category', 'subcategory',
+      'basePrice', 'currency', 'prices', 'images', 'stock', 'lowStockThreshold',
+      'isUnlimited', 'dimensions', 'tags', 'variants', 'seo',
+      'isActive', 'isFeatured', 'isOnSale', 'salePrice', 'saleStartDate', 'saleEndDate',
+    ];
+    const updates: Record<string, any> = {};
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
     const product = await Product.findOneAndUpdate(
       { _id: id, tenant: authReq.tenant },
-      req.body,
+      updates,
       { new: true, runValidators: true }
     );
 
@@ -132,7 +163,9 @@ export const updateProduct: RequestHandler = async (req, res, next) => {
     }
 
     // Invalidate cache
-    await redisClient.del(`product:${id}`);
+    if (redisClient) {
+      try { await redisClient.del(`product:${id}`); } catch (_) { /* skip */ }
+    }
 
     res.status(200).json({
       success: true,
@@ -158,7 +191,9 @@ export const deleteProduct: RequestHandler = async (req, res, next) => {
       return next(new CustomError('Product not found', 404));
     }
 
-    await redisClient.del(`product:${id}`);
+    if (redisClient) {
+      try { await redisClient.del(`product:${id}`); } catch (_) { /* skip */ }
+    }
 
     res.status(200).json({
       success: true,

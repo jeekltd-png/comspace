@@ -2,36 +2,35 @@
 
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { store } from '@/store/store';
 import { Header } from './layout/Header';
 import { Footer } from './layout/Footer';
 import { AuthProvider } from '@/lib/useAuth';
+import { useState } from 'react';
 
-const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
-const queryClient = new QueryClient();
+// Stripe is lazy-loaded only when needed (checkout page)
+// instead of loading 30KB+ on every page
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  // Create QueryClient inside component to avoid SSR sharing across requests
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        {stripePromise ? (
-          <Elements stripe={stripePromise}>
-            <AuthProvider>
-              <Header />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-            </AuthProvider>
-          </Elements>
-        ) : (
-          <AuthProvider>
-            <Header />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </AuthProvider>
-        )}
+        <AuthProvider>
+          <Header />
+          <main id="main-content" className="min-h-screen">{children}</main>
+          <Footer />
+        </AuthProvider>
       </QueryClientProvider>
     </Provider>
   );

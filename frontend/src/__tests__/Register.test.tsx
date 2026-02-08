@@ -1,6 +1,7 @@
 import React from 'react';
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ClientRegister from '../app/register/ClientRegister';
+import ClientRegister from '../app/[locale]/register/ClientRegister';
 
 jest.mock('../lib/api', () => ({
   post: jest.fn().mockResolvedValue({ data: { success: true } }),

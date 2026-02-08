@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   createPaymentIntent,
   confirmPayment,
-  handleStripeWebhook,
   getPaymentMethods,
 } from '../controllers/payment.controller';
 import { protect } from '../middleware/auth.middleware';
@@ -11,7 +10,8 @@ import { validate, createPaymentIntentValidation } from '../middleware/validate.
 
 const router = Router();
 
-router.post('/webhook', handleStripeWebhook);
+// Webhook is mounted directly in server.ts with express.raw() BEFORE express.json()
+// to ensure Stripe signature verification works correctly.
 
 router.use(tenantMiddleware);
 router.use(protect);

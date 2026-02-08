@@ -195,9 +195,22 @@ const allowedOrigins = process.env.CORS_ORIGIN
 app.use(cors({
   origin: allowedOrigins.length > 0 ? allowedOrigins : false,
   credentials: true,
+  maxAge: 86400, // Cache preflight for 24h
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Stripe webhook MUST receive raw body before express.json() parses it
+import { handleStripeWebhook } from './controllers/payment.controller';
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// Request timeout (30 seconds)
+app.use((_req, _res, next) => {
+  _req.setTimeout(30000);
+  _res.setTimeout(30000);
+  next();
+});
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 // Serve uploaded files from /uploads in dev and production when using local storage
@@ -268,17 +281,15 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
 
-// Debug routes for local development and controlled staging. Enable when
-// NODE_ENV !== 'production' (local dev) OR one of DEBUG_* flags is set.
+// Debug routes: NEVER in production. Only in development/test with explicit flag.
 if (
-  process.env.NODE_ENV !== 'production' ||
-  process.env.DEBUG_SENTRY === 'true' ||
-  process.env.DEBUG_EMAIL === 'true'
+  process.env.NODE_ENV !== 'production' &&
+  (process.env.DEBUG_SENTRY === 'true' || process.env.DEBUG_EMAIL === 'true' || process.env.NODE_ENV === 'development')
 ) {
-  // require so we only load debug helpers when appropriate
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const debugRoutes = require('./routes/debug.routes').default;
   app.use('/__debug', debugRoutes);
+  logger.warn('⚠️  Debug routes enabled at /__debug — DO NOT use in production');
 }
 
 // 404 handler
@@ -357,6 +368,20 @@ process.on('SIGTERM', async () => {
   logger.info('SIGTERM received. Shutting down gracefully...');
   await stopServer();
   process.exit(0);
+});
+
+// Handle SIGINT (Ctrl+C)
+process.on('SIGINT', async () => {
+  logger.info('SIGINT received. Shutting down gracefully...');
+  await stopServer();
+  process.exit(0);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', async (err: Error) => {
+  logger.error('Uncaught Exception:', err);
+  await stopServer();
+  process.exit(1);
 });
 
 // expose a way for tests to set the mongod instance

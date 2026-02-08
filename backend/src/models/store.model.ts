@@ -41,7 +41,6 @@ const StoreSchema: Schema = new Schema(
     code: {
       type: String,
       required: true,
-      unique: true,
       uppercase: true,
     },
     address: {
@@ -96,6 +95,6 @@ const StoreSchema: Schema = new Schema(
 );
 
 StoreSchema.index({ coordinates: '2dsphere' });
-StoreSchema.index({ code: 1, tenant: 1 });
+StoreSchema.index({ code: 1, tenant: 1 }, { unique: true });
 
 export default mongoose.model<IStore>('Store', StoreSchema);

@@ -51,7 +51,6 @@ const UserSchema: Schema = new Schema(
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: true,
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
@@ -150,8 +149,8 @@ UserSchema.methods.comparePassword = async function (
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Index for better query performance
-UserSchema.index({ email: 1, tenant: 1 });
+// Compound unique index: email unique PER TENANT (not globally)
+UserSchema.index({ email: 1, tenant: 1 }, { unique: true });
 UserSchema.index({ role: 1 });
 
 export default mongoose.model<IUser>('User', UserSchema);

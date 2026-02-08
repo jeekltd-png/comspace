@@ -20,7 +20,6 @@ const CartSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      unique: true,
     },
     items: [
       {
@@ -56,6 +55,6 @@ const CartSchema: Schema = new Schema(
   }
 );
 
-CartSchema.index({ user: 1, tenant: 1 });
+CartSchema.index({ user: 1, tenant: 1 }, { unique: true });
 
 export default mongoose.model<ICart>('Cart', CartSchema);

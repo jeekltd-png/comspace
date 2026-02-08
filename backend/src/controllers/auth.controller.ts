@@ -190,8 +190,13 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
 
     const user = await User.findOne({ email, tenant: authReq.tenant });
 
+    // Always return a generic success message to prevent user enumeration
     if (!user) {
-      return next(new CustomError('No user found with this email', 404));
+      res.status(200).json({
+        success: true,
+        message: 'If an account with that email exists, a password reset link has been sent',
+      });
+      return;
     }
 
     // Generate reset token
@@ -211,7 +216,7 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Password reset email sent',
+      message: 'If an account with that email exists, a password reset link has been sent',
     });
   } catch (error) {
     next(error);

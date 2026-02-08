@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import crypto from 'crypto';
 
 export interface IOrder extends Document {
   orderNumber: string;
@@ -200,11 +201,12 @@ const OrderSchema: Schema = new Schema(
   }
 );
 
-// Generate order number before saving
+// Generate order number before saving — atomic, no race condition
 OrderSchema.pre('save', async function (this: any, next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderNumber = `ORD-${Date.now()}-${(count + 1).toString().padStart(5, '0')}`;
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = crypto.randomBytes(3).toString('hex').toUpperCase();
+    this.orderNumber = `ORD-${timestamp}-${random}`;
   }
 
   // Add status to history

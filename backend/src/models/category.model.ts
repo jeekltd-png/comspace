@@ -23,7 +23,6 @@ const CategorySchema: Schema = new Schema(
     slug: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
     },
     description: String,
@@ -52,7 +51,7 @@ const CategorySchema: Schema = new Schema(
   }
 );
 
-CategorySchema.index({ slug: 1, tenant: 1 });
+CategorySchema.index({ slug: 1, tenant: 1 }, { unique: true });
 CategorySchema.index({ parent: 1 });
 
 export default mongoose.model<ICategory>('Category', CategorySchema);

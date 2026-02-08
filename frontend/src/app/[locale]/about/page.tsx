@@ -8,71 +8,57 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-4">About ComSpace</h1>
-          <p className="text-xl">Your trusted multi-tenant e-commerce platform</p>
+      <section className="relative bg-gradient-to-br from-brand-600 via-brand-700 to-accent-700 text-white py-24 overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-accent-400 blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-brand-400 blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">About ComSpace</h1>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">Your trusted multi-tenant e-commerce platform built for the modern web</p>
         </div>
       </section>
 
       {/* Content Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="prose prose-lg max-w-none">
-            <h2 className="text-3xl font-bold mb-6">Who We Are</h2>
-            <p className="text-gray-600 mb-6">
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <span className="text-sm font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Our Story</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2 mb-6">Who We Are</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
               ComSpace is a cutting-edge multi-tenant e-commerce platform designed to empower merchants
               and provide customers with an exceptional shopping experience. Built with modern
-              technologies including Next.js, React, and Node.js, we offer a scalable and reliable
-              platform for online commerce.
+              technologies, we offer a scalable and reliable platform for online commerce.
             </p>
+          </div>
 
-            <h2 className="text-3xl font-bold mb-6 mt-12">Our Features</h2>
-            <div className="grid md:grid-cols-2 gap-6 mb-12">
-              <div className="border rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-3">Multi-Language Support</h3>
-                <p className="text-gray-600">
-                  We support 17 languages including English, Spanish, French, Arabic, German, and more,
-                  making your shopping experience seamless in your preferred language.
-                </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            {[
+              { title: 'Multi-Language', desc: '17 languages including English, Spanish, French, Arabic, German, and more.', icon: '🌍' },
+              { title: 'Secure Payments', desc: 'Integration with Stripe ensures your transactions are safe and encrypted.', icon: '🔒' },
+              { title: 'Real-time Inventory', desc: 'Our system tracks inventory in real-time for accurate stock information.', icon: '📦' },
+              { title: 'Advanced Analytics', desc: 'Comprehensive analytics and reporting tools for merchants.', icon: '📊' },
+            ].map(feature => (
+              <div key={feature.title} className="glass-card p-6 text-center hover:shadow-brand transition-shadow">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
               </div>
-              <div className="border rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
-                <p className="text-gray-600">
-                  Integration with Stripe and PayPal ensures your transactions are safe and secure.
-                </p>
-              </div>
-              <div className="border rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-3">Real-time Inventory</h3>
-                <p className="text-gray-600">
-                  Our system tracks inventory in real-time, ensuring accurate stock information.
-                </p>
-              </div>
-              <div className="border rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-3">Advanced Analytics</h3>
-                <p className="text-gray-600">
-                  Comprehensive analytics and reporting tools for merchants to track their business.
-                </p>
-              </div>
+            ))}
+          </div>
+
+          <div className="glass-card p-8 md:p-12 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Technology Stack</h2>
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS', 'Node.js', 'Express', 'MongoDB', 'Redis', 'Stripe', 'next-intl'].map(tech => (
+                <span key={tech} className="px-4 py-2 rounded-full bg-gray-100 dark:bg-surface-800 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {tech}
+                </span>
+              ))}
             </div>
-
-            <h2 className="text-3xl font-bold mb-6">Technology Stack</h2>
-            <ul className="list-disc list-inside text-gray-600 mb-12 space-y-2">
-              <li><strong>Frontend:</strong> Next.js 15, React 19, TypeScript, Tailwind CSS</li>
-              <li><strong>Backend:</strong> Node.js, Express, MongoDB, Redis</li>
-              <li><strong>Internationalization:</strong> next-intl with 17 language support</li>
-              <li><strong>State Management:</strong> Redux Toolkit</li>
-              <li><strong>Testing:</strong> Jest, React Testing Library</li>
-            </ul>
-
-            <div className="text-center mt-12">
-              <Link
-                href="/products"
-                className="inline-block px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Start Shopping
-              </Link>
-            </div>
+            <Link href="/products" className="btn-primary inline-flex items-center gap-2">
+              Start Shopping
+            </Link>
           </div>
         </div>
       </section>

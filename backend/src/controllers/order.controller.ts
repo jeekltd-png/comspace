@@ -77,7 +77,7 @@ export const getOrders: RequestHandler = async (req, res, next) => {
       success: true,
       data: {
         orders,
-        pagination: { page: Number(page), limit: Number(limit), total },
+        pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / Number(limit)) },
       },
     });
   } catch (error) {

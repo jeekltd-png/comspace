@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { FiMail, FiPhone, FiMapPin, FiClock } from 'react-icons/fi';
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -7,91 +8,70 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-          <p className="text-xl">We'd love to hear from you</p>
+      <section className="relative bg-gradient-to-br from-brand-600 via-brand-700 to-accent-700 text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-accent-400 blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+          <p className="text-xl text-white/80">We&apos;d love to hear from you</p>
         </div>
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12">
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-5 gap-12">
             {/* Contact Form */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Send us a message</h2>
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your name"
-                  />
+            <div className="md:col-span-3">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a message</h2>
+              <form className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Name</label>
+                    <input id="contact-name" type="text" className="input-field" placeholder="Your name" />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                    <input id="contact-email" type="email" className="input-field" placeholder="you@example.com" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="your.email@example.com"
-                  />
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject</label>
+                  <input id="contact-subject" type="text" className="input-field" placeholder="How can we help?" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Subject</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="How can we help?"
-                  />
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Message</label>
+                  <textarea id="contact-message" rows={6} className="input-field resize-none" placeholder="Your message..." />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Message</label>
-                  <textarea
-                    rows={6}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your message..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
+                <button type="submit" className="btn-primary w-full sm:w-auto">
                   Send Message
                 </button>
               </form>
             </div>
 
             {/* Contact Information */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Get in touch</h2>
+            <div className="md:col-span-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Get in touch</h2>
               <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold mb-2">Email</h3>
-                  <p className="text-gray-600">support@comspace.com</p>
-                  <p className="text-gray-600">sales@comspace.com</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Phone</h3>
-                  <p className="text-gray-600">+1 (555) 123-4567</p>
-                  <p className="text-gray-600">Mon-Fri: 9:00 AM - 6:00 PM EST</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Address</h3>
-                  <p className="text-gray-600">
-                    123 Commerce Street<br />
-                    Suite 456<br />
-                    New York, NY 10001<br />
-                    United States
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Business Hours</h3>
-                  <p className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM</p>
-                  <p className="text-gray-600">Saturday: 10:00 AM - 4:00 PM</p>
-                  <p className="text-gray-600">Sunday: Closed</p>
-                </div>
+                {[
+                  { icon: FiMail, title: 'Email', lines: ['support@comspace.com', 'sales@comspace.com'] },
+                  { icon: FiPhone, title: 'Phone', lines: ['+1 (555) 123-4567', 'Mon-Fri: 9AM - 6PM EST'] },
+                  { icon: FiMapPin, title: 'Address', lines: ['123 Commerce Street, Suite 456', 'New York, NY 10001, US'] },
+                  { icon: FiClock, title: 'Business Hours', lines: ['Mon-Fri: 9AM - 6PM', 'Sat: 10AM - 4PM', 'Sun: Closed'] },
+                ].map(item => (
+                  <div key={item.title} className="glass-card p-5 flex gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{item.title}</h3>
+                      {item.lines.map((line, i) => (
+                        <p key={i} className="text-gray-600 dark:text-gray-400 text-sm">{line}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

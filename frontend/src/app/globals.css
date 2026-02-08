@@ -3,24 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --primary: #3b82f6;
-  --secondary: #10b981;
-  --accent: #f59e0b;
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #111113;
+  --brand: #a855f7;
+  --brand-light: #c084fc;
+  --brand-dark: #7c3aed;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --brand: #c084fc;
+  --brand-light: #d8b4fe;
+  --brand-dark: #a855f7;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -33,10 +34,79 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /* Focus-visible styles for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl
+           border border-white/20 dark:border-gray-700/30
+           rounded-2xl shadow-glass;
+  }
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-500 via-brand-400 to-accent-400
+           bg-clip-text text-transparent;
+  }
+  /* Button base */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-brand-600 hover:bg-brand-700 active:scale-[0.98]
+           text-white font-semibold px-6 py-3 rounded-2xl
+           transition-all duration-200 shadow-brand
+           focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-brand-500;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white/10 dark:bg-white/5 hover:bg-white/20
+           border border-brand-500/30 text-brand-600 dark:text-brand-300
+           font-semibold px-6 py-3 rounded-2xl
+           transition-all duration-200 backdrop-blur-sm
+           focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-brand-500;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           hover:bg-gray-100 dark:hover:bg-gray-800
+           text-gray-700 dark:text-gray-300
+           font-medium px-4 py-2 rounded-xl
+           transition-all duration-200;
+  }
+  /* Input styling */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl
+           bg-white dark:bg-surface-800
+           border border-gray-200 dark:border-gray-700
+           text-gray-900 dark:text-gray-100
+           placeholder-gray-400 dark:placeholder-gray-500
+           focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500
+           transition-all duration-200;
+  }
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  /* Skeleton loading */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  /* Noise texture overlay */
+  .noise-bg {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
 }

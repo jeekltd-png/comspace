@@ -14,7 +14,16 @@ export const getProfile: RequestHandler = async (req, res, next) => {
 export const updateUser: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const user = await User.findByIdAndUpdate(authReq.user!._id, req.body, {
+    // Whitelist allowed fields to prevent privilege escalation
+    const allowedFields = ['firstName', 'lastName', 'phone', 'avatar', 'addresses', 'preferences'];
+    const updates: Record<string, any> = {};
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(authReq.user!._id, updates, {
       new: true,
       runValidators: true,
     });

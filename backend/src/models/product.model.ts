@@ -77,7 +77,6 @@ const ProductSchema: Schema = new Schema(
     sku: {
       type: String,
       required: [true, 'SKU is required'],
-      unique: true,
       uppercase: true,
       trim: true,
     },
@@ -183,9 +182,10 @@ const ProductSchema: Schema = new Schema(
 // Indexes for better query performance
 ProductSchema.index({ name: 'text', description: 'text', tags: 'text' });
 ProductSchema.index({ category: 1, tenant: 1 });
-// SKU index created via field definition (unique: true) to avoid duplicate index warnings.
+ProductSchema.index({ sku: 1, tenant: 1 }, { unique: true });
 ProductSchema.index({ 'rating.average': -1 });
 ProductSchema.index({ basePrice: 1 });
 ProductSchema.index({ isActive: 1, isFeatured: 1 });
+ProductSchema.index({ paymentIntentId: 1 });
 
 export default mongoose.model<IProduct>('Product', ProductSchema);

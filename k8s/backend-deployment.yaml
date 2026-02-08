@@ -17,6 +17,44 @@ spec:
           image: ghcr.io/jeekltd-png/comspace/backend:latest
           ports:
             - containerPort: 5000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: jwt-secret
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: jwt-refresh-secret
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: mongo-password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: redis-password
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: stripe-secret-key
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: comspace-secrets
+                  key: stripe-webhook-secret
+            - name: FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: comspace-config
+                  key: api-url
           livenessProbe:
             httpGet:
               path: /health

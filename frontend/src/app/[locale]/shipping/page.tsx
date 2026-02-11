@@ -7,7 +7,7 @@ export default async function ShippingPage({ params }: { params: Promise<{ local
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-brand-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Shipping Information</h1>
           <p className="text-xl">Everything you need to know about delivery</p>
@@ -24,7 +24,7 @@ export default async function ShippingPage({ params }: { params: Promise<{ local
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <div className="border rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-3">Standard Shipping</h3>
-                <p className="text-2xl font-bold text-blue-600 mb-3">FREE</p>
+                <p className="text-2xl font-bold text-brand-600 mb-3">FREE</p>
                 <p className="text-gray-600 mb-4">On orders over $50</p>
                 <ul className="text-sm text-gray-600 space-y-2">
                   <li>• 5-7 business days</li>
@@ -32,9 +32,9 @@ export default async function ShippingPage({ params }: { params: Promise<{ local
                   <li>• $4.99 on orders under $50</li>
                 </ul>
               </div>
-              <div className="border rounded-lg p-6 border-blue-600">
+              <div className="border rounded-lg p-6 border-brand-600">
                 <h3 className="text-xl font-semibold mb-3">Express Shipping</h3>
-                <p className="text-2xl font-bold text-blue-600 mb-3">$14.99</p>
+                <p className="text-2xl font-bold text-brand-600 mb-3">$14.99</p>
                 <p className="text-gray-600 mb-4">Fast delivery</p>
                 <ul className="text-sm text-gray-600 space-y-2">
                   <li>• 2-3 business days</li>
@@ -44,7 +44,7 @@ export default async function ShippingPage({ params }: { params: Promise<{ local
               </div>
               <div className="border rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-3">Overnight</h3>
-                <p className="text-2xl font-bold text-blue-600 mb-3">$29.99</p>
+                <p className="text-2xl font-bold text-brand-600 mb-3">$29.99</p>
                 <p className="text-gray-600 mb-4">Next day delivery</p>
                 <ul className="text-sm text-gray-600 space-y-2">
                   <li>• 1 business day</li>
@@ -100,7 +100,7 @@ export default async function ShippingPage({ params }: { params: Promise<{ local
               </p>
               <a
                 href="/contact"
-                className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-block bg-brand-600 text-white px-8 py-3 rounded-lg hover:bg-brand-700 transition-colors"
               >
                 Contact Us
               </a>

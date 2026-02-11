@@ -93,7 +93,7 @@ export const sendNewsletterConfirmation = async (email: string) => {
             <li>Tips and updates</li>
           </ul>
           <p>We're excited to have you as part of our community!</p>
-          <a href="http://localhost:3000" class="button">Visit ComSpace</a>
+          <a href="${process.env.FRONTEND_URL || 'https://comspace.app'}" class="button">Visit ComSpace</a>
         </div>
         <div class="footer">
           <p>You're receiving this email because you subscribed to ComSpace newsletter.</p>
@@ -112,7 +112,7 @@ export const sendNewsletterConfirmation = async (email: string) => {
     
     You'll receive exclusive deals, promotions, new product announcements, and special member-only offers.
     
-    Visit us at: http://localhost:3000
+    Visit us at: ${process.env.FRONTEND_URL || 'https://comspace.app'}
     
     © ${new Date().getFullYear()} ComSpace. All rights reserved.
   `;

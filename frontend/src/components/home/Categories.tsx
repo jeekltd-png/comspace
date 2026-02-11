@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { FiSmartphone, FiShoppingBag, FiHome, FiActivity, FiBook, FiGift } from 'react-icons/fi';
 
 const categories = [
-  { name: 'Electronics', slug: 'electronics', icon: FiSmartphone, color: 'from-blue-500 to-cyan-500' },
+  { name: 'Electronics', slug: 'electronics', icon: FiSmartphone, color: 'from-brand-500 to-cyan-500' },
   { name: 'Fashion', slug: 'fashion', icon: FiShoppingBag, color: 'from-pink-500 to-rose-500' },
   { name: 'Home & Garden', slug: 'home-garden', icon: FiHome, color: 'from-emerald-500 to-teal-500' },
   { name: 'Sports', slug: 'sports', icon: FiActivity, color: 'from-orange-500 to-amber-500' },

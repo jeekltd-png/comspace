@@ -41,7 +41,7 @@ export default function MissingTranslationsAdmin() {
       {!loading && !error && (
         <div>
           <div className="mb-4">
-            <button onClick={exportCsv} className="px-3 py-1 bg-blue-600 text-white rounded">Export CSV</button>
+            <button onClick={exportCsv} className="px-3 py-1 bg-brand-600 text-white rounded">Export CSV</button>
           </div>
           <div className="overflow-auto max-h-96 border rounded">
             <table className="w-full text-sm">

@@ -28,7 +28,7 @@ interface Order {
 
 const statusConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   pending: { icon: FiClock, color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
-  processing: { icon: FiPackage, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+  processing: { icon: FiPackage, color: 'text-brand-600 dark:text-brand-400', bg: 'bg-brand-100 dark:bg-brand-900/30' },
   shipped: { icon: FiTruck, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-900/30' },
   delivered: { icon: FiCheckCircle, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30' },
   cancelled: { icon: FiXCircle, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30' },

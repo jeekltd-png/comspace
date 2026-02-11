@@ -68,7 +68,7 @@ export default function EnhancedProductCard({ product, locale }: ProductCardProp
       <Link href={`/${locale}/products/${product.slug}`} onClick={handleClick}>
         <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
           <Image
-            src={product.images[0] || '/images/placeholder.png'}
+            src={product.images[0] || '/images/placeholder.svg'}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -90,7 +90,7 @@ export default function EnhancedProductCard({ product, locale }: ProductCardProp
           href={`/${locale}/products/${product.slug}`}
           onClick={handleClick}
         >
-          <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
             {product.name}
           </h3>
         </Link>
@@ -128,7 +128,7 @@ export default function EnhancedProductCard({ product, locale }: ProductCardProp
         <div className="flex items-center justify-between pt-2">
           {/* Add to Cart Button */}
           <button
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="flex-1 bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors font-medium"
             disabled={product.stock === 0}
           >
             {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}

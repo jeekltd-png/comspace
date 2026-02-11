@@ -7,7 +7,7 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-brand-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Returns & Exchanges</h1>
           <p className="text-xl">Simple and hassle-free returns</p>
@@ -54,7 +54,7 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
             <h2 className="text-3xl font-bold mb-6">How to Return an Item</h2>
             <div className="space-y-6 mb-12">
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center font-bold">
                   1
                 </div>
                 <div>
@@ -65,7 +65,7 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center font-bold">
                   2
                 </div>
                 <div>
@@ -76,7 +76,7 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center font-bold">
                   3
                 </div>
                 <div>
@@ -87,7 +87,7 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center font-bold">
                   4
                 </div>
                 <div>
@@ -131,13 +131,13 @@ export default async function ReturnsPage({ params }: { params: Promise<{ locale
               <div className="flex gap-4">
                 <a
                   href="/contact"
-                  className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-block bg-brand-600 text-white px-8 py-3 rounded-lg hover:bg-brand-700 transition-colors"
                 >
                   Contact Support
                 </a>
                 <a
                   href="/profile"
-                  className="inline-block border border-blue-600 text-blue-600 px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+                  className="inline-block border border-brand-600 text-brand-600 px-8 py-3 rounded-lg hover:bg-brand-50 transition-colors"
                 >
                   View Orders
                 </a>

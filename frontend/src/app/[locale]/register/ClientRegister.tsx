@@ -39,7 +39,7 @@ const accountTypeOptions: {
     label: 'Individual',
     description: 'Personal shopping account',
     icon: FiShoppingBag,
-    color: 'from-blue-500 to-cyan-500',
+    color: 'from-brand-500 to-cyan-500',
   },
   {
     value: 'business',

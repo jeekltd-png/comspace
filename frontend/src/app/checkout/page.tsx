@@ -6,8 +6,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { clearCart } from '@/store/slices/cartSlice';
+import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import apiClient from '@/lib/api';
-import { FiChevronLeft, FiShield, FiLock, FiCheck } from 'react-icons/fi';
+import { FiChevronLeft, FiShield, FiLock, FiCheck, FiShoppingBag } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 interface ShippingForm {
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
   const { items, total } = useAppSelector(state => state.cart);
   const { user, token } = useAppSelector(state => state.auth);
   const currency = useAppSelector(state => state.currency);
+  const { cart: cartEnabled, checkout: checkoutEnabled } = useFeatureFlags('cart', 'checkout');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState<'shipping' | 'payment'>('shipping');
 
@@ -48,6 +50,22 @@ export default function CheckoutPage() {
       router.push('/cart');
     }
   }, [items.length, router]);
+
+  // Feature gate: show friendly message if checkout is disabled
+  if (!cartEnabled || !checkoutEnabled) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
+        <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-surface-800 flex items-center justify-center mb-6">
+          <FiShoppingBag className="w-10 h-10 text-gray-400" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Checkout Not Available</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 text-center max-w-md">
+          Online checkout is not currently enabled for this store. Please contact the store owner for purchasing options.
+        </p>
+        <Link href="/" className="btn-primary">Back to Home</Link>
+      </div>
+    );
+  }
 
   const formatPrice = (price: number) => {
     const converted = price * (currency.rates[currency.current] || 1);

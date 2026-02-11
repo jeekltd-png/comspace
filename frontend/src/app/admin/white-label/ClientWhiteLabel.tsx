@@ -138,7 +138,7 @@ export default function WhiteLabelSettingsPage() {
           {success && <div role="status" className="text-sm text-green-600">{success}</div>}
 
           <div className="flex justify-end">
-            <button type="submit" disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded">{saving ? 'Saving...' : t('common.save')}</button>
+            <button type="submit" disabled={saving} className="px-4 py-2 bg-brand-600 text-white rounded">{saving ? 'Saving...' : t('common.save')}</button>
           </div>
         </form>
       )}

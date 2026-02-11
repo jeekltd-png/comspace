@@ -225,5 +225,9 @@ OrderSchema.pre('save', async function (this: any, next) {
 OrderSchema.index({ user: 1, tenant: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ createdAt: -1 });
+// Compound indexes for admin queries and tenant-scoped lookups
+OrderSchema.index({ tenant: 1, status: 1, createdAt: -1 });
+OrderSchema.index({ tenant: 1, paymentStatus: 1 });
+OrderSchema.index({ tenant: 1, createdAt: -1 });
 
 export default mongoose.model<IOrder>('Order', OrderSchema);

@@ -4,9 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { updateQuantity, removeItem, clearCart } from '@/store/slices/cartSlice';
+import { useFeatureFlag } from '@/hooks/useFeatureFlag';
 import { FiTrash2, FiMinus, FiPlus, FiShoppingBag, FiArrowLeft, FiShield } from 'react-icons/fi';
 
 export default function CartPage() {
+  const cartEnabled = useFeatureFlag('cart');
   const { items, total } = useAppSelector(state => state.cart);
   const currency = useAppSelector(state => state.currency);
   const dispatch = useAppDispatch();
@@ -15,6 +17,22 @@ export default function CartPage() {
     const converted = price * (currency.rates[currency.current] || 1);
     return `${currency.symbol}${converted.toFixed(2)}`;
   };
+
+  // Feature gate: show friendly message if cart is disabled
+  if (!cartEnabled) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
+        <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-surface-800 flex items-center justify-center mb-6">
+          <FiShoppingBag className="w-10 h-10 text-gray-400" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Shopping Cart Not Available</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 text-center max-w-md">
+          This space is currently set up for information only. Shopping features are not enabled.
+        </p>
+        <Link href="/" className="btn-primary">Back to Home</Link>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

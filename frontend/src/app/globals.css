@@ -68,11 +68,12 @@ body {
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2
            bg-white/10 dark:bg-white/5 hover:bg-white/20
-           border border-brand-500/30 text-brand-600 dark:text-brand-300
+           border text-brand-600 dark:text-brand-300
            font-semibold px-6 py-3 rounded-2xl
            transition-all duration-200 backdrop-blur-sm
            focus-visible:outline-2 focus-visible:outline-offset-2
            focus-visible:outline-brand-500;
+    border-color: color-mix(in srgb, var(--wl-brand-500, #a855f7) 30%, transparent);
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2
@@ -88,8 +89,9 @@ body {
            border border-gray-200 dark:border-gray-700
            text-gray-900 dark:text-gray-100
            placeholder-gray-400 dark:placeholder-gray-500
-           focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500
+           focus:outline-none focus:ring-2 focus:border-brand-500
            transition-all duration-200;
+    --tw-ring-color: color-mix(in srgb, var(--wl-brand-500, #a855f7) 50%, transparent);
   }
   /* Badge */
   .badge {
@@ -109,4 +111,45 @@ body {
   .noise-bg {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
+  /* Sheet slide-in animations */
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  .animate-slide-down {
+    animation: slideDown 0.2s ease-out;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }

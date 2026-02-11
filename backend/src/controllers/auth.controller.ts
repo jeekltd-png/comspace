@@ -163,9 +163,10 @@ export const login: RequestHandler = async (req, res, next) => {
       return next(new CustomError('Account is deactivated', 401));
     }
 
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save();
+    // Update last login (use updateOne to avoid re-triggering the pre-save
+    // password hash hook — the password field loaded via select('+password')
+    // is considered "modified" by Mongoose, which would double-hash it).
+    await User.updateOne({ _id: user._id }, { lastLogin: new Date() });
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
@@ -229,6 +230,14 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
       return next(new CustomError('Refresh token is required', 400));
     }
 
+    // Check if refresh token has been revoked
+    if (redisClient && redisClient.get) {
+      const revoked = await redisClient.get(`rt_revoked:${refreshToken}`);
+      if (revoked) {
+        return next(new CustomError('Refresh token has been revoked', 401));
+      }
+    }
+
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as {
       id: string;
       tenant: string;
@@ -238,6 +247,12 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
     if (!user || !user.isActive) {
       return next(new CustomError('Invalid refresh token', 401));
+    }
+
+    // Revoke old refresh token (token rotation)
+    if (redisClient && redisClient.setEx) {
+      // Revoke for the duration of the old token's max lifetime (7 days)
+      await redisClient.setEx(`rt_revoked:${refreshToken}`, 7 * 24 * 3600, '1');
     }
 
     const newToken = generateToken(user._id.toString(), decoded.tenant);
@@ -376,18 +391,58 @@ export const googleAuth = passport.authenticate('google', {
 });
 
 export const googleAuthCallback = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('google', { session: false }, (err: Error, user: any) => {
+  passport.authenticate('google', { session: false }, async (err: Error, user: any) => {
     if (err || !user) {
       return res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
     }
 
+    // Generate a short-lived auth code instead of passing tokens in URL
+    const authCode = crypto.randomBytes(32).toString('hex');
     const token = generateToken(user._id.toString(), user.tenant);
     const refreshToken = generateRefreshToken(user._id.toString(), user.tenant);
 
+    // Store tokens in Redis under the auth code (expires in 60 seconds)
+    if (redisClient && redisClient.setEx) {
+      await redisClient.setEx(
+        `authcode:${authCode}`,
+        60,
+        JSON.stringify({ token, refreshToken })
+      );
+    }
+
     res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?token=${token}&refreshToken=${refreshToken}`
+      `${process.env.FRONTEND_URL}/auth/callback?code=${authCode}`
     );
   })(req, res, next);
+};
+
+// Exchange auth code for tokens (called by frontend)
+export const exchangeAuthCode: RequestHandler = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+    if (!code) {
+      return next(new CustomError('Auth code is required', 400));
+    }
+
+    let tokensJson: string | null = null;
+    if (redisClient && redisClient.get) {
+      tokensJson = await redisClient.get(`authcode:${code}`);
+    }
+
+    if (!tokensJson) {
+      return next(new CustomError('Invalid or expired auth code', 400));
+    }
+
+    // Delete the code so it can't be reused
+    if (redisClient && redisClient.del) {
+      await redisClient.del(`authcode:${code}`);
+    }
+
+    const tokens = JSON.parse(tokensJson);
+    res.status(200).json({ success: true, data: tokens });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getCurrentUser: RequestHandler = async (req, res, next) => {

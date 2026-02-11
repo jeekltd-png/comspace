@@ -53,7 +53,7 @@ export default function LanguageSwitcher({ currentLocale }: { currentLocale: str
                 >
                   <span>{localeNames[locale]}</span>
                   {currentLocale === locale && (
-                    <FiCheck className="w-4 h-4 text-blue-600" />
+                    <FiCheck className="w-4 h-4 text-brand-600" />
                   )}
                 </button>
               ))}

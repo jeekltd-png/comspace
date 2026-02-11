@@ -9,6 +9,7 @@ import {
   verifyEmail,
   googleAuth,
   googleAuthCallback,
+  exchangeAuthCode,
   getCurrentUser,
   updateProfile,
   changePassword,
@@ -16,7 +17,7 @@ import {
 
 // Protected change password route added below
 import { protect } from '../middleware/auth.middleware';
-import { authLimiter } from '../middleware/rate-limit.middleware';
+import { authLimiter, passwordResetLimiter } from '../middleware/rate-limit.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
 import {
   validate,
@@ -38,13 +39,14 @@ router.use(tenantMiddleware);
 router.post('/register', authLimiter, validate(registerValidation), register);
 router.post('/login', authLimiter, validate(loginValidation), login);
 router.post('/refresh-token', validate(refreshTokenValidation), refreshToken);
-router.post('/forgot-password', authLimiter, validate(forgotPasswordValidation), forgotPassword);
+router.post('/forgot-password', passwordResetLimiter, validate(forgotPasswordValidation), forgotPassword);
 router.post('/reset-password/:token', validate(resetPasswordValidation), resetPassword);
 router.get('/verify-email/:token', verifyEmail);
 
 // OAuth routes
 router.get('/google', googleAuth);
 router.get('/google/callback', googleAuthCallback);
+router.post('/exchange-code', exchangeAuthCode);
 
 // Protected routes
 router.use(protect);

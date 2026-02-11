@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { FiMail, FiPhone, FiMapPin, FiClock } from 'react-icons/fi';
+import { ContactForm } from '@/components/ContactForm';
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -25,29 +26,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             {/* Contact Form */}
             <div className="md:col-span-3">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a message</h2>
-              <form className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Name</label>
-                    <input id="contact-name" type="text" className="input-field" placeholder="Your name" />
-                  </div>
-                  <div>
-                    <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-                    <input id="contact-email" type="email" className="input-field" placeholder="you@example.com" />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject</label>
-                  <input id="contact-subject" type="text" className="input-field" placeholder="How can we help?" />
-                </div>
-                <div>
-                  <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Message</label>
-                  <textarea id="contact-message" rows={6} className="input-field resize-none" placeholder="Your message..." />
-                </div>
-                <button type="submit" className="btn-primary w-full sm:w-auto">
-                  Send Message
-                </button>
-              </form>
+              <ContactForm />
             </div>
 
             {/* Contact Information */}

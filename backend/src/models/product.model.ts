@@ -186,6 +186,5 @@ ProductSchema.index({ sku: 1, tenant: 1 }, { unique: true });
 ProductSchema.index({ 'rating.average': -1 });
 ProductSchema.index({ basePrice: 1 });
 ProductSchema.index({ isActive: 1, isFeatured: 1 });
-ProductSchema.index({ paymentIntentId: 1 });
 
 export default mongoose.model<IProduct>('Product', ProductSchema);

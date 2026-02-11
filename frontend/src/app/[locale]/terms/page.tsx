@@ -7,7 +7,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-brand-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Terms & Conditions</h1>
           <p className="text-xl">Last updated: February 2, 2026</p>
@@ -65,12 +65,12 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
 
             <h2 className="text-3xl font-bold mb-6">5. Shipping and Delivery</h2>
             <p className="text-gray-600 mb-6">
-              We will ship your order to the address you provide. Title and risk of loss pass to you upon delivery to the carrier. Delivery times are estimates and not guaranteed. See our <a href="/shipping" className="text-blue-600 hover:underline">Shipping Information</a> page for details.
+              We will ship your order to the address you provide. Title and risk of loss pass to you upon delivery to the carrier. Delivery times are estimates and not guaranteed. See our <a href="/shipping" className="text-brand-600 hover:underline">Shipping Information</a> page for details.
             </p>
 
             <h2 className="text-3xl font-bold mb-6">6. Returns and Refunds</h2>
             <p className="text-gray-600 mb-6">
-              Our return policy allows returns within 30 days of delivery for most items. See our <a href="/returns" className="text-blue-600 hover:underline">Returns & Exchanges</a> page for complete details.
+              Our return policy allows returns within 30 days of delivery for most items. See our <a href="/returns" className="text-brand-600 hover:underline">Returns & Exchanges</a> page for complete details.
             </p>
 
             <h2 className="text-3xl font-bold mb-6">7. Intellectual Property</h2>
@@ -90,7 +90,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
 
             <h2 className="text-3xl font-bold mb-6">10. Privacy</h2>
             <p className="text-gray-600 mb-6">
-              Your use of ComSpace is also governed by our <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>. Please review our Privacy Policy to understand our practices.
+              Your use of ComSpace is also governed by our <a href="/privacy" className="text-brand-600 hover:underline">Privacy Policy</a>. Please review our Privacy Policy to understand our practices.
             </p>
 
             <h2 className="text-3xl font-bold mb-6">11. Modifications to Terms</h2>
@@ -121,7 +121,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
               </p>
               <a
                 href="/contact"
-                className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-block bg-brand-600 text-white px-8 py-3 rounded-lg hover:bg-brand-700 transition-colors"
               >
                 Contact Us
               </a>

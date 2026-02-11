@@ -1,12 +1,10 @@
-/**
+﻿/**
  * Development seed module — auto-populates the database with sample data
  * when running in NO_DOCKER / dev mode and the DB is empty.
  *
  * Called from server.ts after DB connection.
  */
 
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 import User from '../models/user.model';
 import Category from '../models/category.model';
 import Product from '../models/product.model';
@@ -24,7 +22,6 @@ import { logger } from '../utils/logger';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const hash = (pw: string) => bcrypt.hashSync(pw, 10);
 const DEFAULT_PW = 'Password123!';
 const today = new Date();
 const daysAgo = (n: number) => new Date(today.getTime() - n * 86400000);
@@ -104,20 +101,20 @@ export async function seedDevData(): Promise<void> {
   const users = await User.create([
     // ── Default tenant ─────────────────────────────────────────────────
     {
-      email: 'superadmin@comspace.io', password: hash(DEFAULT_PW),
+      email: 'superadmin@comspace.io', password: DEFAULT_PW,
       firstName: 'Super', lastName: 'Admin', phone: '+1-555-000-0001',
       role: 'superadmin', accountType: 'individual',
       tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(0),
       addresses: [{ label: 'Office', street: '100 Market St', city: 'San Francisco', state: 'CA', country: 'US', postalCode: '94105', isDefault: true }],
     },
     {
-      email: 'admin@comspace.io', password: hash(DEFAULT_PW),
+      email: 'admin@comspace.io', password: DEFAULT_PW,
       firstName: 'Platform', lastName: 'Admin', phone: '+1-555-000-0002',
       role: 'admin', accountType: 'individual',
       tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(1),
     },
     {
-      email: 'sarah.johnson@gmail.com', password: hash(DEFAULT_PW),
+      email: 'sarah.johnson@gmail.com', password: DEFAULT_PW,
       firstName: 'Sarah', lastName: 'Johnson', phone: '+1-555-101-1001',
       role: 'customer', accountType: 'individual',
       tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(2),
@@ -127,28 +124,28 @@ export async function seedDevData(): Promise<void> {
       ],
     },
     {
-      email: 'mike.chen@gmail.com', password: hash(DEFAULT_PW),
+      email: 'mike.chen@gmail.com', password: DEFAULT_PW,
       firstName: 'Mike', lastName: 'Chen', phone: '+1-555-101-1002',
       role: 'customer', accountType: 'individual',
       tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(5),
       addresses: [{ label: 'Home', street: '123 Maple Dr', city: 'Seattle', state: 'WA', country: 'US', postalCode: '98101', isDefault: true }],
     },
     {
-      email: 'emma.davis@outlook.com', password: hash(DEFAULT_PW),
+      email: 'emma.davis@outlook.com', password: DEFAULT_PW,
       firstName: 'Emma', lastName: 'Davis', phone: '+1-555-101-1003',
       role: 'customer', accountType: 'individual',
       tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(10),
       addresses: [{ label: 'Home', street: '321 Pine St', city: 'Denver', state: 'CO', country: 'US', postalCode: '80201', isDefault: true }],
     },
     {
-      email: 'james.wilson@yahoo.com', password: hash(DEFAULT_PW),
+      email: 'james.wilson@yahoo.com', password: DEFAULT_PW,
       firstName: 'James', lastName: 'Wilson', phone: '+1-555-101-1004',
       role: 'customer', accountType: 'individual',
       tenant: 'default', isVerified: false, isActive: true,
     },
     // ── Business tenant (Acme Corp) ────────────────────────────────────
     {
-      email: 'robert.blake@acme-corp.com', password: hash(DEFAULT_PW),
+      email: 'robert.blake@acme-corp.com', password: DEFAULT_PW,
       firstName: 'Robert', lastName: 'Blake', phone: '+1-555-200-1001',
       role: 'merchant', accountType: 'business',
       organization: { name: 'Acme Corporation', registrationNumber: 'BIZ-2024-78901', taxId: 'EIN-12-3456789', industry: 'Industrial Supplies' },
@@ -156,28 +153,28 @@ export async function seedDevData(): Promise<void> {
       addresses: [{ label: 'HQ', street: '200 Industrial Ave', city: 'Dallas', state: 'TX', country: 'US', postalCode: '75201', isDefault: true }],
     },
     {
-      email: 'linda.torres@acme-corp.com', password: hash(DEFAULT_PW),
+      email: 'linda.torres@acme-corp.com', password: DEFAULT_PW,
       firstName: 'Linda', lastName: 'Torres', phone: '+1-555-200-1002',
       role: 'admin', accountType: 'business',
       organization: { name: 'Acme Corporation' },
       tenant: 'acme-corp', isVerified: true, isActive: true, lastLogin: daysAgo(1),
     },
     {
-      email: 'kevin.patel@outlook.com', password: hash(DEFAULT_PW),
+      email: 'kevin.patel@outlook.com', password: DEFAULT_PW,
       firstName: 'Kevin', lastName: 'Patel', phone: '+1-555-200-1003',
       role: 'customer', accountType: 'individual',
       tenant: 'acme-corp', isVerified: true, isActive: true, lastLogin: daysAgo(3),
       addresses: [{ label: 'Home', street: '500 Elm St', city: 'Houston', state: 'TX', country: 'US', postalCode: '77001', isDefault: true }],
     },
     {
-      email: 'nancy.kim@gmail.com', password: hash(DEFAULT_PW),
+      email: 'nancy.kim@gmail.com', password: DEFAULT_PW,
       firstName: 'Nancy', lastName: 'Kim', phone: '+1-555-200-1004',
       role: 'customer', accountType: 'individual',
       tenant: 'acme-corp', isVerified: true, isActive: true, lastLogin: daysAgo(7),
     },
     // ── Association tenant (Green Earth) ───────────────────────────────
     {
-      email: 'olivia.green@greenearth.org', password: hash(DEFAULT_PW),
+      email: 'olivia.green@greenearth.org', password: DEFAULT_PW,
       firstName: 'Olivia', lastName: 'Green', phone: '+1-555-300-1001',
       role: 'admin', accountType: 'association',
       organization: { name: 'Green Earth Association', mission: 'Promote sustainable living and environmental awareness through community action.', estimatedMembers: 250 },
@@ -185,33 +182,33 @@ export async function seedDevData(): Promise<void> {
       addresses: [{ label: 'Office', street: '50 Green Way', city: 'Portland', state: 'OR', country: 'US', postalCode: '97201', isDefault: true }],
     },
     {
-      email: 'david.rivers@gmail.com', password: hash(DEFAULT_PW),
+      email: 'david.rivers@gmail.com', password: DEFAULT_PW,
       firstName: 'David', lastName: 'Rivers', phone: '+1-555-300-1002',
       role: 'customer', accountType: 'individual',
       tenant: 'green-earth-assoc', isVerified: true, isActive: true, lastLogin: daysAgo(2),
       addresses: [{ label: 'Home', street: '88 River Rd', city: 'Portland', state: 'OR', country: 'US', postalCode: '97202', isDefault: true }],
     },
     {
-      email: 'maya.flores@yahoo.com', password: hash(DEFAULT_PW),
+      email: 'maya.flores@yahoo.com', password: DEFAULT_PW,
       firstName: 'Maya', lastName: 'Flores', phone: '+1-555-300-1003',
       role: 'customer', accountType: 'individual',
       tenant: 'green-earth-assoc', isVerified: true, isActive: true, lastLogin: daysAgo(4),
     },
     {
-      email: 'alex.storm@outlook.com', password: hash(DEFAULT_PW),
+      email: 'alex.storm@outlook.com', password: DEFAULT_PW,
       firstName: 'Alex', lastName: 'Storm', phone: '+1-555-300-1004',
       role: 'customer', accountType: 'individual',
       tenant: 'green-earth-assoc', isVerified: true, isActive: true, lastLogin: daysAgo(6),
       addresses: [{ label: 'Home', street: '12 Cloud Ct', city: 'Eugene', state: 'OR', country: 'US', postalCode: '97401', isDefault: true }],
     },
     {
-      email: 'chris.woods@gmail.com', password: hash(DEFAULT_PW),
+      email: 'chris.woods@gmail.com', password: DEFAULT_PW,
       firstName: 'Chris', lastName: 'Woods', phone: '+1-555-300-1005',
       role: 'customer', accountType: 'individual',
       tenant: 'green-earth-assoc', isVerified: true, isActive: true, lastLogin: daysAgo(14),
     },
     {
-      email: 'pat.meadow@gmail.com', password: hash(DEFAULT_PW),
+      email: 'pat.meadow@gmail.com', password: DEFAULT_PW,
       firstName: 'Pat', lastName: 'Meadow', phone: '+1-555-300-1006',
       role: 'customer', accountType: 'individual',
       tenant: 'green-earth-assoc', isVerified: false, isActive: true,

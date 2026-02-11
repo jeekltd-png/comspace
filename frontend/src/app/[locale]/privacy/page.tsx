@@ -7,7 +7,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-brand-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
           <p className="text-xl">Last updated: February 2, 2026</p>
@@ -152,7 +152,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
               </p>
               <a
                 href="/contact"
-                className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-block bg-brand-600 text-white px-8 py-3 rounded-lg hover:bg-brand-700 transition-colors"
               >
                 Contact Us
               </a>

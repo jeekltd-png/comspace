@@ -25,12 +25,22 @@ export const listPages: RequestHandler = async (req, res, next) => {
   }
 };
 
+const ALLOWED_PAGE_FIELDS = ['title', 'slug', 'content', 'published', 'seo', 'template'] as const;
+
+const pickPageFields = (obj: Record<string, any>): Record<string, any> => {
+  const result: Record<string, any> = {};
+  for (const key of ALLOWED_PAGE_FIELDS) {
+    if (key in obj) result[key] = obj[key];
+  }
+  return result;
+};
+
 export const createPage: RequestHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthRequest;
-    const body = req.body;
-    body.tenant = authReq.tenant;
-    const page = await Page.create(body);
+    const sanitized = pickPageFields(req.body);
+    sanitized.tenant = authReq.tenant;
+    const page = await Page.create(sanitized);
     res.status(201).json({ success: true, data: page });
   } catch (err) {
     next(err);
@@ -41,7 +51,8 @@ export const updatePage: RequestHandler = async (req, res, next) => {
   try {
     const authReq = req as AuthRequest;
     const { id } = req.params;
-    const page = await Page.findOneAndUpdate({ _id: id, tenant: authReq.tenant }, req.body, { new: true, runValidators: true });
+    const sanitized = pickPageFields(req.body);
+    const page = await Page.findOneAndUpdate({ _id: id, tenant: authReq.tenant }, sanitized, { new: true, runValidators: true });
     if (!page) return next(new CustomError('Page not found', 404));
     res.status(200).json({ success: true, data: page });
   } catch (err) {

@@ -13,8 +13,15 @@ export interface IWhiteLabel extends Document {
     fontFamily: string;
   };
   features: {
+    // Shopping
+    products: boolean;
+    pricing: boolean;
+    cart: boolean;
+    checkout: boolean;
+    // Fulfilment
     delivery: boolean;
     pickup: boolean;
+    // Community
     reviews: boolean;
     wishlist: boolean;
     chat: boolean;
@@ -66,9 +73,9 @@ const WhiteLabelSchema: Schema = new Schema(
     branding: {
       logo: { type: String, required: true },
       favicon: String,
-      primaryColor: { type: String, default: '#3B82F6' },
+      primaryColor: { type: String, default: '#9333ea' },
       secondaryColor: { type: String, default: '#10B981' },
-      accentColor: { type: String, default: '#F59E0B' },
+      accentColor: { type: String, default: '#ec4899' },
       fontFamily: { type: String, default: 'Inter, sans-serif' },
       // New asset metadata for richer image info
       assets: {
@@ -89,8 +96,15 @@ const WhiteLabelSchema: Schema = new Schema(
       }
     },
     features: {
+      // Shopping capabilities
+      products: { type: Boolean, default: true },
+      pricing: { type: Boolean, default: true },
+      cart: { type: Boolean, default: true },
+      checkout: { type: Boolean, default: true },
+      // Fulfilment
       delivery: { type: Boolean, default: true },
       pickup: { type: Boolean, default: true },
+      // Community
       reviews: { type: Boolean, default: true },
       wishlist: { type: Boolean, default: true },
       chat: { type: Boolean, default: false },

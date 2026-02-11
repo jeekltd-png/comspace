@@ -6,6 +6,10 @@ import { Toaster } from 'react-hot-toast';
 import { NextIntlClientProvider } from 'next-intl';
 import { defaultLocale } from '@/i18n';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { WhiteLabelProvider } from '@/contexts/WhiteLabelContext';
+import { CookieConsent } from '@/components/CookieConsent';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { CurrencyDetector } from '@/components/CurrencyDetector';
 import enMessages from '@/locales/en.json';
 
 const inter = Inter({
@@ -93,6 +97,26 @@ export default function RootLayout({
             }),
           }}
         />
+        {/* Structured data — WebSite with search action */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'ComSpace',
+              url: process.env.NEXT_PUBLIC_SITE_URL || 'https://comspace.store',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://comspace.store'}/search?q={search_term_string}`,
+                },
+                'query-input': 'required name=search_term_string',
+              },
+            }),
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased bg-surface-50 dark:bg-surface-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
         {/* Skip to content — accessibility */}
@@ -101,23 +125,29 @@ export default function RootLayout({
         </a>
         <NextIntlClientProvider locale={defaultLocale} messages={enMessages as any}>
           <ThemeProvider>
-            <Providers>
-              {children}
-              <Toaster
-                position="bottom-center"
-                toastOptions={{
-                  duration: 3000,
-                  style: {
-                    background: 'var(--foreground)',
-                    color: 'var(--background)',
-                    borderRadius: '1rem',
-                    padding: '12px 20px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                  },
-                }}
-              />
-            </Providers>
+            <WhiteLabelProvider>
+              <ErrorBoundary>
+              <Providers>
+                <CurrencyDetector />
+                {children}
+                <CookieConsent />
+                <Toaster
+                  position="bottom-center"
+                  toastOptions={{
+                    duration: 3000,
+                    style: {
+                      background: 'var(--foreground)',
+                      color: 'var(--background)',
+                      borderRadius: '1rem',
+                      padding: '12px 20px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                    },
+                  }}
+                />
+              </Providers>
+              </ErrorBoundary>
+            </WhiteLabelProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -4,8 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import apiClient from '@/lib/api';
 import { useAppDispatch } from '@/store/hooks';
 import { setCredentials, logout as reduxLogout } from '@/store/slices/authSlice';
-
-type User = any;
+import type { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;

@@ -9,6 +9,7 @@ import {
 } from '../controllers/product.controller';
 import { protect, authorize } from '../middleware/auth.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
+import { requireFeature } from '../middleware/feature-gate.middleware';
 import {
   validate,
   createProductValidation,
@@ -20,9 +21,10 @@ const router = Router();
 
 router.use(tenantMiddleware);
 
-router.get('/', getProducts);
-router.get('/search', searchProducts);
-router.get('/:id', validate(mongoIdParam()), getProduct);
+// Public product browsing — gated by 'products' feature
+router.get('/', requireFeature('products'), getProducts);
+router.get('/search', requireFeature('products'), searchProducts);
+router.get('/:id', requireFeature('products'), validate(mongoIdParam()), getProduct);
 
 router.use(protect);
 // Allow admin-like roles (including superadmin and seeded admin1/admin2) and merchants

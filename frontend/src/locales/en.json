@@ -18,6 +18,7 @@
     },
     "featured": {
       "title": "Featured Products",
+      "subtitle": "Handpicked for you",
       "viewAll": "View All Products"
     },
     "categories": {

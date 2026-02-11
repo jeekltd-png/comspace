@@ -69,7 +69,7 @@ export default function AddressesPage() {
 
         <div className="flex gap-3">
           <button onClick={addAddress} className="px-4 py-2 bg-gray-100 rounded">Add address</button>
-          <button onClick={save} disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
+          <button onClick={save} disabled={loading} className="px-4 py-2 bg-brand-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
         </div>
 
         {message && <div className="text-sm text-green-600">{message}</div>}

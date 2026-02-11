@@ -9,7 +9,7 @@ interface ProductBadgeProps {
 }
 
 const badgeStyles: Record<BadgeType, { bg: string; text: string; icon?: string }> = {
-  new: { bg: 'bg-blue-500', text: 'text-white', icon: '✨' },
+  new: { bg: 'bg-brand-500', text: 'text-white', icon: '✨' },
   sale: { bg: 'bg-red-500', text: 'text-white', icon: '🔥' },
   hot: { bg: 'bg-orange-500', text: 'text-white', icon: '🔥' },
   limited: { bg: 'bg-purple-500', text: 'text-white', icon: '⚡' },

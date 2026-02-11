@@ -44,7 +44,7 @@ export default function PreferencesPage() {
       </label>
 
       <div className="mt-4">
-        <button onClick={save} disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
+        <button onClick={save} disabled={loading} className="px-4 py-2 bg-brand-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
       </div>
 
       {message && <div className="text-sm text-green-600 mt-3">{message}</div>}

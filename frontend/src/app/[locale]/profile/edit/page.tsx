@@ -54,7 +54,7 @@ export default function ProfileEditPage() {
         {message && <div className="text-sm text-green-600">{message}</div>}
 
         <div className="flex justify-end">
-          <button disabled={loading} type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
+          <button disabled={loading} type="submit" className="px-4 py-2 bg-brand-600 text-white rounded">{loading ? 'Saving...' : 'Save'}</button>
         </div>
       </form>
     </div>

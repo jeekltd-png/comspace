@@ -75,7 +75,7 @@ export default function RecentlyViewed({ locale }: { locale: string }) {
             >
               <div className="aspect-square relative mb-3 overflow-hidden rounded-md">
                 <Image
-                  src={product.images[0] || '/images/placeholder.png'}
+                  src={product.images[0] || '/images/placeholder.svg'}
                   alt={product.name}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform"
@@ -84,7 +84,7 @@ export default function RecentlyViewed({ locale }: { locale: string }) {
               <h3 className="text-sm font-medium line-clamp-2 mb-2">
                 {product.name}
               </h3>
-              <p className="text-lg font-bold text-blue-600">
+              <p className="text-lg font-bold text-brand-600">
                 ${product.price.toFixed(2)}
               </p>
             </Link>

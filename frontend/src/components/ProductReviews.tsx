@@ -83,7 +83,7 @@ export default function ProductReviews({
 
         <button
           onClick={() => setShowReviewForm(!showReviewForm)}
-          className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="mt-4 w-full bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors"
         >
           Write a Review
         </button>
@@ -99,13 +99,13 @@ export default function ProductReviews({
 
       {/* Filter Info */}
       {filter !== 'all' && (
-        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+        <div className="flex items-center justify-between bg-brand-50 dark:bg-brand-900/20 p-3 rounded-lg">
           <span className="text-sm dark:text-gray-300">
             Showing {filteredReviews.length} {filter}-star reviews
           </span>
           <button
             onClick={() => setFilter('all')}
-            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
           >
             Clear filter
           </button>
@@ -181,8 +181,8 @@ function ReviewCard({ review }: { review: Review }) {
           disabled={hasVoted}
           className={`flex items-center gap-1 ${
             hasVoted 
-              ? 'text-blue-600 dark:text-blue-400' 
-              : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'
+              ? 'text-brand-600 dark:text-brand-400' 
+              : 'text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400'
           } transition-colors`}
         >
           <FiThumbsUp size={16} />
@@ -247,7 +247,7 @@ function ReviewForm({ productId, onClose }: { productId: string; onClose: () => 
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Sum up your experience"
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 dark:text-white"
           required
         />
       </div>
@@ -262,7 +262,7 @@ function ReviewForm({ productId, onClose }: { productId: string; onClose: () => 
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your experience with this product"
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-700 dark:text-white"
           required
         />
       </div>
@@ -272,7 +272,7 @@ function ReviewForm({ productId, onClose }: { productId: string; onClose: () => 
         <button
           type="submit"
           disabled={rating === 0}
-          className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="flex-1 bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Submit Review
         </button>

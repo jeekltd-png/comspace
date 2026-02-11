@@ -34,7 +34,7 @@ const statusConfig: Record<string, { color: string; icon: any; label: string; bg
   lapsed: { color: 'text-amber-700 dark:text-amber-400', icon: FiAlertCircle, label: 'Lapsed', bg: 'bg-amber-100 dark:bg-amber-900/30' },
   suspended: { color: 'text-red-700 dark:text-red-400', icon: FiXCircle, label: 'Suspended', bg: 'bg-red-100 dark:bg-red-900/30' },
   cancelled: { color: 'text-gray-700 dark:text-gray-400', icon: FiXCircle, label: 'Cancelled', bg: 'bg-gray-100 dark:bg-gray-900/30' },
-  pending: { color: 'text-blue-700 dark:text-blue-400', icon: FiClock, label: 'Pending', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+  pending: { color: 'text-brand-700 dark:text-brand-400', icon: FiClock, label: 'Pending', bg: 'bg-brand-100 dark:bg-brand-900/30' },
 };
 
 export default function AdminMembersPage() {

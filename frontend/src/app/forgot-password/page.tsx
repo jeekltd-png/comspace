@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
         {error && <div className="text-sm text-red-600">{error}</div>}
 
         <div className="flex justify-end">
-          <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded">{loading ? 'Sending...' : 'Send reset email'}</button>
+          <button type="submit" disabled={loading} className="px-4 py-2 bg-brand-600 text-white rounded">{loading ? 'Sending...' : 'Send reset email'}</button>
         </div>
       </form>
     </div>

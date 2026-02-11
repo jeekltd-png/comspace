@@ -57,12 +57,12 @@ const statusConfig: Record<string, { color: string; icon: any; label: string }> 
   lapsed: { color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400', icon: FiAlertCircle, label: 'Lapsed' },
   suspended: { color: 'text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400', icon: FiX, label: 'Suspended' },
   cancelled: { color: 'text-gray-600 bg-gray-50 dark:bg-gray-900/30 dark:text-gray-400', icon: FiX, label: 'Cancelled' },
-  pending: { color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400', icon: FiClock, label: 'Pending' },
+  pending: { color: 'text-brand-600 bg-brand-50 dark:bg-brand-900/30 dark:text-brand-400', icon: FiClock, label: 'Pending' },
 };
 
 const duesStatusConfig: Record<string, { color: string; label: string }> = {
   paid: { color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', label: 'Paid' },
-  pending: { color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', label: 'Pending' },
+  pending: { color: 'bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400', label: 'Pending' },
   overdue: { color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', label: 'Overdue' },
   failed: { color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400', label: 'Failed' },
   waived: { color: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400', label: 'Waived' },

@@ -6,7 +6,9 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
 import { FiShoppingCart, FiUser, FiMenu, FiSearch, FiX, FiPackage, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import { useRouter } from 'next/navigation';
+import { useFocusTrap } from '@/hooks/useAccessibility';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +22,11 @@ export function Header() {
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const { cart: cartEnabled, products: productsEnabled } = useFeatureFlags('cart', 'products');
+
+  // Trap focus inside mobile drawer when open
+  useFocusTrap(isMenuOpen, drawerRef);
 
   // Track scroll for glass effect
   useEffect(() => {
@@ -46,6 +53,29 @@ export function Header() {
 
   // Close mobile menu on route change
   useEffect(() => { setIsMenuOpen(false); }, []);
+
+  // Keyboard support: Escape closes menus
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false);
+        setIsProfileOpen(false);
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isMenuOpen]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -101,9 +131,11 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+              {productsEnabled && (
               <Link href="/products" className="btn-ghost text-sm">
                 Products
               </Link>
+              )}
               <ThemeToggle />
 
               {/* Search toggle for mobile */}
@@ -115,7 +147,8 @@ export function Header() {
                 <FiSearch className="w-5 h-5" />
               </button>
 
-              {/* Cart */}
+              {/* Cart — only when cart feature is on */}
+              {cartEnabled && (
               <Link
                 href="/cart"
                 className="btn-ghost p-2 relative"
@@ -128,6 +161,7 @@ export function Header() {
                   </span>
                 )}
               </Link>
+              )}
 
               {/* Profile */}
               {isAuthenticated ? (
@@ -195,6 +229,7 @@ export function Header() {
               <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="btn-ghost p-2" aria-label="Search">
                 <FiSearch className="w-5 h-5" />
               </button>
+              {cartEnabled && (
               <Link href="/cart" className="btn-ghost p-2 relative" aria-label={`Cart (${cartCount})`}>
                 <FiShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
@@ -203,6 +238,7 @@ export function Header() {
                   </span>
                 )}
               </Link>
+              )}
               <button
                 className="btn-ghost p-2"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -236,50 +272,75 @@ export function Header() {
           </div>
         )}
 
-        {/* Mobile menu */}
+        {/* Mobile menu - slide-in drawer */}
         {isMenuOpen && (
-          <nav className="md:hidden border-t border-gray-200 dark:border-gray-800 p-4 space-y-1 animate-slide-down bg-white dark:bg-surface-950" aria-label="Mobile navigation">
-            <Link href="/products" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
-              Products
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                  <FiUser className="w-4 h-4" /> Profile
-                </Link>
-                <Link href="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                  <FiPackage className="w-4 h-4" /> Orders
-                </Link>
-                {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
-                  <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <FiSettings className="w-4 h-4" /> Admin Panel
-                  </Link>
-                )}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
-                  <div className="flex items-center justify-between px-4 py-2">
-                    <span className="text-sm text-gray-500">Theme</span>
-                    <ThemeToggle />
-                  </div>
-                  <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                    <FiLogOut className="w-4 h-4" /> Sign Out
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2 space-y-2">
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-gray-500">Theme</span>
-                  <ThemeToggle />
-                </div>
-                <Link href="/login" onClick={() => setIsMenuOpen(false)} className="block text-center btn-ghost w-full">
-                  Sign In
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)} className="block text-center btn-primary w-full">
-                  Sign Up
-                </Link>
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+              onClick={() => setIsMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Drawer */}
+            <nav
+              ref={drawerRef}
+              className="fixed top-0 right-0 bottom-0 w-[300px] max-w-[85vw] z-50 md:hidden bg-white dark:bg-surface-950 shadow-2xl animate-slide-in-right overflow-y-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                <span className="text-lg font-bold text-gradient">ComSpace</span>
+                <button onClick={() => setIsMenuOpen(false)} className="btn-ghost p-2" aria-label="Close menu">
+                  <FiX className="w-5 h-5" />
+                </button>
               </div>
-            )}
-          </nav>
+              <div className="p-4 space-y-1">
+                {productsEnabled && (
+                <Link href="/products" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                  Products
+                </Link>
+                )}
+                {isAuthenticated ? (
+                  <>
+                    <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      <FiUser className="w-4 h-4" /> Profile
+                    </Link>
+                    <Link href="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      <FiPackage className="w-4 h-4" /> Orders
+                    </Link>
+                    {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
+                      <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <FiSettings className="w-4 h-4" /> Admin Panel
+                      </Link>
+                    )}
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+                      <div className="flex items-center justify-between px-4 py-2">
+                        <span className="text-sm text-gray-500">Theme</span>
+                        <ThemeToggle />
+                      </div>
+                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                        <FiLogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2 space-y-2">
+                    <div className="flex items-center justify-between px-4 py-2">
+                      <span className="text-sm text-gray-500">Theme</span>
+                      <ThemeToggle />
+                    </div>
+                    <Link href="/login" onClick={() => setIsMenuOpen(false)} className="block text-center btn-ghost w-full">
+                      Sign In
+                    </Link>
+                    <Link href="/register" onClick={() => setIsMenuOpen(false)} className="block text-center btn-primary w-full">
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </nav>
+          </>
         )}
       </header>
     </>

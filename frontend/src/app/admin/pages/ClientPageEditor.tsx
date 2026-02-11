@@ -37,7 +37,7 @@ export default function ClientPageEditor({ page }: { page?: any }) {
         <label className="flex items-center gap-2"><input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} /> Published</label>
 
         <div className="flex items-center gap-2">
-          <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded">{saving ? 'Saving...' : 'Save'}</button>
+          <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-brand-600 text-white rounded">{saving ? 'Saving...' : 'Save'}</button>
           {message && <div className="text-sm text-green-600">{message}</div>}
         </div>
       </div>

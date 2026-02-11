@@ -19,7 +19,7 @@ export const FieldHelp: React.FC<FieldHelpProps> = ({ id, title, text, className
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-4 w-4 shrink-0 text-blue-500"
+        className="h-4 w-4 shrink-0 text-brand-500"
         viewBox="0 0 20 20"
         fill="currentColor"
         aria-hidden="true"

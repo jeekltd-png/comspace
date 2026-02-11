@@ -55,7 +55,7 @@ export default function ClientDemo() {
           </div>
         </div>
         <div>
-          <a href={`/admin/white-label`} className="text-sm text-blue-600">Admin: White Label</a>
+          <a href={`/admin/white-label`} className="text-sm text-brand-600">Admin: White Label</a>
         </div>
       </header>
 

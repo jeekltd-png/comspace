@@ -1,23 +1,43 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { CartItem } from '@/types';
 
-interface CartItem {
-  id: string;
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  variant?: string;
-}
+// SSR-safe localStorage helpers
+const getCartFromStorage = (): { items: CartItem[]; total: number } => {
+  if (typeof window === 'undefined') return { items: [], total: 0 };
+  try {
+    const stored = localStorage.getItem('comspace_cart');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        items: parsed.items || [],
+        total: (parsed.items || []).reduce(
+          (sum: number, item: CartItem) => sum + item.price * item.quantity, 0
+        ),
+      };
+    }
+  } catch { /* corrupted data, ignore */ }
+  return { items: [], total: 0 };
+};
+
+const persistCart = (items: CartItem[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('comspace_cart', JSON.stringify({ items }));
+  } catch { /* storage full, ignore */ }
+};
+
+const computeTotal = (items: CartItem[]) =>
+  items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
 interface CartState {
   items: CartItem[];
   total: number;
 }
 
+const stored = getCartFromStorage();
 const initialState: CartState = {
-  items: [],
-  total: 0,
+  items: stored.items,
+  total: stored.total,
 };
 
 const cartSlice = createSlice({
@@ -37,10 +57,8 @@ const cartSlice = createSlice({
         state.items.push(action.payload);
       }
 
-      state.total = state.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
+      state.total = computeTotal(state.items);
+      persistCart(state.items);
     },
     updateQuantity: (
       state,
@@ -49,29 +67,24 @@ const cartSlice = createSlice({
       const item = state.items.find(i => i.id === action.payload.id);
       if (item) {
         item.quantity = action.payload.quantity;
-        state.total = state.items.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        );
+        state.total = computeTotal(state.items);
+        persistCart(state.items);
       }
     },
     removeItem: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
-      state.total = state.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
+      state.total = computeTotal(state.items);
+      persistCart(state.items);
     },
     clearCart: state => {
       state.items = [];
       state.total = 0;
+      persistCart([]);
     },
     setCart: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
-      state.total = action.payload.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
+      state.total = computeTotal(action.payload);
+      persistCart(action.payload);
     },
   },
 });

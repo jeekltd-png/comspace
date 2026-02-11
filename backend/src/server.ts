@@ -21,6 +21,7 @@ import whiteLabelRoutes from './routes/white-label.routes';
 import newsletterRoutes from './routes/newsletter.routes';
 import reviewRoutes from './routes/review.routes';
 import membershipRoutes from './routes/membership.routes';
+import tenantRoutes from './routes/tenant.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -206,6 +207,14 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), han
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+// Cookie parser (needed for CSRF double-submit pattern)
+import cookieParser from 'cookie-parser';
+app.use(cookieParser());
+
+// Sanitize all inputs (XSS prevention)
+import { sanitizeInputs } from './middleware/sanitize.middleware';
+app.use(sanitizeInputs);
+
 // Request timeout (30 seconds)
 app.use((_req, _res, next) => {
   _req.setTimeout(30000);
@@ -214,8 +223,21 @@ app.use((_req, _res, next) => {
 });
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
+// Structured request/response logging (JSON)
+import { requestLogger } from './middleware/request-logger.middleware';
+app.use(requestLogger);
+
 // Serve uploaded files from /uploads in dev and production when using local storage
 import path from 'path';
+import fs from 'fs';
+
+// Cache version at startup
+let _cachedVersion = 'unknown';
+try {
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+  _cachedVersion = pkg.version || _cachedVersion;
+} catch (_) {}
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Request ID
@@ -228,19 +250,8 @@ app.use(rateLimiter);
 configurePassport(passport);
 app.use(passport.initialize());
 
-// Health check
-app.get('/health', async (_req: Request, res: Response) => {
-  // read package.json to get version
-  const fs = await import('fs');
-  const path = await import('path');
-  let version = 'unknown';
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
-    version = pkg.version || version;
-  } catch (e) {
-    // ignore
-  }
-
+// Health check — uses cached version from startup
+app.get('/health', (_req: Request, res: Response) => {
   const commit = process.env.GIT_COMMIT || process.env.COMMIT_SHA || 'unknown';
 
   // dep statuses
@@ -258,7 +269,7 @@ app.get('/health', async (_req: Request, res: Response) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    version,
+    version: _cachedVersion,
     commit,
     deps: {
       mongo: mongoConnected,
@@ -266,6 +277,11 @@ app.get('/health', async (_req: Request, res: Response) => {
     },
   });
 });
+
+// CSRF protection (double-submit cookie pattern)
+import { csrfProtection, setCsrfToken } from './middleware/csrf.middleware';
+app.get('/api/auth/csrf-token', setCsrfToken);
+app.use('/api', csrfProtection);
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -275,6 +291,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/tenants', tenantRoutes);
 app.use('/api/currency', currencyRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/white-label', whiteLabelRoutes);
@@ -282,6 +299,10 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/membership', membershipRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
+
+// Webhook management routes (admin only)
+import webhookRoutes from './routes/webhook.routes';
+app.use('/api/webhooks', webhookRoutes);
 
 // Debug routes: NEVER in production. Only in development/test with explicit flag.
 if (
@@ -293,6 +314,17 @@ if (
   app.use('/__debug', debugRoutes);
   logger.warn('⚠️  Debug routes enabled at /__debug — DO NOT use in production');
 }
+
+// Root health / welcome endpoint
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    name: 'ComSpace API',
+    version: '1.0.0',
+    status: 'healthy',
+    docs: '/api',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

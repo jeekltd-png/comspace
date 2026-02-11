@@ -31,7 +31,7 @@ export default function AdminDashboard() {
             </h1>
             <Link 
               href="/"
-              className="text-blue-600 hover:text-blue-800"
+              className="text-brand-600 hover:text-brand-800"
             >
               ← Back to Store
             </Link>
@@ -90,6 +90,12 @@ export default function AdminDashboard() {
               title="Manage Users"
               description="View and edit users"
             />
+            <ActionButton
+              href="/admin/theme"
+              icon="🎨"
+              title="Theme Editor"
+              description="Colors, fonts & branding"
+            />
           </div>
         </div>
 
@@ -128,7 +134,7 @@ interface StatCardProps {
 
 function StatCard({ title, value, icon, color }: StatCardProps) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
+    blue: 'bg-brand-50 text-brand-600',
     green: 'bg-green-50 text-green-600',
     purple: 'bg-purple-50 text-purple-600',
     yellow: 'bg-yellow-50 text-yellow-600'
@@ -160,7 +166,7 @@ function ActionButton({ href, icon, title, description }: ActionButtonProps) {
   return (
     <Link
       href={href}
-      className="flex items-start p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
+      className="flex items-start p-4 border-2 border-gray-200 rounded-lg hover:border-brand-500 hover:shadow-md transition-all"
     >
       <span className="text-3xl mr-4">{icon}</span>
       <div>
@@ -179,7 +185,7 @@ interface ActivityItemProps {
 
 function ActivityItem({ action, description, time }: ActivityItemProps) {
   return (
-    <div className="flex items-start border-l-4 border-blue-500 pl-4 py-2">
+    <div className="flex items-start border-l-4 border-brand-500 pl-4 py-2">
       <div className="flex-1">
         <p className="font-semibold text-gray-900">{action}</p>
         <p className="text-gray-600 text-sm">{description}</p>

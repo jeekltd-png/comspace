@@ -7,9 +7,11 @@ export const getExchangeRates: RequestHandler = async (req, res, next) => {
   try {
     const { base = 'USD' } = req.query;
 
-    // Check cache first
     const cacheKey = `rates:${base}`;
-    const cached = await redisClient.get(cacheKey);
+    let cached: string | null = null;
+    try {
+      if (redisClient) cached = await redisClient.get(cacheKey);
+    } catch (_) { /* Redis unavailable, skip cache */ }
 
     if (cached) {
       return res.status(200).json({
@@ -18,9 +20,9 @@ export const getExchangeRates: RequestHandler = async (req, res, next) => {
       });
     }
 
-    // Fetch from API
     const response = await axios.get(
-      `${process.env.CURRENCY_API_URL}/${process.env.CURRENCY_API_KEY}/latest/${base}`
+      `${process.env.CURRENCY_API_URL}/${process.env.CURRENCY_API_KEY}/latest/${base}`,
+      { timeout: 5000 }
     );
 
     const data = {
@@ -29,8 +31,9 @@ export const getExchangeRates: RequestHandler = async (req, res, next) => {
       timestamp: response.data.time_last_update_unix,
     };
 
-    // Cache for 1 hour
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(data));
+    try {
+      if (redisClient) await redisClient.setEx(cacheKey, 3600, JSON.stringify(data));
+    } catch (_) { /* Redis unavailable */ }
 
     res.status(200).json({
       success: true,
@@ -52,15 +55,21 @@ export const convertCurrency: RequestHandler = async (req, res, next) => {
     }
 
     const cacheKey = `convert:${from}:${to}`;
-    let rate = (await redisClient.get(cacheKey)) as string | null;
+    let rate: string | null = null;
+    try {
+      if (redisClient) rate = await redisClient.get(cacheKey);
+    } catch (_) { /* Redis unavailable */ }
 
     if (!rate) {
       const response = await axios.get(
-        `${process.env.CURRENCY_API_URL}/${process.env.CURRENCY_API_KEY}/pair/${from}/${to}`
+        `${process.env.CURRENCY_API_URL}/${process.env.CURRENCY_API_KEY}/pair/${from}/${to}`,
+        { timeout: 5000 }
       );
 
       rate = response.data.conversion_rate.toString();
-      await redisClient.setEx(cacheKey, 3600, rate as string);
+      try {
+        if (redisClient) await redisClient.setEx(cacheKey, 3600, rate as string);
+      } catch (_) { /* Redis unavailable */ }
     }
 
     const rateFloat = parseFloat(rate as string);

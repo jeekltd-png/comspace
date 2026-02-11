@@ -2,42 +2,99 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  # ─────────── Backend ───────────
+  backend:
+    name: Backend — Lint, Type-check & Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: pnpm
+          cache-dependency-path: backend/pnpm-lock.yaml
 
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
+      - run: pnpm install --frozen-lockfile
 
-      - name: Start infrastructure (Docker Compose)
-        run: docker-compose up -d
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
 
-      - name: Typecheck & lint
-        run: |
-          npm --prefix backend run build
-          npm run lint --workspaces
+      - name: Unit & integration tests
+        run: pnpm test -- --ci --forceExit --coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci-jwt-secret
+          JWT_REFRESH_SECRET: ci-refresh-secret
+          NO_DOCKER: 'true'
 
-      - name: Start backend (CI)
-        run: |
-          nohup npm --prefix backend run start:ci > backend-server.log 2>&1 &
-          n=0
-          until curl -sS --fail http://localhost:5000/health || [ $n -ge 30 ]; do n=$((n+1)); sleep 1; done
-          cat backend-server.log
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/
 
-      - name: Smoke tests
-        run: npm --prefix backend run smoke
+  # ─────────── Frontend ───────────
+  frontend:
+    name: Frontend — Type-check & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
 
-      - name: Run RBAC tests
-        run: npm --prefix backend test -- src/__tests__/admin.rbac.test.ts -i --runInBand --silent
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: Production build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:5000/api
+
+  # ─────────── Docker (main only) ───────────
+  docker:
+    name: Docker — Build Images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, frontend]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t comspace-backend:ci ./backend
+
+      - name: Build frontend image
+        run: docker build -t comspace-frontend:ci ./frontend

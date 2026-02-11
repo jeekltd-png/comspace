@@ -17,7 +17,7 @@ export default function AdminProductCreate() {
   const isAdmin = !!user && (user.role === 'admin' || user.role === 'merchant' || user.role === 'superadmin' || user.role?.startsWith?.('admin'));
 
   if (authLoading) return <div className="p-6">Loading...</div>;
-  if (!user) return <div className="p-6">You must <a href="/login" className="text-blue-600">sign in</a> as an admin to access this page.</div>;
+  if (!user) return <div className="p-6">You must <a href="/login" className="text-brand-600">sign in</a> as an admin to access this page.</div>;
   if (!isAdmin) return <div className="p-6">You are not authorized to create products.</div>;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

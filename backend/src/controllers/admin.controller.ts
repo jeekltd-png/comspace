@@ -7,17 +7,81 @@ import Product from '../models/product.model';
 export const getDashboardStats: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const [totalUsers, totalOrders, totalProducts, recentOrders] = await Promise.all([
-      User.countDocuments({ tenant: authReq.tenant }),
-      Order.countDocuments({ tenant: authReq.tenant }),
-      Product.countDocuments({ tenant: authReq.tenant }),
-      Order.find({ tenant: authReq.tenant }).sort('-createdAt').limit(10),
+    // Superadmin can view any tenant's dashboard via ?tenantId=xxx
+    const tenant = (authReq.user?.role === 'superadmin' && req.query.tenantId)
+      ? (req.query.tenantId as string)
+      : authReq.tenant;
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const [
+      totalUsers,
+      totalOrders,
+      totalProducts,
+      recentOrders,
+      revenueAll,
+      revenue30d,
+      newUsers30d,
+      ordersByStatus,
+      topProducts,
+      dailyRevenue,
+    ] = await Promise.all([
+      User.countDocuments({ tenant }),
+      Order.countDocuments({ tenant }),
+      Product.countDocuments({ tenant }),
+      Order.find({ tenant }).sort('-createdAt').limit(10).populate('user', 'firstName lastName email'),
+      // Total revenue (all time)
+      Order.aggregate([
+        { $match: { tenant, paymentStatus: 'completed' } },
+        { $group: { _id: null, total: { $sum: '$total' }, count: { $sum: 1 } } },
+      ]),
+      // Revenue last 30 days
+      Order.aggregate([
+        { $match: { tenant, paymentStatus: 'completed', createdAt: { $gte: thirtyDaysAgo } } },
+        { $group: { _id: null, total: { $sum: '$total' }, count: { $sum: 1 } } },
+      ]),
+      // New users last 30 days
+      User.countDocuments({ tenant, createdAt: { $gte: thirtyDaysAgo } }),
+      // Orders grouped by status
+      Order.aggregate([
+        { $match: { tenant } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]),
+      // Top 5 selling products
+      Order.aggregate([
+        { $match: { tenant, paymentStatus: 'completed' } },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.product',
+            name: { $first: '$items.name' },
+            totalSold: { $sum: '$items.quantity' },
+            totalRevenue: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+          },
+        },
+        { $sort: { totalSold: -1 } },
+        { $limit: 5 },
+      ]),
+      // Daily revenue last 7 days
+      Order.aggregate([
+        { $match: { tenant, paymentStatus: 'completed', createdAt: { $gte: sevenDaysAgo } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+            revenue: { $sum: '$total' },
+            orders: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]),
     ]);
 
-    const totalRevenue = await Order.aggregate([
-      { $match: { tenant: authReq.tenant, paymentStatus: 'completed' } },
-      { $group: { _id: null, total: { $sum: '$total' } } },
-    ]);
+    // Average order value
+    const avgOrderValue = revenueAll[0]
+      ? Math.round((revenueAll[0].total / revenueAll[0].count) * 100) / 100
+      : 0;
 
     res.status(200).json({
       success: true,
@@ -26,9 +90,19 @@ export const getDashboardStats: RequestHandler = async (req, res, next) => {
           totalUsers,
           totalOrders,
           totalProducts,
-          totalRevenue: totalRevenue[0]?.total || 0,
+          totalRevenue: revenueAll[0]?.total || 0,
+          revenue30d: revenue30d[0]?.total || 0,
+          orders30d: revenue30d[0]?.count || 0,
+          newUsers30d,
+          avgOrderValue,
         },
         recentOrders,
+        ordersByStatus: ordersByStatus.reduce(
+          (acc: Record<string, number>, cur: any) => ({ ...acc, [cur._id]: cur.count }),
+          {}
+        ),
+        topProducts,
+        dailyRevenue,
       },
     });
   } catch (error) {

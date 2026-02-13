@@ -33,7 +33,7 @@ export const registerValidation = [
   body('email')
     .trim()
     .isEmail()
-    .normalizeEmail()
+    .normalizeEmail({ gmail_remove_dots: false })
     .withMessage('A valid email is required'),
   body('password')
     .isLength({ min: 8 })
@@ -67,7 +67,7 @@ export const loginValidation = [
   body('email')
     .trim()
     .isEmail()
-    .normalizeEmail()
+    .normalizeEmail({ gmail_remove_dots: false })
     .withMessage('A valid email is required'),
   body('password')
     .notEmpty()
@@ -78,7 +78,7 @@ export const forgotPasswordValidation = [
   body('email')
     .trim()
     .isEmail()
-    .normalizeEmail()
+    .normalizeEmail({ gmail_remove_dots: false })
     .withMessage('A valid email is required'),
 ];
 
@@ -282,7 +282,7 @@ export const newsletterSubscribeValidation = [
   body('email')
     .trim()
     .isEmail()
-    .normalizeEmail()
+    .normalizeEmail({ gmail_remove_dots: false })
     .withMessage('A valid email is required'),
 ];
 
@@ -325,7 +325,7 @@ export const createWhiteLabelValidation = [
   body('contact.email')
     .trim()
     .isEmail()
-    .normalizeEmail()
+    .normalizeEmail({ gmail_remove_dots: false })
     .withMessage('A valid contact email is required'),
 ];
 

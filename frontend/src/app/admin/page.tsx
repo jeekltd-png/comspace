@@ -58,6 +58,13 @@ const adminCards = [
     color: 'from-teal-500/10 to-cyan-500/10 border-teal-200 dark:border-teal-800',
   },
   {
+    href: '/admin/vendors',
+    icon: '🏪',
+    title: 'Vendor Management',
+    description: 'Review, approve & manage marketplace vendors',
+    color: 'from-orange-500/10 to-amber-500/10 border-orange-200 dark:border-orange-800',
+  },
+  {
     href: '/admin/theme',
     icon: '🎨',
     title: 'Theme Editor',

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import crypto from 'crypto';
 import User from '../models/user.model';
+import VendorProfile from '../models/vendor-profile.model';
 import WhiteLabel from '../models/white-label.model';
 import { CustomError } from '../middleware/error.middleware';
 import {
@@ -37,7 +38,15 @@ export const register: RequestHandler = async (req, res, next) => {
     let role: string = 'customer';
     let tenantId = authReq.tenant || 'default';
 
-    if (acctType === 'association' || acctType === 'business') {
+    // New: Support "sellOnMarketplace" flag — business/association user becomes a
+    // merchant on the current tenant WITHOUT creating a separate white-label.
+    const sellOnMarketplace = req.body.sellOnMarketplace === true;
+    const showcaseOnly = req.body.showcaseOnly === true;
+
+    if ((sellOnMarketplace || showcaseOnly) && (acctType === 'business' || acctType === 'association')) {
+      // Stay on the current tenant, assign merchant role
+      role = 'merchant';
+    } else if (acctType === 'association' || acctType === 'business') {
       // Create a new tenant (white-label) for this organization
       const slug = organization.name
         .toLowerCase()
@@ -102,6 +111,31 @@ export const register: RequestHandler = async (req, res, next) => {
       } : undefined,
       tenant: tenantId,
     });
+
+    // Auto-create VendorProfile for showcase registrations
+    if (showcaseOnly && organization?.name) {
+      const slug = organization.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .substring(0, 60);
+      try {
+        await VendorProfile.create({
+          userId: user._id,
+          storeName: organization.name,
+          slug: `${slug}-${Date.now().toString(36)}`,
+          shortDescription: organization.industry
+            ? organization.industry.charAt(0).toUpperCase() + organization.industry.slice(1)
+            : 'Local business',
+          profileType: 'showcase',
+          isApproved: false,
+          isActive: true,
+          tenant: tenantId,
+        });
+      } catch (vpErr) {
+        console.log('Auto-create vendor profile skipped:', (vpErr as Error).message);
+      }
+    }
 
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');

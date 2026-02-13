@@ -6,6 +6,7 @@ import {
   updateProduct,
   deleteProduct,
   searchProducts,
+  getMyProducts,
 } from '../controllers/product.controller';
 import { protect, authorize } from '../middleware/auth.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
@@ -24,6 +25,10 @@ router.use(tenantMiddleware);
 // Public product browsing — gated by 'products' feature
 router.get('/', requireFeature('products'), getProducts);
 router.get('/search', requireFeature('products'), searchProducts);
+
+// Merchant's own products (must come before /:id to avoid matching 'mine' as an ID)
+router.get('/mine', protect, authorize('merchant'), getMyProducts);
+
 router.get('/:id', requireFeature('products'), validate(mongoIdParam()), getProduct);
 
 router.use(protect);

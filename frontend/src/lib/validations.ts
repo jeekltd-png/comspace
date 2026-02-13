@@ -17,6 +17,7 @@ export const registerSchema = z
     confirmPassword: z.string().min(1, 'Please confirm your password'),
     phone: z.string().optional(),
     accountType: z.enum(['individual', 'business', 'association']),
+    sellOnMarketplace: z.boolean().optional().default(false),
     orgName: z.string().optional(),
     regNumber: z.string().optional(),
     taxId: z.string().optional(),

@@ -23,6 +23,7 @@ import reviewRoutes from './routes/review.routes';
 import membershipRoutes from './routes/membership.routes';
 import tenantRoutes from './routes/tenant.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import vendorRoutes from './routes/vendor.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -301,6 +302,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/membership', membershipRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/vendors', vendorRoutes);
 
 // Webhook management routes (admin only)
 import webhookRoutes from './routes/webhook.routes';

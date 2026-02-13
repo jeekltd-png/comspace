@@ -21,18 +21,21 @@ import {
   FiCheck,
   FiUsers,
   FiBriefcase,
-  FiShoppingBag,
+  FiGlobe,
   FiHash,
   FiFileText,
   FiTarget,
+  FiShoppingCart,
 } from 'react-icons/fi';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
 
 type AccountType = 'individual' | 'business' | 'association';
 
+type RegistrationMode = 'individual' | 'business' | 'association' | 'marketplace-vendor' | 'showcase';
+
 const accountTypeOptions: {
-  value: AccountType;
+  value: RegistrationMode;
   label: string;
   description: string;
   icon: React.ElementType;
@@ -40,15 +43,29 @@ const accountTypeOptions: {
 }[] = [
   {
     value: 'individual',
-    label: 'Individual',
-    description: 'Personal shopping account',
-    icon: FiShoppingBag,
+    label: 'Personal Account',
+    description: 'Browse, explore & shop when you\u2019re ready',
+    icon: FiUser,
     color: 'from-brand-500 to-cyan-500',
+  },
+  {
+    value: 'showcase',
+    label: 'Showcase',
+    description: 'Display your services & build online presence',
+    icon: FiGlobe,
+    color: 'from-purple-500 to-violet-500',
+  },
+  {
+    value: 'marketplace-vendor',
+    label: 'Sell on ComSpace',
+    description: 'List & sell products on the marketplace',
+    icon: FiShoppingCart,
+    color: 'from-orange-500 to-amber-500',
   },
   {
     value: 'business',
     label: 'Business',
-    description: 'Sell products & manage a store',
+    description: 'Create your own branded online store',
     icon: FiBriefcase,
     color: 'from-emerald-500 to-teal-500',
   },
@@ -69,6 +86,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [registrationMode, setRegistrationMode] = useState<RegistrationMode>('individual');
 
   const {
     register,
@@ -86,6 +104,7 @@ export default function RegisterPage() {
       confirmPassword: '',
       phone: '',
       accountType: 'individual',
+      sellOnMarketplace: false,
       orgName: '',
       regNumber: '',
       taxId: '',
@@ -100,6 +119,9 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setServerError(null);
 
+    const isMarketplaceVendor = registrationMode === 'marketplace-vendor';
+    const isShowcase = registrationMode === 'showcase';
+
     const payload: Record<string, unknown> = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -109,6 +131,17 @@ export default function RegisterPage() {
       phone: data.phone,
       accountType: data.accountType,
     };
+
+    // For marketplace vendors, add the flag
+    if (isMarketplaceVendor) {
+      payload.sellOnMarketplace = true;
+    }
+
+    // For showcase businesses, add the showcaseOnly flag
+    if (isShowcase) {
+      payload.sellOnMarketplace = true;
+      payload.showcaseOnly = true;
+    }
 
     if (data.accountType !== 'individual') {
       payload.organization = {
@@ -130,12 +163,16 @@ export default function RegisterPage() {
         const { user, token, refreshToken } = resp.data.data;
         dispatch(setCredentials({ user, token, refreshToken }));
 
-        if (user.accountType === 'association') {
+        if (isShowcase) {
+          router.push('/admin/merchant/profile');
+        } else if (isMarketplaceVendor) {
+          router.push('/admin/merchant');
+        } else if (user.accountType === 'association') {
           router.push('/create-association');
         } else if (user.accountType === 'business') {
           router.push('/admin');
         } else {
-          router.push('/products');
+          router.push('/');
         }
       } else {
         setServerError(resp.data?.message || 'Registration failed');
@@ -182,12 +219,24 @@ export default function RegisterPage() {
           <div className="space-y-4">
             {accountTypeOptions.map((opt) => {
               const Icon = opt.icon;
-              const selected = accountType === opt.value;
+              const selected = registrationMode === opt.value;
               return (
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => setValue('accountType', opt.value)}
+                  onClick={() => {
+                    setRegistrationMode(opt.value);
+                    if (opt.value === 'marketplace-vendor') {
+                      setValue('accountType', 'business');
+                      setValue('sellOnMarketplace', true);
+                    } else if (opt.value === 'showcase') {
+                      setValue('accountType', 'business');
+                      setValue('sellOnMarketplace', false);
+                    } else {
+                      setValue('accountType', opt.value as AccountType);
+                      setValue('sellOnMarketplace', false);
+                    }
+                  }}
                   className={`w-full glass-card p-5 flex items-center gap-4 text-left transition-all duration-200 ${
                     selected
                       ? 'ring-2 ring-brand-500 shadow-lg shadow-brand-500/10'
@@ -376,18 +425,22 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Organization Fields — shown for business & association */}
-              {accountType !== 'individual' && (
+              {/* Organization Fields — shown for business, marketplace-vendor & association */}
+              {(accountType !== 'individual') && (
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-5 mt-5 space-y-5">
                   <div className="flex items-center gap-2 mb-1">
                     {accountType === 'association' ? (
                       <FiUsers className="w-4 h-4 text-brand-500" />
+                    ) : registrationMode === 'showcase' ? (
+                      <FiGlobe className="w-4 h-4 text-purple-500" />
                     ) : (
                       <FiBriefcase className="w-4 h-4 text-emerald-500" />
                     )}
                     <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
                       {accountType === 'association'
                         ? 'Association Details'
+                        : registrationMode === 'showcase'
+                        ? 'Showcase Details'
                         : 'Business Details'}
                     </h3>
                   </div>

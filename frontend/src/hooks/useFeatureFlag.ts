@@ -97,6 +97,23 @@ export const SPACE_PRESETS = {
       socialLogin: true,
     },
   },
+  showcase: {
+    label: 'Showcase',
+    description: 'Display services & presence with no shopping cart — upgrade later',
+    icon: '🏪',
+    features: {
+      products: true,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: true,
+      chat: true,
+      socialLogin: true,
+    },
+  },
   catalog: {
     label: 'Product Catalog',
     description: 'Browse products with prices, but no online purchasing',

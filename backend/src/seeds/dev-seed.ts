@@ -18,6 +18,7 @@ import Page from '../models/page.model';
 import MembershipPlan from '../models/membershipPlan.model';
 import Membership from '../models/membership.model';
 import MemberDues from '../models/memberDues.model';
+import VendorProfile from '../models/vendor-profile.model';
 import { logger } from '../utils/logger';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -143,6 +144,23 @@ export async function seedDevData(): Promise<void> {
       role: 'customer', accountType: 'individual',
       tenant: 'default', isVerified: false, isActive: true,
     },
+    // ── Default tenant — Marketplace Vendors ───────────────────────────
+    {
+      email: 'anna.craft@gmail.com', password: DEFAULT_PW,
+      firstName: 'Anna', lastName: 'Craft', phone: '+1-555-101-2001',
+      role: 'merchant', accountType: 'business',
+      organization: { name: 'Anna\'s Artisan Goods', registrationNumber: 'BIZ-2024-55001', industry: 'Retail' },
+      tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(1),
+      addresses: [{ label: 'Studio', street: '77 Maker Lane', city: 'Brooklyn', state: 'NY', country: 'US', postalCode: '11201', isDefault: true }],
+    },
+    {
+      email: 'carlos.fresh@outlook.com', password: DEFAULT_PW,
+      firstName: 'Carlos', lastName: 'Mendez', phone: '+1-555-101-2002',
+      role: 'merchant', accountType: 'business',
+      organization: { name: 'FreshTech Gadgets', registrationNumber: 'BIZ-2024-55002', taxId: 'EIN-98-7654321', industry: 'Electronics' },
+      tenant: 'default', isVerified: true, isActive: true, lastLogin: daysAgo(0),
+      addresses: [{ label: 'Warehouse', street: '500 Tech Blvd', city: 'San Jose', state: 'CA', country: 'US', postalCode: '95112', isDefault: true }],
+    },
     // ── Business tenant (Acme Corp) ────────────────────────────────────
     {
       email: 'robert.blake@acme-corp.com', password: DEFAULT_PW,
@@ -261,6 +279,14 @@ export async function seedDevData(): Promise<void> {
     { name: 'Yoga Mat Premium', description: 'Extra-thick 6mm TPE yoga mat with alignment lines. Non-slip surface, eco-friendly. Includes carry strap.', shortDescription: 'Extra-thick eco-friendly yoga mat', sku: 'DEF-SPRT-001', category: c['default:sports-outdoors']._id, basePrice: 59.99, currency: 'USD', prices: [{ currency: 'USD', amount: 59.99, updatedAt: today }], images: [{ url: '/uploads/products/yoga-mat-1.jpg', alt: 'Yoga Mat', isPrimary: true }], stock: 220, lowStockThreshold: 25, tags: ['sports','yoga','fitness','eco-friendly'], rating: { average: 4.5, count: 189 }, tenant: 'default', isOnSale: true, salePrice: 44.99, discount: 25, badge: 'sale', createdBy: u['admin@comspace.io']._id },
     { name: 'Vitamin C Serum', description: '20% Vitamin C serum with hyaluronic acid and vitamin E. Brightens skin and reduces dark spots.', shortDescription: 'Brightening vitamin C serum with HA', sku: 'DEF-HLTH-001', category: c['default:health-beauty']._id, basePrice: 28.99, currency: 'USD', prices: [{ currency: 'USD', amount: 28.99, updatedAt: today }], images: [{ url: '/uploads/products/serum-1.jpg', alt: 'Vitamin C Serum', isPrimary: true }], stock: 400, lowStockThreshold: 40, tags: ['skincare','beauty','vitamin-c'], rating: { average: 4.7, count: 342 }, tenant: 'default', badge: 'new', isNew: true, createdBy: u['admin@comspace.io']._id },
 
+    // Default — Marketplace Vendor Products (Anna's Artisan Goods)
+    { name: 'Hand-Poured Soy Candle Set', description: 'Set of 3 artisan soy candles in lavender, vanilla, and cedar scents. 40-hour burn time each. Cotton wick.', shortDescription: 'Artisan soy candle trio', sku: 'DEF-ART-001', category: c['default:home-garden']._id, basePrice: 38.99, currency: 'USD', prices: [{ currency: 'USD', amount: 38.99, updatedAt: today }], images: [{ url: '/uploads/products/candles-1.jpg', alt: 'Soy Candle Set', isPrimary: true }], stock: 75, lowStockThreshold: 10, tags: ['home','candles','artisan','handmade'], rating: { average: 4.8, count: 52 }, tenant: 'default', isFeatured: true, badge: 'new', isNew: true, createdBy: u['anna.craft@gmail.com']._id },
+    { name: 'Macramé Wall Hanging', description: 'Handcrafted macramé wall hanging made from 100% natural cotton cord. Bohemian style, 24" x 36".', shortDescription: 'Handcrafted cotton macramé', sku: 'DEF-ART-002', category: c['default:home-garden']._id, basePrice: 54.99, currency: 'USD', prices: [{ currency: 'USD', amount: 54.99, updatedAt: today }], images: [{ url: '/uploads/products/macrame-1.jpg', alt: 'Macramé Wall Hanging', isPrimary: true }], stock: 25, lowStockThreshold: 5, tags: ['home','decor','macrame','handmade','boho'], rating: { average: 4.6, count: 28 }, tenant: 'default', createdBy: u['anna.craft@gmail.com']._id },
+
+    // Default — Marketplace Vendor Products (FreshTech Gadgets)
+    { name: 'USB-C Hub 7-in-1', description: 'Compact USB-C multiport adapter: HDMI 4K, 2x USB 3.0, SD/TF card reader, PD 100W. Aluminium body.', shortDescription: '7-in-1 USB-C adapter hub', sku: 'DEF-TECH-001', category: c['default:electronics']._id, basePrice: 39.99, currency: 'USD', prices: [{ currency: 'USD', amount: 39.99, updatedAt: today }], images: [{ url: '/uploads/products/usb-hub-1.jpg', alt: 'USB-C Hub', isPrimary: true }], stock: 200, lowStockThreshold: 25, tags: ['electronics','accessories','usb-c','hub'], rating: { average: 4.5, count: 167 }, tenant: 'default', badge: 'bestseller', isBestseller: true, createdBy: u['carlos.fresh@outlook.com']._id },
+    { name: 'Wireless Charging Pad', description: 'Qi-certified 15W fast wireless charger. Compatible with iPhone, Samsung, and all Qi devices. Anti-slip base.', shortDescription: '15W Qi wireless charger pad', sku: 'DEF-TECH-002', category: c['default:electronics']._id, basePrice: 24.99, currency: 'USD', prices: [{ currency: 'USD', amount: 24.99, updatedAt: today }], images: [{ url: '/uploads/products/charger-1.jpg', alt: 'Wireless Charging Pad', isPrimary: true }], stock: 350, lowStockThreshold: 40, tags: ['electronics','charger','wireless','qi'], rating: { average: 4.4, count: 203 }, tenant: 'default', createdBy: u['carlos.fresh@outlook.com']._id },
+
     // Acme Corp
     { name: 'Industrial Hard Hat — OSHA Approved', description: 'Type I Class E hard hat with ratchet suspension. ANSI/ISEA Z89.1-2014 rated. UV-stabilized HDPE.', shortDescription: 'OSHA-approved industrial hard hat', sku: 'ACM-SAFE-001', category: c['acme-corp:safety-equipment']._id, basePrice: 24.99, currency: 'USD', prices: [{ currency: 'USD', amount: 24.99, updatedAt: today }], images: [{ url: '/uploads/products/hardhat-1.jpg', alt: 'Industrial Hard Hat', isPrimary: true }], stock: 500, lowStockThreshold: 50, tags: ['safety','hardhat','osha','ppe'], rating: { average: 4.6, count: 87 }, tenant: 'acme-corp', isFeatured: true, createdBy: u['robert.blake@acme-corp.com']._id },
     { name: 'Safety Goggles Anti-Fog', description: 'Over-glasses safety goggles with anti-fog coating. Indirect ventilation for chemical splash protection.', shortDescription: 'Anti-fog safety goggles', sku: 'ACM-SAFE-002', category: c['acme-corp:safety-equipment']._id, basePrice: 12.99, currency: 'USD', prices: [{ currency: 'USD', amount: 12.99, updatedAt: today }], images: [{ url: '/uploads/products/goggles-1.jpg', alt: 'Safety Goggles', isPrimary: true }], stock: 800, lowStockThreshold: 100, tags: ['safety','goggles','ppe'], rating: { average: 4.4, count: 156 }, tenant: 'acme-corp', createdBy: u['robert.blake@acme-corp.com']._id },
@@ -290,6 +316,55 @@ export async function seedDevData(): Promise<void> {
     { name: 'ComSpace Austin Pickup', code: 'CMAU01', address: { street: '456 Congress Ave', city: 'Austin', state: 'TX', country: 'US', postalCode: '73301' }, coordinates: { lat: 30.2672, lng: -97.7431 }, phone: '+1-555-100-0010', email: 'austin@comspace.io', hours: storeHours, inventory: [{ product: p['DEF-FASH-001']._id, quantity: 100 }, { product: p['DEF-FASH-002']._id, quantity: 50 }, { product: p['DEF-SPRT-001']._id, quantity: 40 }], tenant: 'default' },
     { name: 'Acme Dallas Warehouse', code: 'ACDL01', address: { street: '200 Industrial Ave', city: 'Dallas', state: 'TX', country: 'US', postalCode: '75201' }, coordinates: { lat: 32.7767, lng: -96.7970 }, phone: '+1-555-200-0002', email: 'warehouse@acme-corp.com', hours: storeHours, inventory: [{ product: p['ACM-SAFE-001']._id, quantity: 200 }, { product: p['ACM-SAFE-002']._id, quantity: 350 }, { product: p['ACM-TOOL-001']._id, quantity: 30 }, { product: p['ACM-FAST-001']._id, quantity: 100 }], tenant: 'acme-corp' },
     { name: 'Green Earth Community Hub', code: 'GEPD01', address: { street: '50 Green Way', city: 'Portland', state: 'OR', country: 'US', postalCode: '97201' }, coordinates: { lat: 45.5152, lng: -122.6784 }, phone: '+1-555-300-0003', email: 'hub@greenearth.org', hours: storeHours, inventory: [{ product: p['GRN-ECO-001']._id, quantity: 80 }, { product: p['GRN-ECO-002']._id, quantity: 50 }, { product: p['GRN-GARD-001']._id, quantity: 60 }], tenant: 'green-earth-assoc' },
+  ]);
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 5.5 VENDOR PROFILES (marketplace vendors on default tenant)
+  // ════════════════════════════════════════════════════════════════════════
+
+  await VendorProfile.insertMany([
+    {
+      userId: u['anna.craft@gmail.com']._id,
+      storeName: 'Anna\'s Artisan Goods',
+      slug: 'annas-artisan-goods',
+      description: 'Handcrafted home decor, candles, and accessories made with love in Brooklyn, NY. Each piece is unique and made from sustainable materials.',
+      shortDescription: 'Handcrafted home decor & accessories',
+      contactEmail: 'anna.craft@gmail.com',
+      contactPhone: '+1-555-101-2001',
+      address: { street: '77 Maker Lane', city: 'Brooklyn', state: 'NY', country: 'US', postalCode: '11201' },
+      socialLinks: { instagram: 'https://instagram.com/annasartisan', website: 'https://annasartisan.com' },
+      policies: {
+        returnPolicy: 'Returns accepted within 14 days for unused items.',
+        shippingPolicy: 'Free shipping on orders over $50. Ships within 2-3 business days.',
+      },
+      rating: { average: 4.7, count: 80 },
+      totalProducts: 2,
+      totalSales: 45,
+      isApproved: true,
+      isActive: true,
+      tenant: 'default',
+    },
+    {
+      userId: u['carlos.fresh@outlook.com']._id,
+      storeName: 'FreshTech Gadgets',
+      slug: 'freshtech-gadgets',
+      description: 'Curated selection of the latest tech accessories and gadgets at unbeatable prices. Quality guaranteed.',
+      shortDescription: 'Tech accessories & gadgets',
+      contactEmail: 'carlos.fresh@outlook.com',
+      contactPhone: '+1-555-101-2002',
+      address: { street: '500 Tech Blvd', city: 'San Jose', state: 'CA', country: 'US', postalCode: '95112' },
+      socialLinks: { twitter: 'https://twitter.com/freshtechgadgets' },
+      policies: {
+        returnPolicy: '30-day hassle-free returns.',
+        shippingPolicy: 'Free 2-day shipping on all orders.',
+      },
+      rating: { average: 4.5, count: 370 },
+      totalProducts: 2,
+      totalSales: 218,
+      isApproved: true,
+      isActive: true,
+      tenant: 'default',
+    },
   ]);
 
   // ════════════════════════════════════════════════════════════════════════
@@ -430,6 +505,7 @@ export async function seedDevData(): Promise<void> {
     categories: await Category.countDocuments(),
     products: await Product.countDocuments(),
     stores: await Store.countDocuments(),
+    vendorProfiles: await VendorProfile.countDocuments(),
     reviews: await Review.countDocuments(),
     orders: await Order.countDocuments(),
     carts: await Cart.countDocuments(),
@@ -440,6 +516,7 @@ export async function seedDevData(): Promise<void> {
     memberDues: await MemberDues.countDocuments(),
   };
 
-  logger.info(`🌱 Seed complete! ${counts.tenants} tenants, ${counts.users} users, ${counts.products} products, ${counts.orders} orders, ${counts.memberships} memberships, ${counts.memberDues} dues records`);
+  logger.info(`🌱 Seed complete! ${counts.tenants} tenants, ${counts.users} users, ${counts.products} products, ${counts.vendorProfiles} vendor profiles, ${counts.orders} orders, ${counts.memberships} memberships, ${counts.memberDues} dues records`);
   logger.info('🔐 All passwords: Password123!  |  Admin: superadmin@comspace.io  |  Business: robert.blake@acme-corp.com  |  Association: olivia.green@greenearth.org');
+  logger.info('🛒 Marketplace vendors: anna.craft@gmail.com, carlos.fresh@outlook.com (both on default tenant)');
 }

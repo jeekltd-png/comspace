@@ -32,6 +32,12 @@ export const getProducts: RequestHandler = async (req, res, next) => {
       query.$text = { $search: search as string };
     }
 
+    // Filter by seller/vendor
+    const { seller } = req.query;
+    if (seller) {
+      query.createdBy = seller;
+    }
+
     const skip = (Number(page) - 1) * Number(limit);
 
     const [products, total] = await Promise.all([
@@ -224,6 +230,52 @@ export const searchProducts: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: { products },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/** GET /products/mine — products created by the authenticated merchant */
+export const getMyProducts: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const { page = 1, limit = 20, sort = '-createdAt', search } = req.query;
+
+    const query: any = {
+      tenant: authReq.tenant,
+      createdBy: authReq.user!._id,
+    };
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { sku: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [products, total] = await Promise.all([
+      Product.find(query)
+        .sort(sort as string)
+        .skip(skip)
+        .limit(Number(limit))
+        .populate('category', 'name slug'),
+      Product.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        products,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     next(error);

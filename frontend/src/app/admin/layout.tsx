@@ -4,11 +4,12 @@ import Link from 'next/link';
 
 const navLinks = [
   { href: '/admin', label: 'Overview' },
+  { href: '/admin/analytics', label: '📊 Analytics' },
   { href: '/admin/tenants', label: '🏢 Tenants' },
   { href: '/admin/members', label: 'Members' },
   { href: '/admin/dues', label: 'Dues' },
-  { href: '/admin/products', label: 'Products' },
-  { href: '/admin/orders', label: 'Orders' },
+  { href: '/admin/products', label: '🛍️ Products' },
+  { href: '/admin/orders', label: '📦 Orders' },
 ];
 
 export default function AdminLayout({

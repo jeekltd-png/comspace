@@ -17,7 +17,21 @@ import {
   FiAlertCircle,
   FiXCircle,
   FiBarChart2,
+  FiCalendar,
 } from 'react-icons/fi';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from 'recharts';
 
 interface DashboardData {
   members: { total: number; active: number; lapsed: number; suspended: number };
@@ -51,6 +65,7 @@ const duesStatusConfig: Record<string, { color: string; icon: any; bg: string }>
 export default function AdminDuesDashboardPage() {
   const { token } = useAppSelector((state) => state.auth);
   const [duesFilter, setDuesFilter] = useState('');
+  const [dateRange, setDateRange] = useState<'6m' | '3m' | '1y' | 'all'>('6m');
   const headers = { Authorization: `Bearer ${token}` };
 
   const { data: dashboard, isLoading: dashLoading } = useQuery<DashboardData>({
@@ -120,8 +135,6 @@ export default function AdminDuesDashboardPage() {
     },
   ];
 
-  const maxRevenue = Math.max(...(dashboard?.monthlyRevenue?.map((r) => r.amount) || [1]));
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -140,9 +153,26 @@ export default function AdminDuesDashboardPage() {
             </p>
           </div>
         </div>
-        <button onClick={handleExport} className="btn-ghost flex items-center gap-2">
-          <FiDownload className="w-4 h-4" /> Export CSV
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 bg-gray-100 dark:bg-surface-800 rounded-xl p-1">
+            {(['3m', '6m', '1y', 'all'] as const).map((range) => (
+              <button
+                key={range}
+                onClick={() => setDateRange(range)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  dateRange === range
+                    ? 'bg-white dark:bg-surface-700 text-brand-600 dark:text-brand-400 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'
+                }`}
+              >
+                {range === '3m' ? '3M' : range === '6m' ? '6M' : range === '1y' ? '1Y' : 'All'}
+              </button>
+            ))}
+          </div>
+          <button onClick={handleExport} className="btn-ghost flex items-center gap-2">
+            <FiDownload className="w-4 h-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}
@@ -172,31 +202,36 @@ export default function AdminDuesDashboardPage() {
       <div className="glass-card p-6 mb-8">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
           <FiTrendingUp className="w-5 h-5 text-brand-500" />
-          Monthly Revenue (Last 6 Months)
+          Monthly Revenue
         </h2>
         {dashLoading ? (
-          <div className="h-48 skeleton" />
+          <div className="h-64 skeleton" />
+        ) : !dashboard?.monthlyRevenue || dashboard.monthlyRevenue.length === 0 ? (
+          <div className="h-64 flex items-center justify-center text-gray-400">No revenue data yet</div>
         ) : (
-          <div className="flex items-end gap-3 h-48">
-            {(dashboard?.monthlyRevenue || []).map((r, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                  ${r.amount.toLocaleString()}
-                </p>
-                <div
-                  className="w-full bg-gradient-to-t from-brand-600 to-brand-400 rounded-t-lg transition-all duration-500"
-                  style={{
-                    height: `${Math.max((r.amount / maxRevenue) * 100, 4)}%`,
-                    minHeight: '8px',
-                  }}
-                />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{r.month}</p>
-              </div>
-            ))}
-            {(!dashboard?.monthlyRevenue || dashboard.monthlyRevenue.length === 0) && (
-              <div className="w-full text-center text-gray-400 py-16">No revenue data yet</div>
-            )}
-          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dashboard.monthlyRevenue} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(156,163,175,0.2)" />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+              <YAxis tick={{ fontSize: 12 }} stroke="#9ca3af" tickFormatter={(v) => `$${v.toLocaleString()}`} />
+              <Tooltip
+                formatter={(value) => [`$${Number(value ?? 0).toLocaleString()}`, 'Revenue']}
+                contentStyle={{
+                  backgroundColor: 'rgba(255,255,255,0.95)',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                }}
+              />
+              <Bar dataKey="amount" fill="url(#revenueGradient)" radius={[6, 6, 0, 0]} />
+              <defs>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#6C63FF" />
+                  <stop offset="100%" stopColor="#818CF8" />
+                </linearGradient>
+              </defs>
+            </BarChart>
+          </ResponsiveContainer>
         )}
       </div>
 
@@ -204,25 +239,69 @@ export default function AdminDuesDashboardPage() {
       {!dashLoading && dashboard && (
         <div className="glass-card p-6 mb-8">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Membership Breakdown</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { label: 'Active', count: dashboard.members.active, color: 'bg-green-500' },
-              { label: 'Lapsed', count: dashboard.members.lapsed, color: 'bg-amber-500' },
-              { label: 'Suspended', count: dashboard.members.suspended, color: 'bg-red-500' },
-              {
-                label: 'Other',
-                count: dashboard.members.total - dashboard.members.active - dashboard.members.lapsed - dashboard.members.suspended,
-                color: 'bg-gray-400',
-              },
-            ].map((seg, i) => (
-              <div key={i} className="text-center">
-                <div className={`w-12 h-12 rounded-full ${seg.color} mx-auto mb-2 flex items-center justify-center`}>
-                  <span className="text-white font-bold text-sm">{seg.count}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            {/* Pie Chart */}
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Active', value: dashboard.members.active },
+                    { name: 'Lapsed', value: dashboard.members.lapsed },
+                    { name: 'Suspended', value: dashboard.members.suspended },
+                    {
+                      name: 'Other',
+                      value: Math.max(
+                        0,
+                        dashboard.members.total -
+                          dashboard.members.active -
+                          dashboard.members.lapsed -
+                          dashboard.members.suspended
+                      ),
+                    },
+                  ].filter((s) => s.value > 0)}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
+                  {[
+                    { color: '#22c55e' },
+                    { color: '#f59e0b' },
+                    { color: '#ef4444' },
+                    { color: '#9ca3af' },
+                  ].map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [Number(value ?? 0), 'Members']} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* Stats cards */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: 'Active', count: dashboard.members.active, color: 'bg-green-500' },
+                { label: 'Lapsed', count: dashboard.members.lapsed, color: 'bg-amber-500' },
+                { label: 'Suspended', count: dashboard.members.suspended, color: 'bg-red-500' },
+                {
+                  label: 'Other',
+                  count: dashboard.members.total - dashboard.members.active - dashboard.members.lapsed - dashboard.members.suspended,
+                  color: 'bg-gray-400',
+                },
+              ].map((seg, i) => (
+                <div key={i} className="text-center">
+                  <div className={`w-12 h-12 rounded-full ${seg.color} mx-auto mb-2 flex items-center justify-center`}>
+                    <span className="text-white font-bold text-sm">{seg.count}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{seg.label}</p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{seg.label}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
           {dashboard.members.total > 0 && (
             <div className="mt-4 h-3 rounded-full bg-gray-100 dark:bg-surface-700 overflow-hidden flex">
               <div

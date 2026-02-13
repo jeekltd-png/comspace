@@ -22,6 +22,7 @@ import newsletterRoutes from './routes/newsletter.routes';
 import reviewRoutes from './routes/review.routes';
 import membershipRoutes from './routes/membership.routes';
 import tenantRoutes from './routes/tenant.routes';
+import analyticsRoutes from './routes/analytics.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -299,6 +300,7 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/membership', membershipRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
+app.use('/api/analytics', analyticsRoutes);
 
 // Webhook management routes (admin only)
 import webhookRoutes from './routes/webhook.routes';

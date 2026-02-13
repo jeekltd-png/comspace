@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
@@ -24,6 +26,8 @@ import {
   FiFileText,
   FiTarget,
 } from 'react-icons/fi';
+import { registerSchema, type RegisterFormData } from '@/lib/validations';
+import { FormStepper } from '@/components/SmartFormGuide';
 
 type AccountType = 'individual' | 'business' | 'association';
 
@@ -63,58 +67,59 @@ export default function RegisterPage() {
   const dispatch = useAppDispatch();
 
   const [step, setStep] = useState<1 | 2>(1);
-  const [accountType, setAccountType] = useState<AccountType>('individual');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  // Form fields
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      phone: '',
+      accountType: 'individual',
+      orgName: '',
+      regNumber: '',
+      taxId: '',
+      industry: '',
+      mission: '',
+      estimatedMembers: '',
+    },
+  });
 
-  // Organization fields
-  const [orgName, setOrgName] = useState('');
-  const [regNumber, setRegNumber] = useState('');
-  const [taxId, setTaxId] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [mission, setMission] = useState('');
-  const [estimatedMembers, setEstimatedMembers] = useState('');
+  const accountType = watch('accountType');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    setLoading(true);
+  const onSubmit = async (data: RegisterFormData) => {
+    setServerError(null);
 
     const payload: Record<string, unknown> = {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      phone,
-      accountType,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      phone: data.phone,
+      accountType: data.accountType,
     };
 
-    if (accountType !== 'individual') {
+    if (data.accountType !== 'individual') {
       payload.organization = {
-        name: orgName,
-        registrationNumber: regNumber || undefined,
-        taxId: taxId || undefined,
-        industry: accountType === 'business' ? industry || undefined : undefined,
-        mission: accountType === 'association' ? mission || undefined : undefined,
+        name: data.orgName,
+        registrationNumber: data.regNumber || undefined,
+        taxId: data.taxId || undefined,
+        industry: data.accountType === 'business' ? data.industry || undefined : undefined,
+        mission: data.accountType === 'association' ? data.mission || undefined : undefined,
         estimatedMembers:
-          accountType === 'association' && estimatedMembers
-            ? parseInt(estimatedMembers, 10)
+          data.accountType === 'association' && data.estimatedMembers
+            ? parseInt(data.estimatedMembers, 10)
             : undefined,
       };
     }
@@ -125,7 +130,6 @@ export default function RegisterPage() {
         const { user, token, refreshToken } = resp.data.data;
         dispatch(setCredentials({ user, token, refreshToken }));
 
-        // Step 5: Route based on account type
         if (user.accountType === 'association') {
           router.push('/create-association');
         } else if (user.accountType === 'business') {
@@ -134,14 +138,12 @@ export default function RegisterPage() {
           router.push('/products');
         }
       } else {
-        setError(resp.data?.message || 'Registration failed');
+        setServerError(resp.data?.message || 'Registration failed');
       }
     } catch (err: any) {
-      setError(
+      setServerError(
         err?.response?.data?.message || err?.message || 'Registration error'
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -164,16 +166,14 @@ export default function RegisterPage() {
         </div>
 
         {/* Step indicators */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div
-            className={`h-2 rounded-full transition-all ${
-              step === 1 ? 'w-10 bg-brand-500' : 'w-6 bg-brand-200 dark:bg-brand-800'
-            }`}
-          />
-          <div
-            className={`h-2 rounded-full transition-all ${
-              step === 2 ? 'w-10 bg-brand-500' : 'w-6 bg-brand-200 dark:bg-brand-800'
-            }`}
+        <div className="mb-8">
+          <FormStepper
+            steps={[
+              { id: 'type', label: 'Account Type' },
+              { id: 'details', label: 'Your Details' },
+            ]}
+            currentStep={step - 1}
+            completedSteps={step === 2 ? [0] : []}
           />
         </div>
 
@@ -187,7 +187,7 @@ export default function RegisterPage() {
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => setAccountType(opt.value)}
+                  onClick={() => setValue('accountType', opt.value)}
                   className={`w-full glass-card p-5 flex items-center gap-4 text-left transition-all duration-200 ${
                     selected
                       ? 'ring-2 ring-brand-500 shadow-lg shadow-brand-500/10'
@@ -243,7 +243,7 @@ export default function RegisterPage() {
         {/* Step 2: Details Form */}
         {step === 2 && (
           <div className="glass-card p-8">
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
               {/* Name row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -257,13 +257,12 @@ export default function RegisterPage() {
                     <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       id="firstName"
-                      required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="input-field pl-11"
+                      {...register('firstName')}
+                      className={`input-field pl-11 ${errors.firstName ? 'border-red-400' : ''}`}
                       placeholder="Jane"
                     />
                   </div>
+                  {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName.message}</p>}
                 </div>
                 <div>
                   <label
@@ -274,12 +273,11 @@ export default function RegisterPage() {
                   </label>
                   <input
                     id="lastName"
-                    required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="input-field"
+                    {...register('lastName')}
+                    className={`input-field ${errors.lastName ? 'border-red-400' : ''}`}
                     placeholder="Doe"
                   />
+                  {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName.message}</p>}
                 </div>
               </div>
 
@@ -296,13 +294,12 @@ export default function RegisterPage() {
                   <input
                     id="email"
                     type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="input-field pl-11"
+                    {...register('email')}
+                    className={`input-field pl-11 ${errors.email ? 'border-red-400' : ''}`}
                     placeholder="you@example.com"
                   />
                 </div>
+                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
               </div>
 
               {/* Password */}
@@ -318,11 +315,8 @@ export default function RegisterPage() {
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    required
-                    minLength={8}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input-field pl-11 pr-11"
+                    {...register('password')}
+                    className={`input-field pl-11 pr-11 ${errors.password ? 'border-red-400' : ''}`}
                     placeholder="Min. 8 characters"
                   />
                   <button
@@ -338,6 +332,7 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </div>
+                {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
               </div>
 
               {/* Confirm Password */}
@@ -353,14 +348,12 @@ export default function RegisterPage() {
                   <input
                     id="confirmPassword"
                     type="password"
-                    required
-                    minLength={8}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="input-field pl-11"
+                    {...register('confirmPassword')}
+                    className={`input-field pl-11 ${errors.confirmPassword ? 'border-red-400' : ''}`}
                     placeholder="Repeat password"
                   />
                 </div>
+                {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>}
               </div>
 
               {/* Phone */}
@@ -376,8 +369,7 @@ export default function RegisterPage() {
                   <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    {...register('phone')}
                     className="input-field pl-11"
                     placeholder="+1 (555) 000-0000"
                   />
@@ -413,16 +405,15 @@ export default function RegisterPage() {
                     </label>
                     <input
                       id="orgName"
-                      required
-                      value={orgName}
-                      onChange={(e) => setOrgName(e.target.value)}
-                      className="input-field"
+                      {...register('orgName')}
+                      className={`input-field ${errors.orgName ? 'border-red-400' : ''}`}
                       placeholder={
                         accountType === 'association'
                           ? 'e.g. National Teachers Association'
                           : 'e.g. Acme Corp'
                       }
                     />
+                    {errors.orgName && <p className="text-xs text-red-500 mt-1">{errors.orgName.message}</p>}
                   </div>
 
                   {/* Reg Number */}
@@ -438,8 +429,7 @@ export default function RegisterPage() {
                       <FiHash className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         id="regNumber"
-                        value={regNumber}
-                        onChange={(e) => setRegNumber(e.target.value)}
+                        {...register('regNumber')}
                         className="input-field pl-11"
                         placeholder="REG-123456"
                       />
@@ -461,8 +451,7 @@ export default function RegisterPage() {
                           <FiFileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <input
                             id="taxId"
-                            value={taxId}
-                            onChange={(e) => setTaxId(e.target.value)}
+                            {...register('taxId')}
                             className="input-field pl-11"
                             placeholder="EIN / VAT number"
                           />
@@ -478,8 +467,7 @@ export default function RegisterPage() {
                         </label>
                         <select
                           id="industry"
-                          value={industry}
-                          onChange={(e) => setIndustry(e.target.value)}
+                          {...register('industry')}
                           className="input-field"
                         >
                           <option value="">Select industry</option>
@@ -510,8 +498,7 @@ export default function RegisterPage() {
                           <FiTarget className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
                           <textarea
                             id="mission"
-                            value={mission}
-                            onChange={(e) => setMission(e.target.value)}
+                            {...register('mission')}
                             className="input-field pl-11"
                             rows={2}
                             placeholder="Brief description of your association's purpose"
@@ -532,10 +519,7 @@ export default function RegisterPage() {
                             id="estimatedMembers"
                             type="number"
                             min="1"
-                            value={estimatedMembers}
-                            onChange={(e) =>
-                              setEstimatedMembers(e.target.value)
-                            }
+                            {...register('estimatedMembers')}
                             className="input-field pl-11"
                             placeholder="e.g. 100"
                           />
@@ -547,12 +531,12 @@ export default function RegisterPage() {
               )}
 
               {/* Error */}
-              {error && (
+              {serverError && (
                 <div
                   role="alert"
                   className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-2xl px-4 py-3"
                 >
-                  {error}
+                  {serverError}
                 </div>
               )}
 
@@ -567,11 +551,11 @@ export default function RegisterPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={isSubmitting}
                   className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50"
-                  aria-busy={loading}
+                  aria-busy={isSubmitting}
                 >
-                  {loading ? (
+                  {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Creating account...

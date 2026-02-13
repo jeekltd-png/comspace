@@ -10,6 +10,8 @@ import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import apiClient from '@/lib/api';
 import { FiChevronLeft, FiShield, FiLock, FiCheck, FiShoppingBag } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { SmartFormGuide, type FormGuideStep } from '@/components/SmartFormGuide';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface ShippingForm {
   firstName: string;
@@ -44,6 +46,66 @@ export default function CheckoutPage() {
     zipCode: '',
     country: 'US',
   });
+
+  const { trackCheckout, trackFormProgress } = useAnalytics();
+  const [activeField, setActiveField] = useState('');
+
+  const checkoutGuideSteps: FormGuideStep[] = [
+    {
+      id: 'firstName', label: 'First Name', required: true, section: 'Personal Info',
+      hint: 'Your first (given) name as it appears on your ID.',
+      example: 'John',
+    },
+    {
+      id: 'lastName', label: 'Last Name', required: true, section: 'Personal Info',
+      hint: 'Your last (family) name.',
+      example: 'Smith',
+    },
+    {
+      id: 'email', label: 'Email', required: true, section: 'Personal Info',
+      hint: 'We will send your order confirmation and updates here.',
+      example: 'john@example.com',
+      tips: ['Double-check for typos — this is where your receipt goes'],
+    },
+    {
+      id: 'phone', label: 'Phone', section: 'Personal Info',
+      hint: 'For delivery driver contact (optional but recommended).',
+      example: '+1-555-000-0000',
+    },
+    {
+      id: 'address', label: 'Street Address', required: true, section: 'Shipping Address',
+      hint: 'Full street address including apartment/suite number.',
+      example: '123 Main St, Apt 4B',
+      tips: ['Include apartment, suite, or unit numbers', 'PO Boxes may not be supported for all carriers'],
+    },
+    {
+      id: 'city', label: 'City', required: true, section: 'Shipping Address',
+      hint: 'City or town for delivery.',
+      example: 'New York',
+    },
+    {
+      id: 'state', label: 'State / Province', required: true, section: 'Shipping Address',
+      hint: 'State, province, or region.',
+      example: 'NY',
+    },
+    {
+      id: 'zipCode', label: 'ZIP / Postal Code', required: true, section: 'Shipping Address',
+      hint: 'Required for accurate shipping rates.',
+      example: '10001',
+      tips: ['US: 5-digit or ZIP+4 format', 'UK: Include the space (e.g., SW1A 1AA)'],
+    },
+  ];
+
+  const checkoutCompletionMap: Record<string, boolean> = {
+    firstName: !!form.firstName,
+    lastName: !!form.lastName,
+    email: !!form.email,
+    phone: !!form.phone,
+    address: !!form.address,
+    city: !!form.city,
+    state: !!form.state,
+    zipCode: !!form.zipCode,
+  };
 
   useEffect(() => {
     if (items.length === 0) {
@@ -396,6 +458,22 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Smart Form Guide for checkout assistance */}
+      {step === 'shipping' && (
+        <SmartFormGuide
+          formTitle="Fill in your shipping details to complete your order. We'll guide you through each field."
+          steps={checkoutGuideSteps}
+          activeFieldId={activeField}
+          onFieldClick={(fieldId) => {
+            setActiveField(fieldId);
+            document.getElementById(fieldId)?.focus();
+          }}
+          completionMap={checkoutCompletionMap}
+          position="floating"
+          defaultCollapsed={true}
+        />
+      )}
     </div>
   );
 }

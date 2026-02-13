@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import { FiStar, FiMinus, FiPlus, FiShoppingCart, FiHeart, FiShare2, FiChevronLeft, FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface ProductImage {
   url: string;
@@ -38,6 +39,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
+  const { trackProductView, trackAddToCart, trackPageView } = useAnalytics();
 
   const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: ['product', id],
@@ -46,6 +48,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       return response.data.data.product || response.data.data;
     },
   });
+
+  // Track product view when product data loads
+  useEffect(() => {
+    if (product) {
+      trackProductView(product._id, product.name);
+      trackPageView(`/products/${product._id}`, { productName: product.name });
+    }
+  }, [product?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatPrice = (price: number) => {
     const converted = price * (currency.rates[currency.current] || 1);
@@ -64,6 +74,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         image: product.images[0]?.url || '/placeholder.png',
       })
     );
+    trackAddToCart(product._id, product.name, quantity);
     toast.success(`${product.name} added to cart!`);
   };
 

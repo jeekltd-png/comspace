@@ -7,7 +7,8 @@ import Image from 'next/image';
 import apiClient from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { FiSearch, FiStar, FiShoppingCart, FiFilter } from 'react-icons/fi';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface Product {
   _id: string;
@@ -24,6 +25,14 @@ function SearchResults() {
   const query = searchParams.get('q') || '';
   const currency = useAppSelector(state => state.currency);
   const [sort, setSort] = useState('relevance');
+  const { trackSearch, trackPageView } = useAnalytics();
+
+  useEffect(() => {
+    if (query) {
+      trackSearch(query);
+      trackPageView('/search', { query });
+    }
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, isLoading } = useQuery<{ products: Product[]; total: number }>({
     queryKey: ['search', query, sort],

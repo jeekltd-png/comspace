@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,18 +12,8 @@ import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import apiClient from '@/lib/api';
 import { FiChevronLeft, FiShield, FiLock, FiCheck, FiShoppingBag } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-
-interface ShippingForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-}
+import { shippingSchema, type ShippingFormData } from '@/lib/validations';
+import { FormStepper } from '@/components/SmartFormGuide';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -33,16 +25,25 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState<'shipping' | 'payment'>('shipping');
 
-  const [form, setForm] = useState<ShippingForm>({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    email: user?.email || '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'US',
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    getValues,
+    trigger,
+    formState: { errors },
+  } = useForm<ShippingFormData>({
+    resolver: zodResolver(shippingSchema),
+    defaultValues: {
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'US',
+    },
   });
 
   useEffect(() => {
@@ -72,13 +73,12 @@ export default function CheckoutPage() {
     return `${currency.symbol}${converted.toFixed(2)}`;
   };
 
-  const updateField = (field: keyof ShippingForm, value: string) => {
-    setForm(prev => ({ ...prev, [field]: value }));
+  const advanceToPayment = async () => {
+    const valid = await trigger();
+    if (valid) setStep('payment');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: ShippingFormData) => {
     if (step === 'shipping') {
       setStep('payment');
       return;
@@ -95,16 +95,16 @@ export default function CheckoutPage() {
           variant: item.variant,
         })),
         shippingAddress: {
-          firstName: form.firstName,
-          lastName: form.lastName,
-          address: form.address,
-          city: form.city,
-          state: form.state,
-          zipCode: form.zipCode,
-          country: form.country,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          zipCode: data.zipCode,
+          country: data.country,
         },
-        contactEmail: form.email,
-        contactPhone: form.phone,
+        contactEmail: data.email,
+        contactPhone: data.phone,
         total,
       };
 
@@ -145,30 +145,22 @@ export default function CheckoutPage() {
       </div>
 
       {/* Steps */}
-      <div className="flex items-center gap-4 mb-10">
-        <div className={`flex items-center gap-2 ${step === 'shipping' ? 'text-brand-600 dark:text-brand-400' : 'text-green-600 dark:text-green-400'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-            step === 'shipping' ? 'bg-brand-600 text-white' : 'bg-green-600 text-white'
-          }`}>
-            {step === 'payment' ? <FiCheck className="w-4 h-4" /> : '1'}
-          </div>
-          <span className="font-medium text-sm">Shipping</span>
-        </div>
-        <div className="h-px flex-1 bg-gray-200 dark:bg-surface-700" />
-        <div className={`flex items-center gap-2 ${step === 'payment' ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-            step === 'payment' ? 'bg-brand-600 text-white' : 'bg-gray-200 dark:bg-surface-700 text-gray-500'
-          }`}>
-            2
-          </div>
-          <span className="font-medium text-sm">Payment</span>
-        </div>
+      <div className="mb-10">
+        <FormStepper
+          steps={[
+            { id: 'shipping', label: 'Shipping', description: 'Delivery address' },
+            { id: 'payment', label: 'Payment', description: 'Secure checkout' },
+          ]}
+          currentStep={step === 'shipping' ? 0 : 1}
+          completedSteps={step === 'payment' ? [0] : []}
+          onStepClick={(i) => { if (i === 0) setStep('shipping'); }}
+        />
       </div>
 
       <div className="lg:grid lg:grid-cols-12 lg:gap-12">
         {/* Form */}
         <div className="lg:col-span-7">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={rhfHandleSubmit(onSubmit)}>
             {step === 'shipping' && (
               <div className="glass-card p-6 md:p-8 space-y-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Shipping Information</h2>
@@ -179,22 +171,20 @@ export default function CheckoutPage() {
                     <input
                       id="firstName"
                       type="text"
-                      required
-                      value={form.firstName}
-                      onChange={e => updateField('firstName', e.target.value)}
-                      className="input-field"
+                      {...register('firstName')}
+                      className={`input-field ${errors.firstName ? 'border-red-400' : ''}`}
                     />
+                    {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Last Name</label>
                     <input
                       id="lastName"
                       type="text"
-                      required
-                      value={form.lastName}
-                      onChange={e => updateField('lastName', e.target.value)}
-                      className="input-field"
+                      {...register('lastName')}
+                      className={`input-field ${errors.lastName ? 'border-red-400' : ''}`}
                     />
+                    {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName.message}</p>}
                   </div>
                 </div>
 
@@ -204,19 +194,17 @@ export default function CheckoutPage() {
                     <input
                       id="email"
                       type="email"
-                      required
-                      value={form.email}
-                      onChange={e => updateField('email', e.target.value)}
-                      className="input-field"
+                      {...register('email')}
+                      className={`input-field ${errors.email ? 'border-red-400' : ''}`}
                     />
+                    {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Phone</label>
                     <input
                       id="phone"
                       type="tel"
-                      value={form.phone}
-                      onChange={e => updateField('phone', e.target.value)}
+                      {...register('phone')}
                       className="input-field"
                     />
                   </div>
@@ -227,11 +215,10 @@ export default function CheckoutPage() {
                   <input
                     id="address"
                     type="text"
-                    required
-                    value={form.address}
-                    onChange={e => updateField('address', e.target.value)}
-                    className="input-field"
+                    {...register('address')}
+                    className={`input-field ${errors.address ? 'border-red-400' : ''}`}
                   />
+                  {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -240,33 +227,30 @@ export default function CheckoutPage() {
                     <input
                       id="city"
                       type="text"
-                      required
-                      value={form.city}
-                      onChange={e => updateField('city', e.target.value)}
-                      className="input-field"
+                      {...register('city')}
+                      className={`input-field ${errors.city ? 'border-red-400' : ''}`}
                     />
+                    {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="state" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">State</label>
                     <input
                       id="state"
                       type="text"
-                      required
-                      value={form.state}
-                      onChange={e => updateField('state', e.target.value)}
-                      className="input-field"
+                      {...register('state')}
+                      className={`input-field ${errors.state ? 'border-red-400' : ''}`}
                     />
+                    {errors.state && <p className="text-xs text-red-500 mt-1">{errors.state.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">ZIP Code</label>
                     <input
                       id="zipCode"
                       type="text"
-                      required
-                      value={form.zipCode}
-                      onChange={e => updateField('zipCode', e.target.value)}
-                      className="input-field"
+                      {...register('zipCode')}
+                      className={`input-field ${errors.zipCode ? 'border-red-400' : ''}`}
                     />
+                    {errors.zipCode && <p className="text-xs text-red-500 mt-1">{errors.zipCode.message}</p>}
                   </div>
                 </div>
 
@@ -274,8 +258,7 @@ export default function CheckoutPage() {
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Country</label>
                   <select
                     id="country"
-                    value={form.country}
-                    onChange={e => updateField('country', e.target.value)}
+                    {...register('country')}
                     className="input-field"
                   >
                     <option value="US">United States</option>
@@ -289,7 +272,7 @@ export default function CheckoutPage() {
                   </select>
                 </div>
 
-                <button type="submit" className="btn-primary w-full mt-4">
+                <button type="button" onClick={advanceToPayment} className="btn-primary w-full mt-4">
                   Continue to Payment
                 </button>
               </div>
@@ -309,9 +292,9 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="bg-gray-50 dark:bg-surface-800/50 rounded-2xl p-4 text-sm text-gray-600 dark:text-gray-400">
-                  <p className="font-medium text-gray-900 dark:text-white">{form.firstName} {form.lastName}</p>
-                  <p>{form.address}</p>
-                  <p>{form.city}, {form.state} {form.zipCode}, {form.country}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{getValues('firstName')} {getValues('lastName')}</p>
+                  <p>{getValues('address')}</p>
+                  <p>{getValues('city')}, {getValues('state')} {getValues('zipCode')}, {getValues('country')}</p>
                 </div>
 
                 <div className="border border-gray-200 dark:border-surface-700 rounded-2xl p-6 text-center">

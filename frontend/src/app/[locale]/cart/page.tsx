@@ -1,17 +1,25 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { updateQuantity, removeItem, clearCart } from '@/store/slices/cartSlice';
 import { useFeatureFlag } from '@/hooks/useFeatureFlag';
 import { FiTrash2, FiMinus, FiPlus, FiShoppingBag, FiArrowLeft, FiShield } from 'react-icons/fi';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function CartPage() {
   const cartEnabled = useFeatureFlag('cart');
   const { items, total } = useAppSelector(state => state.cart);
   const currency = useAppSelector(state => state.currency);
   const dispatch = useAppDispatch();
+  const { trackPageView } = useAnalytics();
+
+  // Track cart page view
+  React.useEffect(() => {
+    trackPageView('/cart', { itemCount: items.length, total });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatPrice = (price: number) => {
     const converted = price * (currency.rates[currency.current] || 1);

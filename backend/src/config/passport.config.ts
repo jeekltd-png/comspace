@@ -2,6 +2,8 @@ import { PassportStatic } from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.model';
+import { sendEmail } from '../utils/email';
+import { welcomeEmail } from '../templates/email.templates';
 
 export const configurePassport = (passport: PassportStatic) => {
   // JWT Strategy
@@ -72,6 +74,15 @@ export const configurePassport = (passport: PassportStatic) => {
                   isVerified: true,
                   tenant,
                 });
+
+                // Send welcome email to new Google OAuth user
+                const fullName = `${user.firstName} ${user.lastName}`.trim();
+                const welcome = welcomeEmail(fullName, undefined, user.accountType || 'individual');
+                sendEmail({
+                  to: user.email,
+                  subject: welcome.subject,
+                  html: welcome.html,
+                }).catch(err => console.log('Welcome email send failed:', err.message));
               }
             }
 

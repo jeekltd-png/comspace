@@ -12,6 +12,7 @@ import { FiHeart, FiShoppingCart } from 'react-icons/fi';
 import { useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import { useFeatureFlags } from '@/hooks/useFeatureFlag';
+import { Tooltip } from '@/components/ui/Tooltip';
 import toast from 'react-hot-toast';
 
 interface ProductImage {
@@ -141,9 +142,11 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
 
       {/* Free Shipping Badge */}
       {displayPrice >= 50 && (
-        <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-md font-bold z-10">
+        <Tooltip content="This item qualifies for free standard shipping" position="left">
+        <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-md font-bold z-10 cursor-help">
           FREE SHIPPING
         </div>
+        </Tooltip>
       )}
 
       {/* Image Section */}
@@ -238,6 +241,7 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
 
           {/* Wishlist Button — only when wishlist feature is on */}
           {wishlistEnabled && (
+          <Tooltip content="Save to wishlist" position="top">
           <button
             onClick={handleWishlist}
             className="p-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 hover:text-red-500 dark:hover:border-red-400 dark:hover:text-red-400 transition-colors"
@@ -245,6 +249,7 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
           >
             <FiHeart size={20} />
           </button>
+          </Tooltip>
           )}
         </div>
 

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 const adminCards = [
   {
@@ -116,15 +117,16 @@ export default function AdminIndex() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {adminCards.map((card) => (
+          <Tooltip key={card.href} content={`Accessible by: ${card.roles.join(', ')}`} position="top">
           <Link
-            key={card.href}
             href={card.href}
-            className={`p-5 border rounded-2xl bg-gradient-to-br ${card.color} hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group`}
+            className={`p-5 border rounded-2xl bg-gradient-to-br ${card.color} hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group block`}
           >
             <div className="text-2xl mb-2">{card.icon}</div>
             <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{card.title}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{card.description}</p>
           </Link>
+          </Tooltip>
         ))}
       </div>
     </main>

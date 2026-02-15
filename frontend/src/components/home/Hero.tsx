@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { FiArrowRight, FiShield, FiTruck, FiGlobe } from 'react-icons/fi';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 export function Hero() {
   return (
@@ -17,10 +18,12 @@ export function Hero() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36">
         <div className="max-w-3xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium mb-8 animate-fade-in">
+          <Tooltip content="Pay in your local currency — we support USD, EUR, GBP, JPY, NGN, INR, BRL and 35+ more with real-time conversion rates." position="bottom" maxWidth={320}>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium mb-8 animate-fade-in cursor-help">
             <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
             Now supporting 40+ currencies worldwide
           </div>
+          </Tooltip>
 
           {/* Headline */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-slide-up">
@@ -47,18 +50,24 @@ export function Hero() {
 
           {/* Trust signals */}
           <div className="flex flex-wrap justify-center gap-6 sm:gap-10 mt-16 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+            <Tooltip content="256-bit SSL encryption on every transaction. Powered by Stripe for PCI-compliant payments." position="bottom">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 cursor-help">
               <FiShield className="w-5 h-5 text-brand-500" />
               <span className="text-sm font-medium">Secure Payments</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+            </Tooltip>
+            <Tooltip content="Free standard shipping on all orders over $50. Express & international options available at checkout." position="bottom">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 cursor-help">
               <FiTruck className="w-5 h-5 text-brand-500" />
               <span className="text-sm font-medium">Free Shipping $50+</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+            </Tooltip>
+            <Tooltip content="Shop in your local currency with real-time exchange rates. We support 40+ currencies worldwide." position="bottom">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 cursor-help">
               <FiGlobe className="w-5 h-5 text-brand-500" />
               <span className="text-sm font-medium">40+ Currencies</span>
             </div>
+            </Tooltip>
           </div>
         </div>
       </div>

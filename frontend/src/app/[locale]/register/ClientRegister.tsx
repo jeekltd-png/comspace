@@ -26,18 +26,21 @@ import {
   FiFileText,
   FiTarget,
   FiShoppingCart,
+  FiBookOpen,
 } from 'react-icons/fi';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
+import { Tooltip } from '@/components/ui/Tooltip';
 
-type AccountType = 'individual' | 'business' | 'association';
+type AccountType = 'individual' | 'business' | 'association' | 'education';
 
-type RegistrationMode = 'individual' | 'business' | 'association' | 'marketplace-vendor' | 'showcase';
+type RegistrationMode = 'individual' | 'business' | 'association' | 'marketplace-vendor' | 'showcase' | 'education';
 
 const accountTypeOptions: {
   value: RegistrationMode;
   label: string;
   description: string;
+  tooltip: string;
   icon: React.ElementType;
   color: string;
 }[] = [
@@ -45,6 +48,7 @@ const accountTypeOptions: {
     value: 'individual',
     label: 'Personal Account',
     description: 'Browse, explore & shop when you\u2019re ready',
+    tooltip: 'Best for shoppers. Browse products, place orders, track deliveries & manage your purchases across all currencies.',
     icon: FiUser,
     color: 'from-brand-500 to-cyan-500',
   },
@@ -52,6 +56,7 @@ const accountTypeOptions: {
     value: 'showcase',
     label: 'Showcase',
     description: 'Display your services & build online presence',
+    tooltip: 'Create a public profile to showcase your services, portfolio & contact info — no selling or inventory required.',
     icon: FiGlobe,
     color: 'from-purple-500 to-violet-500',
   },
@@ -59,6 +64,7 @@ const accountTypeOptions: {
     value: 'marketplace-vendor',
     label: 'Sell on ComSpace',
     description: 'List & sell products on the marketplace',
+    tooltip: 'List your products on the ComSpace marketplace. We handle the storefront — you manage products, pricing & orders.',
     icon: FiShoppingCart,
     color: 'from-orange-500 to-amber-500',
   },
@@ -66,6 +72,7 @@ const accountTypeOptions: {
     value: 'business',
     label: 'Business',
     description: 'Create your own branded online store',
+    tooltip: 'Get your own white-label store with custom branding, domain, theme & full e-commerce capabilities.',
     icon: FiBriefcase,
     color: 'from-emerald-500 to-teal-500',
   },
@@ -73,8 +80,17 @@ const accountTypeOptions: {
     value: 'association',
     label: 'Association',
     description: 'Manage members & collect dues',
+    tooltip: 'Ideal for clubs, unions & non-profits. Manage members, collect dues, track payments & communicate with your community.',
     icon: FiUsers,
     color: 'from-brand-500 to-accent-500',
+  },
+  {
+    value: 'education',
+    label: 'Education',
+    description: 'Create a space for your school or institution',
+    tooltip: 'For primary, secondary, further or higher education. Manage students, staff, timetables, enrollment & parent/student portals.',
+    icon: FiBookOpen,
+    color: 'from-sky-500 to-blue-600',
   },
 ];
 
@@ -111,6 +127,9 @@ export default function RegisterPage() {
       industry: '',
       mission: '',
       estimatedMembers: '',
+      institutionType: undefined,
+      estimatedStudents: '',
+      urn: '',
     },
   });
 
@@ -147,13 +166,20 @@ export default function RegisterPage() {
       payload.organization = {
         name: data.orgName,
         registrationNumber: data.regNumber || undefined,
-        taxId: data.taxId || undefined,
+        taxId: data.accountType === 'business' ? data.taxId || undefined : undefined,
         industry: data.accountType === 'business' ? data.industry || undefined : undefined,
         mission: data.accountType === 'association' ? data.mission || undefined : undefined,
         estimatedMembers:
           data.accountType === 'association' && data.estimatedMembers
             ? parseInt(data.estimatedMembers, 10)
             : undefined,
+        // Education-specific fields
+        institutionType: data.accountType === 'education' ? data.institutionType || undefined : undefined,
+        estimatedStudents:
+          data.accountType === 'education' && data.estimatedStudents
+            ? parseInt(data.estimatedStudents, 10)
+            : undefined,
+        urn: data.accountType === 'education' ? data.urn || undefined : undefined,
       };
     }
 
@@ -169,6 +195,8 @@ export default function RegisterPage() {
           router.push('/admin/merchant');
         } else if (user.accountType === 'association') {
           router.push('/create-association');
+        } else if (user.accountType === 'education') {
+          router.push('/admin');
         } else if (user.accountType === 'business') {
           router.push('/admin');
         } else {
@@ -198,7 +226,7 @@ export default function RegisterPage() {
           <p className="text-gray-500 dark:text-gray-400 mt-2">
             {step === 1
               ? 'Choose your account type'
-              : `Setting up your ${accountTypeOptions.find((o) => o.value === accountType)?.label} account`}
+              : `Setting up your ${accountTypeOptions.find((o) => o.value === registrationMode)?.label || accountTypeOptions.find((o) => o.value === accountType)?.label} account`}
           </p>
         </div>
 
@@ -232,6 +260,9 @@ export default function RegisterPage() {
                     } else if (opt.value === 'showcase') {
                       setValue('accountType', 'business');
                       setValue('sellOnMarketplace', false);
+                    } else if (opt.value === 'education') {
+                      setValue('accountType', 'education');
+                      setValue('sellOnMarketplace', false);
                     } else {
                       setValue('accountType', opt.value as AccountType);
                       setValue('sellOnMarketplace', false);
@@ -248,6 +279,7 @@ export default function RegisterPage() {
                   >
                     <Icon className="w-6 h-6 text-white" />
                   </div>
+                  <Tooltip content={opt.tooltip} position="right" maxWidth={300}>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {opt.label}
@@ -256,6 +288,7 @@ export default function RegisterPage() {
                       {opt.description}
                     </p>
                   </div>
+                  </Tooltip>
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                       selected
@@ -431,6 +464,8 @@ export default function RegisterPage() {
                   <div className="flex items-center gap-2 mb-1">
                     {accountType === 'association' ? (
                       <FiUsers className="w-4 h-4 text-brand-500" />
+                    ) : accountType === 'education' ? (
+                      <FiBookOpen className="w-4 h-4 text-sky-500" />
                     ) : registrationMode === 'showcase' ? (
                       <FiGlobe className="w-4 h-4 text-purple-500" />
                     ) : (
@@ -439,6 +474,8 @@ export default function RegisterPage() {
                     <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
                       {accountType === 'association'
                         ? 'Association Details'
+                        : accountType === 'education'
+                        ? 'Institution Details'
                         : registrationMode === 'showcase'
                         ? 'Showcase Details'
                         : 'Business Details'}
@@ -453,6 +490,8 @@ export default function RegisterPage() {
                     >
                       {accountType === 'association'
                         ? 'Association Name'
+                        : accountType === 'education'
+                        ? 'Institution Name'
                         : 'Company Name'}{' '}
                       <span className="text-red-500">*</span>
                     </label>
@@ -463,6 +502,8 @@ export default function RegisterPage() {
                       placeholder={
                         accountType === 'association'
                           ? 'e.g. National Teachers Association'
+                          : accountType === 'education'
+                          ? 'e.g. Riverside Academy'
                           : 'e.g. Acme Corp'
                       }
                     />
@@ -575,6 +616,70 @@ export default function RegisterPage() {
                             {...register('estimatedMembers')}
                             className="input-field pl-11"
                             placeholder="e.g. 100"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Education-specific: Institution Type, URN, Estimated Students */}
+                  {accountType === 'education' && (
+                    <>
+                      <div>
+                        <label
+                          htmlFor="institutionType"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                        >
+                          Institution Type{' '}
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          id="institutionType"
+                          {...register('institutionType')}
+                          className="input-field"
+                        >
+                          <option value="">Select institution type</option>
+                          <option value="primary">Primary School</option>
+                          <option value="secondary">Secondary School</option>
+                          <option value="further">Further Education (College)</option>
+                          <option value="higher">Higher Education (University)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="urn"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                        >
+                          URN / School Reference Number{' '}
+                          <span className="text-gray-400">(optional)</span>
+                        </label>
+                        <div className="relative">
+                          <FiHash className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <input
+                            id="urn"
+                            {...register('urn')}
+                            className="input-field pl-11"
+                            placeholder="e.g. 123456"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="estimatedStudents"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                        >
+                          Estimated Students{' '}
+                          <span className="text-gray-400">(optional)</span>
+                        </label>
+                        <div className="relative">
+                          <FiUsers className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <input
+                            id="estimatedStudents"
+                            type="number"
+                            min="1"
+                            {...register('estimatedStudents')}
+                            className="input-field pl-11"
+                            placeholder="e.g. 500"
                           />
                         </div>
                       </div>

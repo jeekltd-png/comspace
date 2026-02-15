@@ -4,6 +4,9 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+export { Tooltip } from './Tooltip';
+export type { TooltipProps } from './Tooltip';
+
 function cn(...inputs: (string | undefined | null | false)[]) {
   return twMerge(clsx(inputs));
 }

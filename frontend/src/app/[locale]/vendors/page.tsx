@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 interface Vendor {
   _id: string;
@@ -59,6 +60,7 @@ export default function VendorsPage() {
       {/* Search */}
       <form onSubmit={handleSearch} className="max-w-md mx-auto mb-10">
         <div className="flex gap-2">
+          <Tooltip content="Search by store name, description or product category" position="bottom">
           <input
             type="text"
             value={search}
@@ -66,6 +68,7 @@ export default function VendorsPage() {
             placeholder="Search vendors..."
             className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:outline-none"
           />
+          </Tooltip>
           <button
             type="submit"
             className="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
@@ -127,7 +130,8 @@ export default function VendorsPage() {
                 )}
 
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-surface-800">
-                  <div className="flex items-center gap-1">
+                  <Tooltip content={`Average rating: ${vendor.rating.average.toFixed(1)} out of 5 from ${vendor.rating.count} customer reviews`} position="top">
+                  <div className="flex items-center gap-1 cursor-help">
                     <span className="text-amber-500">★</span>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {vendor.rating.average.toFixed(1)}
@@ -136,9 +140,12 @@ export default function VendorsPage() {
                       ({vendor.rating.count})
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400">
+                  </Tooltip>
+                  <Tooltip content={`This vendor has ${vendor.totalProducts} active product ${vendor.totalProducts === 1 ? 'listing' : 'listings'}`} position="top">
+                  <span className="text-xs text-gray-400 cursor-help">
                     {vendor.totalProducts} {vendor.totalProducts === 1 ? 'listing' : 'listings'}
                   </span>
+                  </Tooltip>
                 </div>
               </div>
             </Link>

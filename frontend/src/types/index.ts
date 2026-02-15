@@ -8,7 +8,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
-  accountType?: 'individual' | 'business' | 'association';
+  accountType?: 'individual' | 'business' | 'association' | 'education';
   avatar?: string;
   phone?: string;
   isVerified?: boolean;
@@ -41,6 +41,9 @@ export interface User {
     industry?: string;
     mission?: string;
     estimatedMembers?: number;
+    institutionType?: 'primary' | 'secondary' | 'further' | 'higher';
+    estimatedStudents?: number;
+    urn?: string;
   };
 }
 

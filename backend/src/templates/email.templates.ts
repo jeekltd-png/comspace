@@ -70,12 +70,92 @@ function baseTemplate(b: Required<EmailBranding>, title: string, body: string): 
 </html>`;
 }
 
-/** Welcome email sent after registration */
+/** Welcome email sent after registration — adapts content based on account type */
 export function welcomeEmail(
   userName: string,
-  branding?: EmailBranding
+  branding?: EmailBranding,
+  accountType?: string,
+  orgName?: string
 ): { subject: string; html: string } {
   const b = merge(branding);
+
+  // Education-specific welcome
+  if (accountType === 'education') {
+    const body = `
+      <h2 style="color:#18181b;margin:0 0 16px;font-size:20px;">Welcome, ${userName}! 🎓</h2>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 16px;">
+        Thank you for registering <strong>${orgName || 'your institution'}</strong> on <strong>${b.storeName}</strong>.
+      </p>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 16px;">
+        Your education space is ready. Here's what you can do next:
+      </p>
+      <ul style="color:#3f3f46;line-height:1.8;margin:0 0 24px;padding-left:20px;">
+        <li>Set up your institution profile, branding & logo</li>
+        <li>Invite staff members and assign roles</li>
+        <li>Configure timetables, enrollment & communication channels</li>
+        <li>Enable parent and student portals</li>
+        <li>Set up your online uniform shop or resource store (optional)</li>
+      </ul>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${b.storeUrl}/admin" style="display:inline-block;background:${b.primaryColor};color:#ffffff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">
+          Go to Admin Dashboard
+        </a>
+      </div>
+      <p style="color:#71717a;font-size:13px;line-height:1.5;margin:16px 0 0;">
+        Need help getting started? Check our <a href="${b.storeUrl}/docs" style="color:${b.primaryColor};text-decoration:none;">setup guide</a> or contact our support team.
+      </p>
+    `;
+    return {
+      subject: `Welcome to ${b.storeName} — ${orgName || 'Your Education Space'} is ready! 🎓`,
+      html: baseTemplate(b, `Welcome to ${b.storeName}`, body),
+    };
+  }
+
+  // Association welcome
+  if (accountType === 'association') {
+    const body = `
+      <h2 style="color:#18181b;margin:0 0 16px;font-size:20px;">Welcome, ${userName}! 🌿</h2>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 16px;">
+        Thank you for registering <strong>${orgName || 'your association'}</strong> on <strong>${b.storeName}</strong>.
+      </p>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 24px;">
+        You can now manage your members, collect dues, and communicate with your community.
+      </p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${b.storeUrl}/admin" style="display:inline-block;background:${b.primaryColor};color:#ffffff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">
+          Set Up Your Association
+        </a>
+      </div>
+    `;
+    return {
+      subject: `Welcome to ${b.storeName} — ${orgName || 'Your Association'} is ready!`,
+      html: baseTemplate(b, `Welcome to ${b.storeName}`, body),
+    };
+  }
+
+  // Business welcome
+  if (accountType === 'business') {
+    const body = `
+      <h2 style="color:#18181b;margin:0 0 16px;font-size:20px;">Welcome, ${userName}! 🏢</h2>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 16px;">
+        Thank you for registering <strong>${orgName || 'your business'}</strong> on <strong>${b.storeName}</strong>.
+      </p>
+      <p style="color:#3f3f46;line-height:1.6;margin:0 0 24px;">
+        Your branded online store is ready. Customize your branding, add products, and start selling!
+      </p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${b.storeUrl}/admin" style="display:inline-block;background:${b.primaryColor};color:#ffffff;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">
+          Go to Your Store Dashboard
+        </a>
+      </div>
+    `;
+    return {
+      subject: `Welcome to ${b.storeName} — ${orgName || 'Your Store'} is ready!`,
+      html: baseTemplate(b, `Welcome to ${b.storeName}`, body),
+    };
+  }
+
+  // Default (individual / shopper)
   const body = `
     <h2 style="color:#18181b;margin:0 0 16px;font-size:20px;">Welcome, ${userName}! 🎉</h2>
     <p style="color:#3f3f46;line-height:1.6;margin:0 0 24px;">

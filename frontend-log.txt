@@ -1,0 +1,17 @@
+   ▲ Next.js 15.5.11
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.6s
+ ○ Compiling /middleware ...
+ GET /login 200 in 6262ms
+ GET /register 200 in 3192ms
+ GET /register 200 in 1726ms
+ GET /manifest.json 200 in 4381ms
+ GET /register 200 in 1338ms
+ GET / 200 in 811ms
+ GET /manifest.json 404 in 355ms
+ GET / 200 in 330ms
+ GET /manifest.json 404 in 426ms

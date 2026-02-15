@@ -42,8 +42,8 @@ export const protect: RequestHandler = async (req, _res, next) => {
     }
     const decoded = jwt.verify(token, jwtSecret) as { id: string; tenant: string };
 
-    // Get user from token
-    const user = await User.findById(decoded.id).select('+password');
+    // Get user from token (no need to load password hash on every request)
+    const user = await User.findById(decoded.id);
 
     if (!user || !user.isActive) {
       return next(new CustomError('User not found or inactive', 401));

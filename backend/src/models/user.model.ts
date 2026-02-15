@@ -11,7 +11,7 @@ export interface IUser extends Document {
   // 'admin' kept for backward compatibility; 'merchant' manages tenant-level resources.
   role: 'customer' | 'admin' | 'admin1' | 'admin2' | 'superadmin' | 'merchant';
   // Account classification: what type of entity is this user
-  accountType: 'individual' | 'business' | 'association';
+  accountType: 'individual' | 'business' | 'association' | 'education';
   organization?: {
     name: string;
     registrationNumber?: string;
@@ -19,6 +19,10 @@ export interface IUser extends Document {
     industry?: string;
     mission?: string;
     estimatedMembers?: number;
+    // Education-specific fields
+    institutionType?: 'primary' | 'secondary' | 'further' | 'higher';
+    estimatedStudents?: number;
+    urn?: string; // Unique Reference Number
   };
   avatar?: string;
   addresses: Array<{
@@ -91,7 +95,7 @@ const UserSchema: Schema = new Schema(
     },
     accountType: {
       type: String,
-      enum: ['individual', 'business', 'association'],
+      enum: ['individual', 'business', 'association', 'education'],
       default: 'individual',
     },
     organization: {
@@ -101,6 +105,10 @@ const UserSchema: Schema = new Schema(
       industry: { type: String, trim: true },
       mission: { type: String, trim: true },
       estimatedMembers: { type: Number },
+      // Education-specific fields
+      institutionType: { type: String, enum: ['primary', 'secondary', 'further', 'higher'] },
+      estimatedStudents: { type: Number },
+      urn: { type: String, trim: true },
     },
     avatar: {
       type: String,

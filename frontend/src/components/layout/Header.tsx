@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
 import { FiShoppingCart, FiUser, FiMenu, FiSearch, FiX, FiPackage, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
 import ThemeToggle from '@/components/ThemeToggle';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import { useRouter } from 'next/navigation';
 import { useFocusTrap } from '@/hooks/useAccessibility';
@@ -149,6 +150,7 @@ export function Header() {
 
               {/* Cart — only when cart feature is on */}
               {cartEnabled && (
+              <Tooltip content={cartCount > 0 ? `You have ${cartCount} item${cartCount !== 1 ? 's' : ''} in your cart` : 'Your cart is empty'} position="bottom">
               <Link
                 href="/cart"
                 className="btn-ghost p-2 relative"
@@ -161,6 +163,7 @@ export function Header() {
                   </span>
                 )}
               </Link>
+              </Tooltip>
               )}
 
               {/* Profile */}

@@ -11,6 +11,7 @@ import {
   AuthRequest,
 } from '../middleware/auth.middleware';
 import { sendEmail } from '../utils/email';
+import { welcomeEmail } from '../templates/email.templates';
 import { parseUserAgent, getClientIp } from '../utils/device-parser';
 import passport from 'passport';
 import { redisClient } from '../server';
@@ -23,11 +24,11 @@ export const register: RequestHandler = async (req, res, next) => {
 
     // Validate accountType-specific fields
     const acctType = accountType || 'individual';
-    if (!['individual', 'business', 'association'].includes(acctType)) {
+    if (!['individual', 'business', 'association', 'education'].includes(acctType)) {
       return next(new CustomError('Invalid account type', 400));
     }
-    if ((acctType === 'business' || acctType === 'association') && (!organization || !organization.name)) {
-      return next(new CustomError('Organization name is required for business and association accounts', 400));
+    if ((acctType === 'business' || acctType === 'association' || acctType === 'education') && (!organization || !organization.name)) {
+      return next(new CustomError('Organization / institution name is required for business, association and education accounts', 400));
     }
 
     // Check if user exists
@@ -48,7 +49,7 @@ export const register: RequestHandler = async (req, res, next) => {
     if ((sellOnMarketplace || showcaseOnly) && (acctType === 'business' || acctType === 'association')) {
       // Stay on the current tenant, assign merchant role
       role = 'merchant';
-    } else if (acctType === 'association' || acctType === 'business') {
+    } else if (acctType === 'association' || acctType === 'business' || acctType === 'education') {
       // Create a new tenant (white-label) for this organization
       const slug = organization.name
         .toLowerCase()
@@ -71,10 +72,17 @@ export const register: RequestHandler = async (req, res, next) => {
         features: {
           delivery: acctType === 'business',
           pickup: acctType === 'business',
-          reviews: true,
+          reviews: acctType !== 'education',
           wishlist: acctType === 'business',
-          chat: false,
+          chat: acctType === 'education',
           socialLogin: true,
+          // Education-specific features
+          ...(acctType === 'education' ? {
+            timetable: true,
+            enrollment: true,
+            parentPortal: true,
+            studentPortal: true,
+          } : {}),
         },
         payment: {
           stripeAccountId: '',
@@ -91,7 +99,7 @@ export const register: RequestHandler = async (req, res, next) => {
       });
 
       tenantId = uniqueTenantId;
-      role = acctType === 'association' ? 'admin' : 'merchant';
+      role = (acctType === 'association' || acctType === 'education') ? 'admin' : 'merchant';
     }
 
     // Create user
@@ -110,6 +118,10 @@ export const register: RequestHandler = async (req, res, next) => {
         industry: organization.industry,
         mission: organization.mission,
         estimatedMembers: organization.estimatedMembers,
+        // Education-specific fields
+        institutionType: acctType === 'education' ? organization.institutionType : undefined,
+        estimatedStudents: acctType === 'education' ? organization.estimatedStudents : undefined,
+        urn: acctType === 'education' ? organization.urn : undefined,
       } : undefined,
       tenant: tenantId,
     });
@@ -153,6 +165,20 @@ export const register: RequestHandler = async (req, res, next) => {
       subject: 'Verify Your Email',
       text: `Please click this link to verify your email: ${verificationUrl}`,
     }).catch(err => console.log('Email send failed:', err.message));
+
+    // Send branded welcome email (non-blocking)
+    const orgName = organization?.name;
+    const welcome = welcomeEmail(
+      `${firstName} ${lastName}`,
+      undefined,
+      acctType,
+      orgName
+    );
+    sendEmail({
+      to: user.email,
+      subject: welcome.subject,
+      html: welcome.html,
+    }).catch(err => console.log('Welcome email send failed:', err.message));
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);

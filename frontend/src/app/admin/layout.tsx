@@ -5,21 +5,22 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { usePathname } from 'next/navigation';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 // Role-based navigation: each link specifies which roles can see it
 const allNavLinks = [
-  { href: '/admin', label: 'Overview', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'] },
-  { href: '/admin/analytics', label: '📊 Analytics', roles: ['superadmin', 'admin', 'admin1', 'admin2'] },
-  { href: '/admin/users', label: '👤 Users', roles: ['superadmin', 'admin', 'admin1', 'admin2'] },
-  { href: '/admin/tenants', label: '🏢 Tenants', roles: ['superadmin'] },
-  { href: '/admin/vendors', label: '🏪 Vendors', roles: ['superadmin', 'admin', 'admin1', 'admin2'] },
-  { href: '/admin/members', label: 'Members', roles: ['superadmin', 'admin', 'admin1', 'admin2'] },
-  { href: '/admin/dues', label: 'Dues', roles: ['superadmin', 'admin', 'admin1', 'admin2'] },
-  { href: '/admin/products', label: '🛍️ Products', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'] },
-  { href: '/admin/orders', label: '📦 Orders', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'] },
-  { href: '/admin/audit-log', label: '📋 Audit Log', roles: ['superadmin', 'admin', 'admin1'] },
-  { href: '/admin/login-history', label: '🔐 Logins', roles: ['superadmin', 'admin', 'admin1'] },
-  { href: '/admin/merchant', label: '🛒 My Store', roles: ['merchant'] },
+  { href: '/admin', label: 'Overview', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'Admin panel home — quick access to all sections' },
+  { href: '/admin/analytics', label: '📊 Analytics', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Revenue, conversions, traffic & user activity metrics' },
+  { href: '/admin/users', label: '👤 Users', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Manage accounts, roles, enable/disable & reset passwords' },
+  { href: '/admin/tenants', label: '🏢 Tenants', roles: ['superadmin'], tooltip: 'Manage all platform tenants, features & white-label config' },
+  { href: '/admin/vendors', label: '🏪 Vendors', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Review, approve & manage marketplace vendor applications' },
+  { href: '/admin/members', label: 'Members', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'View & manage association or organisation members' },
+  { href: '/admin/dues', label: 'Dues', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Track dues, payments, overdue balances & billing history' },
+  { href: '/admin/products', label: '🛍️ Products', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'Manage product catalog, inventory, pricing & images' },
+  { href: '/admin/orders', label: '📦 Orders', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'View, track & manage customer orders & fulfillment' },
+  { href: '/admin/audit-log', label: '📋 Audit Log', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Full trail of admin actions — who did what, when, from where' },
+  { href: '/admin/login-history', label: '🔐 Logins', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Monitor login attempts, devices, IPs & security events' },
+  { href: '/admin/merchant', label: '🛒 My Store', roles: ['merchant'], tooltip: 'Manage your store profile, products & orders' },
 ];
 
 const ADMIN_ROLES = ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'];
@@ -82,8 +83,8 @@ export default function AdminLayout({
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/admin' && pathname?.startsWith(link.href));
               return (
+                <Tooltip key={link.href} content={link.tooltip} position="bottom">
                 <Link
-                  key={link.href}
                   href={link.href}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                     isActive
@@ -93,6 +94,7 @@ export default function AdminLayout({
                 >
                   {link.label}
                 </Link>
+                </Tooltip>
               );
             })}
           </nav>

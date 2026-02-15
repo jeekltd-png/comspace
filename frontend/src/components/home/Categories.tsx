@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { FiSmartphone, FiShoppingBag, FiHome, FiActivity, FiBook, FiGift } from 'react-icons/fi';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 const categories = [
-  { name: 'Electronics', slug: 'electronics', icon: FiSmartphone, color: 'from-brand-500 to-cyan-500' },
-  { name: 'Fashion', slug: 'fashion', icon: FiShoppingBag, color: 'from-pink-500 to-rose-500' },
-  { name: 'Home & Garden', slug: 'home-garden', icon: FiHome, color: 'from-emerald-500 to-teal-500' },
-  { name: 'Sports', slug: 'sports', icon: FiActivity, color: 'from-orange-500 to-amber-500' },
-  { name: 'Books', slug: 'books', icon: FiBook, color: 'from-brand-500 to-indigo-500' },
-  { name: 'Gifts', slug: 'gifts', icon: FiGift, color: 'from-red-500 to-pink-500' },
+  { name: 'Electronics', slug: 'electronics', icon: FiSmartphone, color: 'from-brand-500 to-cyan-500', tooltip: 'Phones, laptops, tablets, wearables, audio & smart home devices' },
+  { name: 'Fashion', slug: 'fashion', icon: FiShoppingBag, color: 'from-pink-500 to-rose-500', tooltip: 'Clothing, shoes, accessories, bags & jewellery for all styles' },
+  { name: 'Home & Garden', slug: 'home-garden', icon: FiHome, color: 'from-emerald-500 to-teal-500', tooltip: 'Furniture, décor, kitchenware, garden tools & outdoor living' },
+  { name: 'Sports', slug: 'sports', icon: FiActivity, color: 'from-orange-500 to-amber-500', tooltip: 'Fitness equipment, sportswear, outdoor gear & wellness products' },
+  { name: 'Books', slug: 'books', icon: FiBook, color: 'from-brand-500 to-indigo-500', tooltip: 'Bestsellers, textbooks, e-books, audiobooks & stationery' },
+  { name: 'Gifts', slug: 'gifts', icon: FiGift, color: 'from-red-500 to-pink-500', tooltip: 'Curated gift sets, personalised items, vouchers & seasonal specials' },
 ];
 
 export function Categories() {
@@ -21,6 +22,7 @@ export function Categories() {
         {categories.map(category => {
           const Icon = category.icon;
           return (
+            <Tooltip content={category.tooltip} position="bottom">
             <Link
               key={category.slug}
               href={`/products?category=${category.slug}`}
@@ -31,6 +33,7 @@ export function Categories() {
               </div>
               <h3 className="font-semibold text-sm text-gray-900 dark:text-white">{category.name}</h3>
             </Link>
+            </Tooltip>
           );
         })}
       </div>

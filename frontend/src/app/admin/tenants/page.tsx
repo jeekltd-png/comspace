@@ -45,6 +45,7 @@ const TENANT_TYPE_LABELS: Record<string, { label: string; color: string; icon: s
   individual:  { label: 'Individual',  color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',       icon: '👤' },
   business:    { label: 'Business',    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',   icon: '🏢' },
   association: { label: 'Association', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',   icon: '🌿' },
+  education:   { label: 'Education',   color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',           icon: '🎓' },
 };
 
 export default function TenantsPage() {
@@ -138,7 +139,7 @@ export default function TenantsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tenant Management</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Manage all individual, business, and association tenants
+            Manage all individual, business, association and education tenants
           </p>
         </div>
         <Link
@@ -172,7 +173,7 @@ export default function TenantsPage() {
           />
         </div>
         <div className="flex gap-1 bg-gray-100 dark:bg-surface-800 rounded-xl p-1">
-          {['all', 'platform', 'individual', 'business', 'association'].map((type) => (
+          {['all', 'platform', 'individual', 'business', 'association', 'education'].map((type) => (
             <button
               key={type}
               onClick={() => setFilterType(type)}

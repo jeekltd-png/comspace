@@ -16,7 +16,7 @@ export const registerSchema = z
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
     phone: z.string().optional(),
-    accountType: z.enum(['individual', 'business', 'association']),
+    accountType: z.enum(['individual', 'business', 'association', 'education']),
     sellOnMarketplace: z.boolean().optional().default(false),
     orgName: z.string().optional(),
     regNumber: z.string().optional(),
@@ -24,6 +24,10 @@ export const registerSchema = z
     industry: z.string().optional(),
     mission: z.string().optional(),
     estimatedMembers: z.string().optional(),
+    // Education-specific fields
+    institutionType: z.enum(['primary', 'secondary', 'further', 'higher']).optional(),
+    estimatedStudents: z.string().optional(),
+    urn: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -31,7 +35,7 @@ export const registerSchema = z
   })
   .refine(
     (data) => data.accountType === 'individual' || (data.orgName && data.orgName.length > 0),
-    { message: 'Organization name is required', path: ['orgName'] }
+    { message: 'Organization / institution name is required', path: ['orgName'] }
   );
 export type RegisterFormData = z.infer<typeof registerSchema>;
 

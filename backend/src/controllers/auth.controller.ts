@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import User from '../models/user.model';
 import VendorProfile from '../models/vendor-profile.model';
 import WhiteLabel from '../models/white-label.model';
+import LoginHistory from '../models/loginHistory.model';
 import { CustomError } from '../middleware/error.middleware';
 import {
   generateToken,
@@ -10,6 +11,7 @@ import {
   AuthRequest,
 } from '../middleware/auth.middleware';
 import { sendEmail } from '../utils/email';
+import { parseUserAgent, getClientIp } from '../utils/device-parser';
 import passport from 'passport';
 import { redisClient } from '../server';
 import jwt from 'jsonwebtoken';
@@ -190,10 +192,33 @@ export const login: RequestHandler = async (req, res, next) => {
     const user = await User.findOne({ email, tenant: authReq.tenant }).select('+password');
 
     if (!user || !(await user.comparePassword(password))) {
+      // Record failed login attempt (fire-and-forget)
+      const failDevice = parseUserAgent(req.headers['user-agent']);
+      LoginHistory.create({
+        user: user?._id,
+        email,
+        action: 'login_failed',
+        ip: getClientIp(req),
+        userAgent: req.headers['user-agent'] || '',
+        device: failDevice,
+        failureReason: !user ? 'user_not_found' : 'wrong_password',
+        tenant: authReq.tenant || 'default',
+      }).catch(() => {});
       return next(new CustomError('Invalid credentials', 401));
     }
 
     if (!user.isActive) {
+      // Record disabled account login attempt
+      LoginHistory.create({
+        user: user._id,
+        email,
+        action: 'login_failed',
+        ip: getClientIp(req),
+        userAgent: req.headers['user-agent'] || '',
+        device: parseUserAgent(req.headers['user-agent']),
+        failureReason: 'account_deactivated',
+        tenant: authReq.tenant || 'default',
+      }).catch(() => {});
       return next(new CustomError('Account is deactivated', 401));
     }
 
@@ -205,6 +230,19 @@ export const login: RequestHandler = async (req, res, next) => {
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
     const refreshToken = generateRefreshToken(user._id.toString(), authReq.tenant!);
+
+    // Record successful login (fire-and-forget)
+    const device = parseUserAgent(req.headers['user-agent']);
+    const clientIp = getClientIp(req);
+    LoginHistory.create({
+      user: user._id,
+      email: user.email,
+      action: 'login_success',
+      ip: clientIp,
+      userAgent: req.headers['user-agent'] || '',
+      device,
+      tenant: authReq.tenant || 'default',
+    }).catch(() => {});
 
     res.status(200).json({
       success: true,
@@ -335,6 +373,17 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
       text: `Click this link to reset your password: ${resetUrl}\n\nThis link expires in 1 hour.`,
     });
 
+    // Record password reset request (fire-and-forget)
+    LoginHistory.create({
+      user: user._id,
+      email: user.email,
+      action: 'password_reset_request',
+      ip: getClientIp(req),
+      userAgent: req.headers['user-agent'] || '',
+      device: parseUserAgent(req.headers['user-agent']),
+      tenant: authReq.tenant || 'default',
+    }).catch(() => {});
+
     res.status(200).json({
       success: true,
       message: 'If an account with that email exists, a password reset link has been sent',
@@ -372,6 +421,24 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     if (redisClient && redisClient.del) {
       await redisClient.del(`reset:${token}`);
     }
+
+    // Record password reset completion (fire-and-forget)
+    LoginHistory.create({
+      user: user._id,
+      email: user.email,
+      action: 'password_reset_complete',
+      ip: getClientIp(req),
+      userAgent: req.headers['user-agent'] || '',
+      device: parseUserAgent(req.headers['user-agent']),
+      tenant: user.tenant || 'default',
+    }).catch(() => {});
+
+    // Send confirmation email
+    sendEmail({
+      to: user.email,
+      subject: 'Password Changed Successfully',
+      text: `Your password has been changed successfully. If you did not make this change, contact support immediately.`,
+    }).catch(() => {});
 
     res.status(200).json({
       success: true,

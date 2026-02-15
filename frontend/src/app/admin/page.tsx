@@ -7,6 +7,15 @@ const adminCards = [
     title: 'Analytics Dashboard',
     description: 'Real-time metrics, user activity, revenue, conversion funnels & ratings',
     color: 'from-brand-500/10 to-purple-500/10 border-brand-200 dark:border-brand-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
+  },
+  {
+    href: '/admin/users',
+    icon: '👤',
+    title: 'User Management',
+    description: 'Manage user accounts, roles, enable/disable, reset passwords',
+    color: 'from-violet-500/10 to-purple-500/10 border-violet-200 dark:border-violet-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
   },
   {
     href: '/admin/orders',
@@ -14,6 +23,7 @@ const adminCards = [
     title: 'Orders',
     description: 'View, track & manage all customer orders and fulfillment',
     color: 'from-blue-500/10 to-cyan-500/10 border-blue-200 dark:border-blue-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'],
   },
   {
     href: '/admin/products',
@@ -21,6 +31,7 @@ const adminCards = [
     title: 'Products',
     description: 'Manage product catalog, inventory & pricing',
     color: 'from-emerald-500/10 to-green-500/10 border-emerald-200 dark:border-emerald-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'],
   },
   {
     href: '/admin/tenants',
@@ -28,6 +39,7 @@ const adminCards = [
     title: 'Tenant Management',
     description: 'View & manage all tenants (individual, business, association)',
     color: 'from-amber-500/10 to-yellow-500/10 border-amber-200 dark:border-amber-800',
+    roles: ['superadmin'],
   },
   {
     href: '/admin/members',
@@ -35,6 +47,7 @@ const adminCards = [
     title: 'Members',
     description: 'Manage members, roles & user accounts',
     color: 'from-indigo-500/10 to-violet-500/10 border-indigo-200 dark:border-indigo-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
   },
   {
     href: '/admin/dues',
@@ -42,6 +55,23 @@ const adminCards = [
     title: 'Dues & Billing',
     description: 'Track member dues, payments & overdue balances',
     color: 'from-rose-500/10 to-pink-500/10 border-rose-200 dark:border-rose-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
+  },
+  {
+    href: '/admin/audit-log',
+    icon: '📋',
+    title: 'Audit Log',
+    description: 'Full trail of admin actions — who did what, when, from where',
+    color: 'from-cyan-500/10 to-blue-500/10 border-cyan-200 dark:border-cyan-800',
+    roles: ['superadmin', 'admin', 'admin1'],
+  },
+  {
+    href: '/admin/login-history',
+    icon: '🔐',
+    title: 'Login History',
+    description: 'Monitor login attempts, device info, IP addresses & security events',
+    color: 'from-red-500/10 to-rose-500/10 border-red-200 dark:border-red-800',
+    roles: ['superadmin', 'admin', 'admin1'],
   },
   {
     href: '/admin/pages',
@@ -49,6 +79,7 @@ const adminCards = [
     title: 'Pages',
     description: 'Manage CMS pages & content',
     color: 'from-gray-500/10 to-slate-500/10 border-gray-200 dark:border-gray-700',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
   },
   {
     href: '/admin/white-label',
@@ -56,6 +87,7 @@ const adminCards = [
     title: 'White Label',
     description: 'Manage branding & assets per tenant',
     color: 'from-teal-500/10 to-cyan-500/10 border-teal-200 dark:border-teal-800',
+    roles: ['superadmin', 'admin'],
   },
   {
     href: '/admin/vendors',
@@ -63,6 +95,7 @@ const adminCards = [
     title: 'Vendor Management',
     description: 'Review, approve & manage marketplace vendors',
     color: 'from-orange-500/10 to-amber-500/10 border-orange-200 dark:border-orange-800',
+    roles: ['superadmin', 'admin', 'admin1', 'admin2'],
   },
   {
     href: '/admin/theme',
@@ -70,6 +103,7 @@ const adminCards = [
     title: 'Theme Editor',
     description: 'Colors, fonts, logo & live preview',
     color: 'from-fuchsia-500/10 to-purple-500/10 border-fuchsia-200 dark:border-fuchsia-800',
+    roles: ['superadmin', 'admin'],
   },
 ];
 

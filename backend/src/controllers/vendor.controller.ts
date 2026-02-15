@@ -4,6 +4,7 @@ import Product from '../models/product.model';
 import Order from '../models/order.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
+import { createAuditLog } from '../utils/audit';
 
 // ─── Public endpoints ─────────────────────────────────────────────────────
 
@@ -437,6 +438,20 @@ export const adminApproveVendor: RequestHandler = async (req, res, next) => {
     if (!vendor) {
       return next(new CustomError('Vendor not found', 404));
     }
+
+    // Audit trail for vendor approval changes
+    createAuditLog({
+      actor: authReq.user!,
+      action: approved ? 'vendor_approved' : 'vendor_revoked',
+      category: 'vendor',
+      description: `${approved ? 'Approved' : 'Revoked'} vendor: ${vendor.storeName}`,
+      targetType: 'vendor',
+      targetId: vendor._id.toString(),
+      targetEmail: vendor.contactEmail,
+      changes: [{ field: 'isApproved', oldValue: !approved, newValue: !!approved }],
+      req,
+      tenant: authReq.tenant,
+    }).catch(() => {});
 
     res.status(200).json({
       success: true,

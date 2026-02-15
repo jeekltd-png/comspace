@@ -12,6 +12,36 @@ export interface User {
   avatar?: string;
   phone?: string;
   isVerified?: boolean;
+  isActive?: boolean;
+  lastLogin?: string;
+  createdAt?: string;
+  addresses?: Array<{
+    label: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+    coordinates?: { lat: number; lng: number };
+    isDefault: boolean;
+  }>;
+  preferences?: {
+    currency: string;
+    language: string;
+    notifications: {
+      email: boolean;
+      push: boolean;
+      sms: boolean;
+    };
+  };
+  organization?: {
+    name: string;
+    registrationNumber?: string;
+    taxId?: string;
+    industry?: string;
+    mission?: string;
+    estimatedMembers?: number;
+  };
 }
 
 export interface Product {

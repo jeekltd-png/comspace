@@ -7,6 +7,7 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import { dispatchWebhook, WEBHOOK_EVENTS } from '../utils/webhook';
+import { createAuditLog } from '../utils/audit';
 
 // Default tax/shipping — overridable per tenant via white-label config or env vars
 const DEFAULT_TAX_RATE = parseFloat(process.env.DEFAULT_TAX_RATE || '0.10');
@@ -176,12 +177,16 @@ export const getOrder: RequestHandler = async (req, res, next) => {
 };
 
 export const updateOrderStatus: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
   try {
     const { id } = req.params;
     const { status, note } = req.body;
 
+    const oldOrder = await Order.findOne({ _id: id, tenant: authReq.tenant });
+    const oldStatus = oldOrder?.status;
+
     const order = await Order.findOneAndUpdate(
-      { _id: id, tenant: (req as AuthRequest).tenant },
+      { _id: id, tenant: authReq.tenant },
       { status, $push: { statusHistory: { status, note, timestamp: new Date() } } },
       { new: true }
     );
@@ -189,6 +194,20 @@ export const updateOrderStatus: RequestHandler = async (req, res, next) => {
     if (!order) {
       return next(new CustomError('Order not found', 404));
     }
+
+    // Audit trail for order status changes
+    createAuditLog({
+      actor: authReq.user!,
+      action: 'order_status_changed',
+      category: 'order',
+      description: `Order ${order.orderNumber} status changed: ${oldStatus} → ${status}`,
+      targetType: 'order',
+      targetId: order._id.toString(),
+      changes: [{ field: 'status', oldValue: oldStatus, newValue: status }],
+      metadata: { note, orderNumber: order.orderNumber },
+      req,
+      tenant: authReq.tenant,
+    }).catch(() => {});
 
     res.status(200).json({ success: true, data: { order } });
   } catch (error) {

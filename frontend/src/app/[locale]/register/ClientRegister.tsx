@@ -32,6 +32,7 @@ import {
   FiActivity,
   FiHeart,
   FiPackage,
+  FiTool,
 } from 'react-icons/fi';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
@@ -53,7 +54,8 @@ type RegistrationMode =
   | 'restaurant'
   | 'gym'
   | 'pharmacy'
-  | 'laundry';
+  | 'laundry'
+  | 'home-services';
 
 // Which modes are vertical shortcuts (business + spacePreset)
 const VERTICAL_SHORTCUTS: Record<string, string> = {
@@ -63,6 +65,7 @@ const VERTICAL_SHORTCUTS: Record<string, string> = {
   gym: 'gym',
   pharmacy: 'pharmacy',
   laundry: 'laundry',
+  'home-services': 'home-services',
 };
 
 const accountTypeOptions: {
@@ -144,6 +147,14 @@ const accountTypeOptions: {
     tooltip: 'Manage laundry & dry-cleaning orders. Schedule pickups, track orders & offer delivery back to customers.',
     icon: FiDroplet,
     color: 'from-blue-500 to-sky-500',
+  },
+  {
+    value: 'home-services',
+    label: 'Home Services',
+    description: 'Plumbing, building, cleaning & more',
+    tooltip: 'For tradespeople & service pros. Manage bookings, quotes, reviews & showcase your work — plumbers, builders, cleaners, decorators & more.',
+    icon: FiTool,
+    color: 'from-amber-500 to-yellow-600',
   },
   {
     value: 'business',
@@ -618,6 +629,8 @@ export default function RegisterPage() {
                           ? 'e.g. HealthPlus Pharmacy'
                           : registrationMode === 'laundry'
                           ? 'e.g. CleanWave Laundry'
+                          : registrationMode === 'home-services'
+                          ? 'e.g. Dave\u2019s Plumbing'
                           : 'e.g. Acme Corp'
                       }
                     />
@@ -645,7 +658,7 @@ export default function RegisterPage() {
                   </div>
 
                   {/* Business-specific: Tax ID & Industry */}
-                  {accountType === 'business' && (
+                  {accountType === 'business' && !( registrationMode in VERTICAL_SHORTCUTS) && (
                     <>
                       <div>
                         <label
@@ -689,6 +702,36 @@ export default function RegisterPage() {
                         </select>
                       </div>
                     </>
+                  )}
+
+                  {/* Home Services: Trade Specialty */}
+                  {registrationMode === 'home-services' && (
+                    <div>
+                      <label
+                        htmlFor="industry"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                      >
+                        Trade / Specialty{' '}
+                        <span className="text-gray-400">(optional)</span>
+                      </label>
+                      <select
+                        id="industry"
+                        {...register('industry')}
+                        className="input-field"
+                      >
+                        <option value="">Select your trade</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="carpenter">Carpenter / Joiner</option>
+                        <option value="builder">Builder / Contractor</option>
+                        <option value="cleaner">Cleaner</option>
+                        <option value="decorator">Interior Decorator / Painter</option>
+                        <option value="electrician">Electrician</option>
+                        <option value="locksmith">Locksmith</option>
+                        <option value="gardener">Gardener / Landscaper</option>
+                        <option value="handyman">General Handyman</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
                   )}
 
                   {/* Association-specific: Mission & Members */}

@@ -285,6 +285,25 @@ export const SPACE_PRESETS = {
       salon: false,
     },
   },
+  'home-services': {
+    label: 'Home Services',
+    description: 'Trades & service professionals — bookings, quotes & reviews',
+    icon: '🔧',
+    features: {
+      products: true,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: false,
+      chat: true,
+      socialLogin: true,
+      booking: true,
+      salon: false,
+    },
+  },
 } as const;
 
 export type SpacePreset = keyof typeof SPACE_PRESETS;

@@ -57,6 +57,11 @@ export const register: RequestHandler = async (req, res, next) => {
         delivery: true, pickup: true, reviews: true, wishlist: false,
         chat: false, socialLogin: true, booking: true, salon: false,
       },
+      'home-services': {
+        products: true, pricing: true, cart: false, checkout: false,
+        delivery: false, pickup: false, reviews: true, wishlist: false,
+        chat: true, socialLogin: true, booking: true, salon: false,
+      },
     };
 
     // Validate accountType-specific fields

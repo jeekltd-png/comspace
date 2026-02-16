@@ -27,6 +27,11 @@ import {
   FiTarget,
   FiShoppingCart,
   FiBookOpen,
+  FiScissors,
+  FiDroplet,
+  FiActivity,
+  FiHeart,
+  FiPackage,
 } from 'react-icons/fi';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
@@ -34,7 +39,31 @@ import { Tooltip } from '@/components/ui/Tooltip';
 
 type AccountType = 'individual' | 'business' | 'association' | 'education';
 
-type RegistrationMode = 'individual' | 'business' | 'association' | 'marketplace-vendor' | 'showcase' | 'education';
+// Registration mode — verticals like salon, food-store, etc. are shortcuts that
+// register as accountType=business with a spacePreset hint for auto-feature-flagging.
+type RegistrationMode =
+  | 'individual'
+  | 'business'
+  | 'association'
+  | 'marketplace-vendor'
+  | 'showcase'
+  | 'education'
+  | 'salon'
+  | 'food-store'
+  | 'restaurant'
+  | 'gym'
+  | 'pharmacy'
+  | 'laundry';
+
+// Which modes are vertical shortcuts (business + spacePreset)
+const VERTICAL_SHORTCUTS: Record<string, string> = {
+  salon: 'salon',
+  'food-store': 'food-store',
+  restaurant: 'restaurant',
+  gym: 'gym',
+  pharmacy: 'pharmacy',
+  laundry: 'laundry',
+};
 
 const accountTypeOptions: {
   value: RegistrationMode;
@@ -67,6 +96,54 @@ const accountTypeOptions: {
     tooltip: 'List your products on the ComSpace marketplace. We handle the storefront — you manage products, pricing & orders.',
     icon: FiShoppingCart,
     color: 'from-orange-500 to-amber-500',
+  },
+  {
+    value: 'food-store',
+    label: 'Food Store',
+    description: 'Sell groceries, provisions & food items online',
+    tooltip: 'Perfect for corner shops, grocery stores & food businesses. Manage inventory, take orders, offer delivery & click-and-collect.',
+    icon: FiPackage,
+    color: 'from-lime-500 to-green-600',
+  },
+  {
+    value: 'salon',
+    label: 'Salon',
+    description: 'Manage bookings, staff & services',
+    tooltip: 'Perfect for salons, barbershops & spas. Manage your services, staff schedules, appointments & client bookings all in one place.',
+    icon: FiScissors,
+    color: 'from-pink-500 to-rose-500',
+  },
+  {
+    value: 'restaurant',
+    label: 'Restaurant',
+    description: 'Online orders, delivery & table bookings',
+    tooltip: 'Accept online food orders, manage a menu, offer delivery or pickup, and optionally take table reservations.',
+    icon: FiDroplet,
+    color: 'from-red-500 to-orange-500',
+  },
+  {
+    value: 'gym',
+    label: 'Gym & Fitness',
+    description: 'Memberships, classes & bookings',
+    tooltip: 'Manage memberships, class timetables, trainer bookings & sell fitness products — all in one place.',
+    icon: FiActivity,
+    color: 'from-indigo-500 to-purple-600',
+  },
+  {
+    value: 'pharmacy',
+    label: 'Pharmacy',
+    description: 'Sell health products & manage prescriptions',
+    tooltip: 'List health & wellness products online. Manage inventory, take orders, offer delivery & click-and-collect.',
+    icon: FiHeart,
+    color: 'from-teal-500 to-cyan-600',
+  },
+  {
+    value: 'laundry',
+    label: 'Laundry',
+    description: 'Pickup, wash & delivery service',
+    tooltip: 'Manage laundry & dry-cleaning orders. Schedule pickups, track orders & offer delivery back to customers.',
+    icon: FiDroplet,
+    color: 'from-blue-500 to-sky-500',
   },
   {
     value: 'business',
@@ -121,6 +198,7 @@ export default function RegisterPage() {
       phone: '',
       accountType: 'individual',
       sellOnMarketplace: false,
+      spacePreset: '',
       orgName: '',
       regNumber: '',
       taxId: '',
@@ -140,6 +218,7 @@ export default function RegisterPage() {
 
     const isMarketplaceVendor = registrationMode === 'marketplace-vendor';
     const isShowcase = registrationMode === 'showcase';
+    const verticalPreset = VERTICAL_SHORTCUTS[registrationMode]; // e.g. 'salon', 'food-store'
 
     const payload: Record<string, unknown> = {
       firstName: data.firstName,
@@ -150,6 +229,11 @@ export default function RegisterPage() {
       phone: data.phone,
       accountType: data.accountType,
     };
+
+    // Vertical shortcuts send a spacePreset hint
+    if (verticalPreset) {
+      payload.spacePreset = verticalPreset;
+    }
 
     // For marketplace vendors, add the flag
     if (isMarketplaceVendor) {
@@ -193,6 +277,11 @@ export default function RegisterPage() {
           router.push('/admin/merchant/profile');
         } else if (isMarketplaceVendor) {
           router.push('/admin/merchant');
+        } else if (verticalPreset === 'salon') {
+          router.push('/salon');
+        } else if (verticalPreset) {
+          // Other verticals (food-store, restaurant, etc.) → admin dashboard
+          router.push('/admin');
         } else if (user.accountType === 'association') {
           router.push('/create-association');
         } else if (user.accountType === 'education') {
@@ -254,18 +343,29 @@ export default function RegisterPage() {
                   type="button"
                   onClick={() => {
                     setRegistrationMode(opt.value);
+                    const isVertical = opt.value in VERTICAL_SHORTCUTS;
                     if (opt.value === 'marketplace-vendor') {
                       setValue('accountType', 'business');
                       setValue('sellOnMarketplace', true);
+                      setValue('spacePreset', '');
                     } else if (opt.value === 'showcase') {
                       setValue('accountType', 'business');
                       setValue('sellOnMarketplace', false);
+                      setValue('spacePreset', '');
+                    } else if (isVertical) {
+                      // Salon, food-store, restaurant, gym, pharmacy, laundry
+                      // → all business under the hood with a spacePreset
+                      setValue('accountType', 'business');
+                      setValue('sellOnMarketplace', false);
+                      setValue('spacePreset', VERTICAL_SHORTCUTS[opt.value]);
                     } else if (opt.value === 'education') {
                       setValue('accountType', 'education');
                       setValue('sellOnMarketplace', false);
+                      setValue('spacePreset', '');
                     } else {
                       setValue('accountType', opt.value as AccountType);
                       setValue('sellOnMarketplace', false);
+                      setValue('spacePreset', '');
                     }
                   }}
                   className={`w-full glass-card p-5 flex items-center gap-4 text-left transition-all duration-200 ${
@@ -468,6 +568,8 @@ export default function RegisterPage() {
                       <FiBookOpen className="w-4 h-4 text-sky-500" />
                     ) : registrationMode === 'showcase' ? (
                       <FiGlobe className="w-4 h-4 text-purple-500" />
+                    ) : registrationMode in VERTICAL_SHORTCUTS ? (
+                      <FiBriefcase className="w-4 h-4 text-pink-500" />
                     ) : (
                       <FiBriefcase className="w-4 h-4 text-emerald-500" />
                     )}
@@ -478,7 +580,7 @@ export default function RegisterPage() {
                         ? 'Institution Details'
                         : registrationMode === 'showcase'
                         ? 'Showcase Details'
-                        : 'Business Details'}
+                        : `${accountTypeOptions.find(o => o.value === registrationMode)?.label || 'Business'} Details`}
                     </h3>
                   </div>
 
@@ -492,7 +594,7 @@ export default function RegisterPage() {
                         ? 'Association Name'
                         : accountType === 'education'
                         ? 'Institution Name'
-                        : 'Company Name'}{' '}
+                        : `${accountTypeOptions.find(o => o.value === registrationMode)?.label || 'Company'} Name`}{' '}
                       <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -504,6 +606,18 @@ export default function RegisterPage() {
                           ? 'e.g. National Teachers Association'
                           : accountType === 'education'
                           ? 'e.g. Riverside Academy'
+                          : registrationMode === 'salon'
+                          ? 'e.g. Glamour Hair & Beauty'
+                          : registrationMode === 'food-store'
+                          ? 'e.g. Lanre Foods'
+                          : registrationMode === 'restaurant'
+                          ? 'e.g. Mama Kitchen'
+                          : registrationMode === 'gym'
+                          ? 'e.g. FitZone Gym'
+                          : registrationMode === 'pharmacy'
+                          ? 'e.g. HealthPlus Pharmacy'
+                          : registrationMode === 'laundry'
+                          ? 'e.g. CleanWave Laundry'
                           : 'e.g. Acme Corp'
                       }
                     />
@@ -685,6 +799,7 @@ export default function RegisterPage() {
                       </div>
                     </>
                   )}
+
                 </div>
               )}
 

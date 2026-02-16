@@ -24,6 +24,8 @@ export const registerSchema = z
     phone: z.string().optional(),
     accountType: z.enum(['individual', 'business', 'association', 'education']),
     sellOnMarketplace: z.boolean().optional().default(false),
+    // Space preset hint — vertical shortcuts (salon, food-store, etc.) all use accountType=business
+    spacePreset: z.string().optional(),
     orgName: z.string().optional(),
     regNumber: z.string().optional(),
     taxId: z.string().optional(),

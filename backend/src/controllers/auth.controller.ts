@@ -21,7 +21,43 @@ import jwt from 'jsonwebtoken';
 export const register: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const { email, password, firstName, lastName, phone, accountType, organization } = req.body;
+    const { email, password, firstName, lastName, phone, accountType, organization, spacePreset } = req.body;
+
+    // ── Space-preset feature-flag map ──────────────────────────────────────
+    // Vertical shortcuts (salon, food-store, etc.) register as accountType=business
+    // with a spacePreset hint. This map defines the feature flags each preset enables.
+    const SPACE_PRESET_FEATURES: Record<string, Record<string, boolean>> = {
+      salon: {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: false, pickup: false, reviews: true, wishlist: true,
+        chat: true, socialLogin: true, booking: true, salon: true,
+      },
+      'food-store': {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: true, pickup: true, reviews: true, wishlist: true,
+        chat: false, socialLogin: true, booking: false, salon: false,
+      },
+      restaurant: {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: true, pickup: true, reviews: true, wishlist: false,
+        chat: false, socialLogin: true, booking: true, salon: false,
+      },
+      gym: {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: false, pickup: false, reviews: true, wishlist: false,
+        chat: true, socialLogin: true, booking: true, salon: false,
+      },
+      pharmacy: {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: true, pickup: true, reviews: true, wishlist: true,
+        chat: false, socialLogin: true, booking: false, salon: false,
+      },
+      laundry: {
+        products: true, pricing: true, cart: true, checkout: true,
+        delivery: true, pickup: true, reviews: true, wishlist: false,
+        chat: false, socialLogin: true, booking: true, salon: false,
+      },
+    };
 
     // Validate accountType-specific fields
     const acctType = accountType || 'individual';
@@ -70,21 +106,25 @@ export const register: RequestHandler = async (req, res, next) => {
           accentColor: '#F59E0B',
           fontFamily: 'Inter, sans-serif',
         },
-        features: {
-          delivery: acctType === 'business',
-          pickup: acctType === 'business',
-          reviews: acctType !== 'education',
-          wishlist: acctType === 'business',
-          chat: acctType === 'education',
-          socialLogin: true,
-          // Education-specific features
-          ...(acctType === 'education' ? {
-            timetable: true,
-            enrollment: true,
-            parentPortal: true,
-            studentPortal: true,
-          } : {}),
-        },
+        // If a spacePreset was provided (e.g. 'salon', 'food-store'), use its
+        // feature flags. Otherwise fall back to the legacy accountType logic.
+        features: spacePreset && SPACE_PRESET_FEATURES[spacePreset]
+          ? SPACE_PRESET_FEATURES[spacePreset]
+          : {
+              delivery: acctType === 'business',
+              pickup: acctType === 'business',
+              reviews: acctType !== 'education',
+              wishlist: acctType === 'business',
+              chat: acctType === 'education',
+              socialLogin: true,
+              // Education-specific features
+              ...(acctType === 'education' ? {
+                timetable: true,
+                enrollment: true,
+                parentPortal: true,
+                studentPortal: true,
+              } : {}),
+            },
         payment: {
           stripeAccountId: '',
           supportedMethods: ['card'],

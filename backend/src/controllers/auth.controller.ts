@@ -13,6 +13,7 @@ import {
 import { sendEmail } from '../utils/email';
 import { welcomeEmail } from '../templates/email.templates';
 import { parseUserAgent, getClientIp } from '../utils/device-parser';
+import { logger } from '../utils/logger';
 import passport from 'passport';
 import { redisClient } from '../server';
 import jwt from 'jsonwebtoken';
@@ -34,7 +35,7 @@ export const register: RequestHandler = async (req, res, next) => {
     // Check if user exists
     const existingUser = await User.findOne({ email, tenant: authReq.tenant });
     if (existingUser) {
-      return next(new CustomError('User already exists with this email', 400));
+      return next(new CustomError('Registration could not be completed. Please try a different email or log in.', 400));
     }
 
     // Determine role based on account type
@@ -147,7 +148,7 @@ export const register: RequestHandler = async (req, res, next) => {
           tenant: tenantId,
         });
       } catch (vpErr) {
-        console.log('Auto-create vendor profile skipped:', (vpErr as Error).message);
+        logger.warn('Auto-create vendor profile skipped:', { error: (vpErr as Error).message });
       }
     }
 
@@ -164,7 +165,7 @@ export const register: RequestHandler = async (req, res, next) => {
       to: user.email,
       subject: 'Verify Your Email',
       text: `Please click this link to verify your email: ${verificationUrl}`,
-    }).catch(err => console.log('Email send failed:', err.message));
+    }).catch(err => logger.warn('Email send failed:', { error: err.message }));
 
     // Send branded welcome email (non-blocking)
     const orgName = organization?.name;
@@ -178,7 +179,7 @@ export const register: RequestHandler = async (req, res, next) => {
       to: user.email,
       subject: welcome.subject,
       html: welcome.html,
-    }).catch(err => console.log('Welcome email send failed:', err.message));
+    }).catch(err => logger.warn('Welcome email send failed:', { error: err.message }));
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
@@ -231,6 +232,11 @@ export const login: RequestHandler = async (req, res, next) => {
         tenant: authReq.tenant || 'default',
       }).catch(() => {});
       return next(new CustomError('Invalid credentials', 401));
+    }
+
+    // Require email verification before login
+    if (!user.isVerified) {
+      return next(new CustomError('Please verify your email address before logging in', 403));
     }
 
     if (!user.isActive) {
@@ -336,7 +342,11 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
       }
     }
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as {
+    const refreshSecret = process.env.JWT_REFRESH_SECRET;
+    if (!refreshSecret) {
+      return next(new CustomError('Server configuration error', 500));
+    }
+    const decoded = jwt.verify(refreshToken, refreshSecret, { algorithms: ['HS256'] }) as {
       id: string;
       tenant: string;
     };

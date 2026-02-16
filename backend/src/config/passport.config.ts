@@ -4,6 +4,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.model';
 import { sendEmail } from '../utils/email';
 import { welcomeEmail } from '../templates/email.templates';
+import { logger } from '../utils/logger';
 
 export const configurePassport = (passport: PassportStatic) => {
   // JWT Strategy
@@ -82,7 +83,7 @@ export const configurePassport = (passport: PassportStatic) => {
                   to: user.email,
                   subject: welcome.subject,
                   html: welcome.html,
-                }).catch(err => console.log('Welcome email send failed:', err.message));
+                }).catch(err => logger.warn('Welcome email send failed:', { error: err.message }));
               }
             }
 

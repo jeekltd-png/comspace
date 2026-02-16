@@ -2,11 +2,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+# Use pnpm to match the project's package manager
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:20-alpine AS runner
@@ -14,8 +17,10 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --only=production
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
@@ -27,4 +32,4 @@ USER comspace
 
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

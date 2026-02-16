@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from '@/store/store';
 import { Header } from './layout/Header';
 import { Footer } from './layout/Footer';
+import ChatGate from './chat/ChatGate';
 import { AuthProvider } from '@/lib/useAuth';
 import { useState } from 'react';
 
@@ -30,6 +31,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <Header />
           <main id="main-content" className="min-h-screen">{children}</main>
           <Footer />
+          <ChatGate />
         </AuthProvider>
       </QueryClientProvider>
     </Provider>

@@ -27,7 +27,14 @@ const logger = winston.createLogger({
   ],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+  // In production containers, also log to stdout for Docker/K8s log collection
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+    })
+  );
+} else {
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(winston.format.colorize(), winston.format.simple()),

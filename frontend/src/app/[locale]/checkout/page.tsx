@@ -14,14 +14,15 @@ import { FiChevronLeft, FiShield, FiLock, FiCheck, FiShoppingBag } from 'react-i
 import toast from 'react-hot-toast';
 import { shippingSchema, type ShippingFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
+import { useFormatPrice } from '@/lib/currency';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { items, total } = useAppSelector(state => state.cart);
   const { user, token } = useAppSelector(state => state.auth);
-  const currency = useAppSelector(state => state.currency);
   const { cart: cartEnabled, checkout: checkoutEnabled } = useFeatureFlags('cart', 'checkout');
+  const formatPrice = useFormatPrice();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState<'shipping' | 'payment'>('shipping');
 
@@ -67,11 +68,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  const formatPrice = (price: number) => {
-    const converted = price * (currency.rates[currency.current] || 1);
-    return `${currency.symbol}${converted.toFixed(2)}`;
-  };
 
   const advanceToPayment = async () => {
     const valid = await trigger();

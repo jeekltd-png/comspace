@@ -229,5 +229,7 @@ OrderSchema.index({ createdAt: -1 });
 OrderSchema.index({ tenant: 1, status: 1, createdAt: -1 });
 OrderSchema.index({ tenant: 1, paymentStatus: 1 });
 OrderSchema.index({ tenant: 1, createdAt: -1 });
+// Index for Stripe webhook lookups by paymentIntentId
+OrderSchema.index({ paymentIntentId: 1 }, { sparse: true });
 
 export default mongoose.model<IOrder>('Order', OrderSchema);

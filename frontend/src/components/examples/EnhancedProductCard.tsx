@@ -11,6 +11,7 @@ import { StockCountdownCompact } from '@/components/StockCountdown';
 import { SocialShareCompact } from '@/components/SocialShare';
 import { StarRating } from '@/components/ProductReviews';
 import { useRecentlyViewed } from '@/components/RecentlyViewed';
+import { useFormatPrice } from '@/lib/currency';
 
 interface Product {
   _id: string;
@@ -36,6 +37,7 @@ interface ProductCardProps {
 
 export default function EnhancedProductCard({ product, locale }: ProductCardProps) {
   const { addToRecentlyViewed } = useRecentlyViewed();
+  const fmt = useFormatPrice();
   
   const productUrl = `${window.location.origin}/${locale}/products/${product.slug}`;
   
@@ -108,15 +110,15 @@ export default function EnhancedProductCard({ product, locale }: ProductCardProp
           {product.salePrice ? (
             <>
               <span className="text-xl font-bold text-red-600 dark:text-red-400">
-                ${product.salePrice.toFixed(2)}
+                {fmt(product.salePrice)}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                ${product.price.toFixed(2)}
+                {fmt(product.price)}
               </span>
             </>
           ) : (
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              ${product.price.toFixed(2)}
+              {fmt(product.price)}
             </span>
           )}
         </div>

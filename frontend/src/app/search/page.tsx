@@ -9,6 +9,7 @@ import { useAppSelector } from '@/store/hooks';
 import { FiSearch, FiStar, FiShoppingCart, FiFilter } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useFormatPrice } from '@/lib/currency';
 
 interface Product {
   _id: string;
@@ -23,7 +24,6 @@ interface Product {
 function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const currency = useAppSelector(state => state.currency);
   const [sort, setSort] = useState('relevance');
   const { trackSearch, trackPageView } = useAnalytics();
 
@@ -49,10 +49,7 @@ function SearchResults() {
     enabled: query.length > 0,
   });
 
-  const formatPrice = (price: number) => {
-    const converted = price * (currency.rates[currency.current] || 1);
-    return `${currency.symbol}${converted.toFixed(2)}`;
-  };
+  const formatPrice = useFormatPrice();
 
   const products = data?.products || [];
   const total = data?.total || 0;

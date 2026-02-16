@@ -3,15 +3,27 @@ import Stripe from 'stripe';
 import Order from '../models/order.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
+import { logger } from '../utils/logger';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia' as any,
-});
+// Lazy-initialize Stripe so the server doesn't crash if the key is unset
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new CustomError('Payment service is not configured', 503);
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-11-20.acacia' as any,
+    });
+  }
+  return _stripe;
+}
 
 export const createPaymentIntent: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
-    const { amount, currency = 'USD', orderId } = req.body;
+    const stripe = getStripe();
+    const { currency = 'USD', orderId } = req.body;
 
     const order = await Order.findOne({
       _id: orderId,
@@ -22,6 +34,9 @@ export const createPaymentIntent: RequestHandler = async (req, res, next) => {
     if (!order) {
       return next(new CustomError('Order not found', 404));
     }
+
+    // Use server-side order total — never trust client-supplied amount
+    const amount = order.total;
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
@@ -53,13 +68,25 @@ export const createPaymentIntent: RequestHandler = async (req, res, next) => {
 };
 
 export const confirmPayment: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
   try {
+    const stripe = getStripe();
     const { paymentIntentId } = req.body;
+
+    // Validate paymentIntentId format
+    if (!paymentIntentId || typeof paymentIntentId !== 'string' || !paymentIntentId.startsWith('pi_')) {
+      return next(new CustomError('Invalid payment intent ID', 400));
+    }
 
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     if (paymentIntent.status === 'succeeded') {
-      const order = await Order.findOne({ paymentIntentId });
+      // Scope to authenticated user's tenant
+      const order = await Order.findOne({
+        paymentIntentId,
+        user: authReq.user!._id,
+        tenant: authReq.tenant,
+      });
 
       if (order) {
         order.paymentStatus = 'completed';
@@ -87,13 +114,20 @@ export const handleStripeWebhook = async (req: any, res: Response, _next: NextFu
   const sig = req.headers['stripe-signature'];
   let event;
 
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    logger.error('STRIPE_WEBHOOK_SECRET is not configured');
+    return res.status(500).json({ error: 'Webhook not configured' });
+  }
+
   try {
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err: any) {
+    logger.warn('Stripe webhook signature verification failed', { error: err.message });
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -121,7 +155,9 @@ export const handleStripeWebhook = async (req: any, res: Response, _next: NextFu
       break;
   }
 
-  res.status(200).json({ received: true });    return;};
+  res.status(200).json({ received: true });
+  return;
+};
 
 export const getPaymentMethods: RequestHandler = async (_req, res, next) => {
   try {

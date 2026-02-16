@@ -25,6 +25,19 @@ apiClient.interceptors.request.use(
   error => Promise.reject(error)
 );
 
+// Refresh token mutex to prevent race conditions with concurrent 401s
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
 apiClient.interceptors.response.use(
   response => response,
   async error => {
@@ -33,6 +46,17 @@ apiClient.interceptors.response.use(
     if (typeof window !== 'undefined' && error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      if (isRefreshing) {
+        // Queue this request until the refresh completes
+        return new Promise((resolve) => {
+          addRefreshSubscriber((newToken: string) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         const response = await axios.post(
@@ -42,10 +66,18 @@ apiClient.interceptors.response.use(
 
         const { token } = response.data.data;
         localStorage.setItem('token', token);
+        if (response.data.data.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.data.refreshToken);
+        }
+
+        isRefreshing = false;
+        onRefreshed(token);
 
         originalRequest.headers.Authorization = `Bearer ${token}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;
+        refreshSubscribers = [];
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         window.location.href = '/login';

@@ -15,7 +15,9 @@ export type FeatureName =
   | 'reviews'
   | 'wishlist'
   | 'chat'
-  | 'socialLogin';
+  | 'socialLogin'
+  | 'booking'
+  | 'salon';
 
 /**
  * Default feature values when no white-label config exists or a feature isn't
@@ -32,6 +34,8 @@ const FEATURE_DEFAULTS: Record<FeatureName, boolean> = {
   wishlist: true,
   chat: false,
   socialLogin: true,
+  booking: false,
+  salon: false,
 };
 
 /**
@@ -163,6 +167,27 @@ export const SPACE_PRESETS = {
       wishlist: false,
       chat: true,
       socialLogin: true,
+      booking: true,
+      salon: false,
+    },
+  },
+  salon: {
+    label: 'Salon / Spa',
+    description: 'Full salon with services, staff, and online appointment booking',
+    icon: '💇',
+    features: {
+      products: true,
+      pricing: true,
+      cart: true,
+      checkout: true,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: true,
+      chat: true,
+      socialLogin: true,
+      booking: true,
+      salon: true,
     },
   },
 } as const;

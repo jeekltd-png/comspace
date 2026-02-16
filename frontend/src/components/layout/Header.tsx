@@ -8,7 +8,7 @@ import { FiShoppingCart, FiUser, FiMenu, FiSearch, FiX, FiPackage, FiSettings, F
 import ThemeToggle from '@/components/ThemeToggle';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useFeatureFlags } from '@/hooks/useFeatureFlag';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useFocusTrap } from '@/hooks/useAccessibility';
 
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
   const profileRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
-  const { cart: cartEnabled, products: productsEnabled } = useFeatureFlags('cart', 'products');
+  const { cart: cartEnabled, products: productsEnabled, salon: salonEnabled, booking: bookingEnabled } = useFeatureFlags('cart', 'products', 'salon', 'booking');
 
   // Trap focus inside mobile drawer when open
   useFocusTrap(isMenuOpen, drawerRef);
@@ -53,7 +53,8 @@ export function Header() {
   }, [isSearchOpen]);
 
   // Close mobile menu on route change
-  useEffect(() => { setIsMenuOpen(false); }, []);
+  const pathname = usePathname();
+  useEffect(() => { setIsMenuOpen(false); setIsProfileOpen(false); }, [pathname]);
 
   // Keyboard support: Escape closes menus
   useEffect(() => {
@@ -137,6 +138,11 @@ export function Header() {
                 Products
               </Link>
               )}
+              {(salonEnabled || bookingEnabled) && (
+              <Link href="/salon" className="btn-ghost text-sm">
+                Services
+              </Link>
+              )}
               <ThemeToggle />
 
               {/* Search toggle for mobile */}
@@ -196,6 +202,12 @@ export function Header() {
                         <FiPackage className="w-4 h-4 text-gray-400" />
                         Orders
                       </Link>
+                      {(salonEnabled || bookingEnabled) && (
+                      <Link href="/salon/bookings" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
+                        📅
+                        My Bookings
+                      </Link>
+                      )}
                       {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
                         <Link href={user?.role === 'merchant' ? '/admin/merchant' : '/admin'} className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
                           <FiSettings className="w-4 h-4 text-gray-400" />
@@ -304,6 +316,11 @@ export function Header() {
                   Products
                 </Link>
                 )}
+                {(salonEnabled || bookingEnabled) && (
+                <Link href="/salon" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                  💇 Services
+                </Link>
+                )}
                 {isAuthenticated ? (
                   <>
                     <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -312,6 +329,11 @@ export function Header() {
                     <Link href="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                       <FiPackage className="w-4 h-4" /> Orders
                     </Link>
+                    {(salonEnabled || bookingEnabled) && (
+                    <Link href="/salon/bookings" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      📅 My Bookings
+                    </Link>
+                    )}
                     {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
                       <Link href={user?.role === 'merchant' ? '/admin/merchant' : '/admin'} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <FiSettings className="w-4 h-4" /> {user?.role === 'merchant' ? 'My Dashboard' : 'Admin Panel'}

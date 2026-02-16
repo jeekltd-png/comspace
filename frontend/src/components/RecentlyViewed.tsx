@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useFormatPrice } from '@/lib/currency';
 
 interface Product {
   _id: string;
@@ -57,6 +58,7 @@ export function useRecentlyViewed() {
 // Component to display recently viewed products
 export default function RecentlyViewed({ locale }: { locale: string }) {
   const { recentProducts } = useRecentlyViewed();
+  const fmt = useFormatPrice();
 
   if (recentProducts.length === 0) {
     return null;
@@ -85,7 +87,7 @@ export default function RecentlyViewed({ locale }: { locale: string }) {
                 {product.name}
               </h3>
               <p className="text-lg font-bold text-brand-600">
-                ${product.price.toFixed(2)}
+                {fmt(product.price)}
               </p>
             </Link>
           ))}

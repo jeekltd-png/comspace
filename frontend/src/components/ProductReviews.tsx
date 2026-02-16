@@ -199,11 +199,22 @@ function ReviewForm({ productId, onClose }: { productId: string; onClose: () => 
   const [comment, setComment] = useState('');
   const [hoveredRating, setHoveredRating] = useState(0);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Submit to API
-    console.log({ productId, rating, title, comment });
-    onClose();
+    if (rating === 0) return;
+    setIsSubmitting(true);
+    try {
+      const { default: apiClient } = await import('@/lib/api');
+      await apiClient.post('/reviews', { productId, rating, title, comment });
+      onClose();
+    } catch (err: any) {
+      const { default: toast } = await import('react-hot-toast');
+      toast.error(err?.response?.data?.message || 'Failed to submit review. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

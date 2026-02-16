@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useFormatPrice } from '@/lib/currency';
 
 const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export default function DemoPage() {
   const searchParams = useSearchParams();
   const tenant = searchParams?.get('tenant') || 'demo-company-2026';
+  const fmt = useFormatPrice();
 
   const [config, setConfig] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
@@ -75,7 +77,7 @@ export default function DemoPage() {
               <div>
                 <div className="font-semibold">{p.name}</div>
                 <div className="text-sm text-gray-600">{p.shortDescription}</div>
-                <div className="mt-2 font-bold">{p.currency || '$'}{p.basePrice}</div>
+                <div className="mt-2 font-bold">{fmt(p.basePrice)}</div>
               </div>
             </div>
           ))}

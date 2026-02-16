@@ -9,8 +9,10 @@ import { SocialShareCompact } from '@/components/SocialShare';
 import { StarRating } from '@/components/ProductReviews';
 import { useRecentlyViewed } from '@/components/RecentlyViewed';
 import { FiHeart, FiShoppingCart } from 'react-icons/fi';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
+import { toggleWishlist } from '@/store/slices/wishlistSlice';
+import { useFormatPrice } from '@/lib/currency';
 import { useFeatureFlags } from '@/hooks/useFeatureFlag';
 import { Tooltip } from '@/components/ui/Tooltip';
 import toast from 'react-hot-toast';
@@ -56,6 +58,9 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const { cart: cartEnabled, pricing: pricingEnabled, wishlist: wishlistEnabled } = useFeatureFlags('cart', 'pricing', 'wishlist');
   const [imgSrc, setImgSrc] = useState<string | null>(null);
+  const fmt = useFormatPrice();
+  const wishlistItems = useAppSelector(state => state.wishlist.items);
+  const isWishlisted = wishlistItems.some(i => i.productId === product._id);
   
   // Handle different naming conventions
   const productName = product.name || product.title || 'Product';
@@ -132,7 +137,14 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    toast.success('Added to wishlist!');
+    dispatch(toggleWishlist({
+      productId: product._id,
+      name: productName,
+      price: displayPrice,
+      image: productImage,
+      addedAt: new Date().toISOString(),
+    }));
+    toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist!');
   };
 
   return (
@@ -206,15 +218,15 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
           {productSalePrice && productSalePrice < productPrice ? (
             <>
               <span className="text-xl font-bold text-red-600 dark:text-red-400">
-                ${productSalePrice.toFixed(2)}
+                {fmt(productSalePrice)}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                ${productPrice.toFixed(2)}
+                {fmt(productPrice)}
               </span>
             </>
           ) : (
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              ${productPrice.toFixed(2)}
+              {fmt(productPrice)}
             </span>
           )}
         </div>
@@ -241,11 +253,11 @@ export default function ProductCard({ product, locale }: ProductCardProps) {
 
           {/* Wishlist Button — only when wishlist feature is on */}
           {wishlistEnabled && (
-          <Tooltip content="Save to wishlist" position="top">
+          <Tooltip content={isWishlisted ? "Remove from wishlist" : "Save to wishlist"} position="top">
           <button
             onClick={handleWishlist}
-            className="p-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 hover:text-red-500 dark:hover:border-red-400 dark:hover:text-red-400 transition-colors"
-            aria-label="Add to wishlist"
+            className={`p-2.5 border-2 rounded-lg transition-colors ${isWishlisted ? 'border-red-500 text-red-500 bg-red-50 dark:bg-red-900/20 dark:border-red-400 dark:text-red-400' : 'border-gray-300 dark:border-gray-600 hover:border-red-500 hover:text-red-500 dark:hover:border-red-400 dark:hover:text-red-400'}`}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             <FiHeart size={20} />
           </button>

@@ -10,6 +10,7 @@ import { addItem } from '@/store/slices/cartSlice';
 import { FiStar, FiMinus, FiPlus, FiShoppingCart, FiHeart, FiShare2, FiChevronLeft, FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useFormatPrice } from '@/lib/currency';
 
 interface ProductImage {
   url: string;
@@ -35,7 +36,6 @@ interface Product {
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id, locale } = use(params);
   const dispatch = useAppDispatch();
-  const currency = useAppSelector(state => state.currency);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
@@ -57,10 +57,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }
   }, [product?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const formatPrice = (price: number) => {
-    const converted = price * (currency.rates[currency.current] || 1);
-    return `${currency.symbol}${converted.toFixed(2)}`;
-  };
+  const formatPrice = useFormatPrice();
 
   const handleAddToCart = () => {
     if (!product) return;

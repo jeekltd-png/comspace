@@ -17,37 +17,42 @@ export const getProducts: RequestHandler = async (req, res, next) => {
       search,
     } = req.query;
 
-    const query: any = {
-      tenant: authReq.tenant,
-      isActive: true,
-    };
+      const limitNum = Math.min(Number(limit) || 20, 100); // Cap at 100
 
-    if (category) query.category = category;
-    if (minPrice || maxPrice) {
-      query.basePrice = {};
-      if (minPrice) query.basePrice.$gte = Number(minPrice);
-      if (maxPrice) query.basePrice.$lte = Number(maxPrice);
-    }
-    if (search) {
-      query.$text = { $search: search as string };
-    }
+      const query: any = {
+        tenant: authReq.tenant,
+        isActive: true,
+      };
 
-    // Filter by seller/vendor
-    const { seller } = req.query;
-    if (seller) {
-      query.createdBy = seller;
-    }
+      if (category) query.category = category;
+      if (minPrice || maxPrice) {
+        query.basePrice = {};
+        if (minPrice) query.basePrice.$gte = Number(minPrice);
+        if (maxPrice) query.basePrice.$lte = Number(maxPrice);
+      }
+      if (search) {
+        query.$text = { $search: search as string };
+      }
 
-    const skip = (Number(page) - 1) * Number(limit);
+      // Filter by seller/vendor
+      const { seller } = req.query;
+      if (seller) {
+        query.createdBy = seller;
+      }
 
-    const [products, total] = await Promise.all([
-      Product.find(query)
-        .sort(sort as string)
-        .skip(skip)
-        .limit(Number(limit))
-        .populate('category', 'name slug'),
-      Product.countDocuments(query),
-    ]);
+      // Whitelist allowed sort fields to prevent sorting by sensitive fields
+      const allowedSorts = ['createdAt', '-createdAt', 'basePrice', '-basePrice', 'name', '-name'];
+      const safeSort = allowedSorts.includes(sort as string) ? (sort as string) : '-createdAt';
+
+      const skip = (Number(page) - 1) * limitNum;
+      const [products, total] = await Promise.all([
+        Product.find(query)
+          .sort(safeSort)
+          .skip(skip)
+          .limit(limitNum)
+          .populate('category', 'name slug'),
+        Product.countDocuments(query),
+      ]);
 
     res.status(200).json({
       success: true,
@@ -55,9 +60,9 @@ export const getProducts: RequestHandler = async (req, res, next) => {
         products,
         pagination: {
           page: Number(page),
-          limit: Number(limit),
+          limit: limitNum,
           total,
-          pages: Math.ceil(total / Number(limit)),
+          pages: Math.ceil(total / limitNum),
         },
       },
     });
@@ -71,10 +76,11 @@ export const getProduct: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Try cache first
-    if (redisClient) {
-      try {
-        const cached = await redisClient.get(`product:${id}`);
+// Try cache first (tenant-scoped to prevent cross-tenant leaks)
+      const cacheKey = `product:${authReq.tenant}:${id}`;
+      if (redisClient) {
+        try {
+          const cached = await redisClient.get(cacheKey);
         if (cached) {
           return res.status(200).json({
             success: true,
@@ -96,7 +102,7 @@ export const getProduct: RequestHandler = async (req, res, next) => {
 
     // Cache for 5 minutes
     if (redisClient) {
-      try { await redisClient.setEx(`product:${id}`, 300, JSON.stringify(product)); } catch (_) { /* skip */ }
+      try { await redisClient.setEx(cacheKey, 300, JSON.stringify(product)); } catch (_) { /* skip */ }
     }
 
     res.status(200).json({
@@ -170,7 +176,7 @@ export const updateProduct: RequestHandler = async (req, res, next) => {
 
     // Invalidate cache
     if (redisClient) {
-      try { await redisClient.del(`product:${id}`); } catch (_) { /* skip */ }
+      try { await redisClient.del(`product:${authReq.tenant}:${id}`); } catch (_) { /* skip */ }
     }
 
     res.status(200).json({
@@ -198,7 +204,7 @@ export const deleteProduct: RequestHandler = async (req, res, next) => {
     }
 
     if (redisClient) {
-      try { await redisClient.del(`product:${id}`); } catch (_) { /* skip */ }
+      try { await redisClient.del(`product:${authReq.tenant}:${id}`); } catch (_) { /* skip */ }
     }
 
     res.status(200).json({
@@ -214,6 +220,7 @@ export const searchProducts: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
     const { q, limit = 10 } = req.query;
+    const limitNum = Math.min(Number(limit) || 10, 50); // Cap search results
 
     if (!q) {
       return next(new CustomError('Search query is required', 400));
@@ -224,7 +231,7 @@ export const searchProducts: RequestHandler = async (req, res, next) => {
       tenant: authReq.tenant,
       isActive: true,
     })
-      .limit(Number(limit))
+      .limit(limitNum)
       .select('name shortDescription basePrice images');
 
     res.status(200).json({
@@ -248,9 +255,11 @@ export const getMyProducts: RequestHandler = async (req, res, next) => {
     };
 
     if (search) {
+      // Escape regex special characters to prevent ReDoS
+      const escaped = String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { sku: { $regex: search, $options: 'i' } },
+        { name: { $regex: escaped, $options: 'i' } },
+        { sku: { $regex: escaped, $options: 'i' } },
       ];
     }
 

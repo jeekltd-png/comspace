@@ -39,6 +39,9 @@ export interface WhiteLabelConfig {
     wishlist?: boolean;
     chat?: boolean;
     socialLogin?: boolean;
+    // Salon / Booking
+    booking?: boolean;
+    salon?: boolean;
   };
   contact?: {
     email?: string;

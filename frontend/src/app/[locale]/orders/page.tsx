@@ -6,6 +6,7 @@ import Image from 'next/image';
 import apiClient from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { FiPackage, FiChevronRight, FiShoppingBag, FiClock, FiCheckCircle, FiTruck, FiXCircle } from 'react-icons/fi';
+import { useFormatPrice } from '@/lib/currency';
 
 interface OrderItem {
   product: { _id: string; name: string; images?: Array<{ url: string; alt: string }> };
@@ -36,7 +37,7 @@ const statusConfig: Record<string, { icon: React.ElementType; color: string; bg:
 
 export default function OrdersPage() {
   const { token, user } = useAppSelector(state => state.auth);
-  const currency = useAppSelector(state => state.currency);
+  const formatPrice = useFormatPrice();
 
   const { data, isLoading, error } = useQuery<{ orders: Order[] }>({
     queryKey: ['orders'],
@@ -48,11 +49,6 @@ export default function OrdersPage() {
     },
     enabled: !!token,
   });
-
-  const formatPrice = (price: number) => {
-    const converted = price * (currency.rates[currency.current] || 1);
-    return `${currency.symbol}${converted.toFixed(2)}`;
-  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {

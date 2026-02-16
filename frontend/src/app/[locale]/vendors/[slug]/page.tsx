@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
+import { useFormatPrice } from '@/lib/currency';
 
 interface VendorProfile {
   _id: string;
@@ -51,6 +52,7 @@ interface Product {
 export default function VendorProfilePage() {
   const params = useParams();
   const slug = params?.slug as string;
+  const fmt = useFormatPrice();
 
   const [vendor, setVendor] = useState<VendorProfile | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -279,15 +281,15 @@ export default function VendorProfilePage() {
                         {product.isOnSale && product.salePrice ? (
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-red-600 dark:text-red-400">
-                              ${product.salePrice.toFixed(2)}
+                              {fmt(product.salePrice)}
                             </span>
                             <span className="text-xs text-gray-400 line-through">
-                              ${product.basePrice.toFixed(2)}
+                              {fmt(product.basePrice)}
                             </span>
                           </div>
                         ) : (
                           <span className="font-bold text-gray-900 dark:text-white">
-                            ${product.basePrice.toFixed(2)}
+                            {fmt(product.basePrice)}
                           </span>
                         )}
                       </div>

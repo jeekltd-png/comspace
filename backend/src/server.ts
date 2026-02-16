@@ -24,6 +24,8 @@ import membershipRoutes from './routes/membership.routes';
 import tenantRoutes from './routes/tenant.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import vendorRoutes from './routes/vendor.routes';
+import chatRoutes from './routes/chat.routes';
+import salonRoutes from './routes/salon.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -61,6 +63,12 @@ initEmailService();
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
+
+// Trust proxy — configurable for multi-layer proxy setups (CDN → LB → nginx → app)
+app.set('trust proxy', parseInt(process.env.TRUST_PROXY || '1', 10));
+
+// Strict query mode — unknown filter fields throw instead of being silently ignored
+mongoose.set('strictQuery', true);
 
 // Redis client (created at runtime to support NO_DOCKER fallback)
 export let redisClient: any;
@@ -252,11 +260,8 @@ app.use(rateLimiter);
 configurePassport(passport);
 app.use(passport.initialize());
 
-// Health check — uses cached version from startup
+// Health check — public returns minimal info, detailed info requires admin auth
 app.get('/health', (_req: Request, res: Response) => {
-  const commit = process.env.GIT_COMMIT || process.env.COMMIT_SHA || 'unknown';
-
-  // dep statuses
   const mongoConnected = mongoose.connection?.readyState === 1;
   let redisConnected = false;
   try {
@@ -267,16 +272,10 @@ app.get('/health', (_req: Request, res: Response) => {
     redisConnected = false;
   }
 
-  res.status(200).json({
-    status: 'healthy',
+  const healthy = mongoConnected && redisConnected;
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: _cachedVersion,
-    commit,
-    deps: {
-      mongo: mongoConnected,
-      redis: redisConnected,
-    },
   });
 });
 
@@ -303,6 +302,8 @@ app.use('/api/membership', membershipRoutes);
 app.use('/api/pages', require('./routes/pages.routes').default);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/vendors', vendorRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/salon', salonRoutes);
 
 // Webhook management routes (admin only)
 import webhookRoutes from './routes/webhook.routes';
@@ -323,7 +324,6 @@ if (
 app.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'ComSpace API',
-    version: '1.0.0',
     status: 'healthy',
     docs: '/api',
     timestamp: new Date().toISOString(),

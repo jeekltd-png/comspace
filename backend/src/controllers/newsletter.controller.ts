@@ -81,19 +81,14 @@ export const unsubscribe: RequestHandler = async (req: Request, res: Response, n
 
     const subscription = await Newsletter.findOne({ email: email.toLowerCase() });
 
-    if (!subscription) {
-      return res.status(404).json({ message: 'Email not found in our newsletter list' });
+    // Use a generic response to prevent email enumeration
+    if (subscription && subscription.isActive) {
+      subscription.isActive = false;
+      subscription.unsubscribedAt = new Date();
+      await subscription.save();
     }
 
-    if (!subscription.isActive) {
-      return res.status(400).json({ message: 'This email is already unsubscribed' });
-    }
-
-    subscription.isActive = false;
-    subscription.unsubscribedAt = new Date();
-    await subscription.save();
-
-    res.json({ message: 'Successfully unsubscribed from newsletter' });
+    res.json({ message: 'If this email was subscribed, it has been unsubscribed.' });
   } catch (error) {
     logger.error('Newsletter unsubscribe error:', error);
     next(error);

@@ -63,7 +63,7 @@ const countryCurrencyMap: Record<string, string> = {
   CN: 'CNY', JP: 'JPY', KR: 'KRW', IN: 'INR', PK: 'PKR', BD: 'BDT',
   DE: 'EUR', FR: 'EUR', IT: 'EUR', ES: 'EUR', NL: 'EUR', BE: 'EUR',
   AT: 'EUR', PT: 'EUR', IE: 'EUR', FI: 'EUR', GR: 'EUR',
-  BR: 'MX', MX: 'MXN', AR: 'ARS', CO: 'COP', CL: 'CLP', PE: 'PEN',
+  BR: 'BRL', MX: 'MXN', AR: 'ARS', CO: 'COP', CL: 'CLP', PE: 'PEN',
   ZA: 'ZAR', NG: 'NGN', GH: 'GHS', KE: 'KES', EG: 'EGP',
   AE: 'AED', SA: 'SAR', TR: 'TRY', RU: 'RUB',
   SE: 'SEK', NO: 'NOK', DK: 'DKK', CH: 'CHF', PL: 'PLN',

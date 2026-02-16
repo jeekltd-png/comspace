@@ -2,11 +2,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+# Use pnpm to match the project's package manager
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:20-alpine
@@ -14,8 +17,13 @@ FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --only=production
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Install curl for healthcheck BEFORE switching to non-root user
+RUN apk add --no-cache curl
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
 
 COPY --from=builder /app/dist ./dist
 
@@ -24,7 +32,6 @@ RUN addgroup -g 1001 -S nodejs && adduser -S comspace -u 1001
 USER comspace
 
 EXPOSE 5000
-RUN apk add --no-cache curl
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 CMD ["node", "dist/server.js"]

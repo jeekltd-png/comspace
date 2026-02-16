@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
 
 export interface TooltipProps {
   /** The content to display inside the tooltip */
@@ -92,6 +92,8 @@ export function Tooltip({
     right: 'right-full top-1/2 -translate-y-1/2 border-r-gray-900 dark:border-r-surface-700 border-y-transparent border-l-transparent',
   };
 
+  const tooltipId = useId();
+
   return (
     <div
       className="relative inline-flex"
@@ -100,11 +102,13 @@ export function Tooltip({
       onFocus={show}
       onBlur={hide}
       ref={triggerRef}
+      aria-describedby={visible ? tooltipId : undefined}
     >
       {children}
       {visible && (
         <div
           ref={tooltipRef}
+          id={tooltipId}
           role="tooltip"
           style={{ maxWidth }}
           className={`absolute z-[200] ${positionStyles[adjustedPosition]} pointer-events-none animate-fade-in`}

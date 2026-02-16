@@ -3,14 +3,17 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { FiMail, FiArrowRight } from 'react-icons/fi';
-import { FaFacebookF, FaTwitter, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { FaFacebookF, FaTwitter, FaInstagram, FaTiktok, FaLinkedinIn } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import { useWhiteLabel } from '@/contexts/WhiteLabelContext';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export function Footer() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { config } = useWhiteLabel();
+  const social = config?.social;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,18 +90,26 @@ export function Footer() {
               Your modern marketplace for quality products. Secure payments, worldwide delivery.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Facebook">
+              {social?.facebook && (
+              <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Facebook">
                 <FaFacebookF className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Twitter">
+              )}
+              {social?.twitter && (
+              <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Twitter">
                 <FaTwitter className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Instagram">
+              )}
+              {social?.instagram && (
+              <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="Instagram">
                 <FaInstagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="TikTok">
-                <FaTiktok className="w-4 h-4" />
+              )}
+              {social?.linkedin && (
+              <a href={social.linkedin} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-brand-600 flex items-center justify-center transition-colors" aria-label="LinkedIn">
+                <FaLinkedinIn className="w-4 h-4" />
               </a>
+              )}
             </div>
           </div>
 

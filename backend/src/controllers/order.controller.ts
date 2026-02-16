@@ -132,14 +132,15 @@ export const getOrders: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
   try {
     const { page = 1, limit = 10, status } = req.query;
+    const limitNum = Math.min(Number(limit) || 10, 100); // Cap at 100
     const query: any = { user: authReq.user!._id, tenant: authReq.tenant };
 
     if (status) query.status = status;
 
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (Number(page) - 1) * limitNum;
 
     const [orders, total] = await Promise.all([
-      Order.find(query).sort('-createdAt').skip(skip).limit(Number(limit)),
+      Order.find(query).sort('-createdAt').skip(skip).limit(limitNum),
       Order.countDocuments(query),
     ]);
 
@@ -147,7 +148,7 @@ export const getOrders: RequestHandler = async (req, res, next) => {
       success: true,
       data: {
         orders,
-        pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / Number(limit)) },
+        pagination: { page: Number(page), limit: limitNum, total, pages: Math.ceil(total / limitNum) },
       },
     });
   } catch (error) {

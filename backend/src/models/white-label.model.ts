@@ -26,6 +26,9 @@ export interface IWhiteLabel extends Document {
     wishlist: boolean;
     chat: boolean;
     socialLogin: boolean;
+    // Salon / Booking
+    booking: boolean;
+    salon: boolean;
   };
   payment: {
     stripeAccountId: string;
@@ -109,6 +112,9 @@ const WhiteLabelSchema: Schema = new Schema(
       wishlist: { type: Boolean, default: true },
       chat: { type: Boolean, default: false },
       socialLogin: { type: Boolean, default: true },
+      // Salon / Booking
+      booking: { type: Boolean, default: false },
+      salon: { type: Boolean, default: false },
     },
     payment: {
       stripeAccountId: String,

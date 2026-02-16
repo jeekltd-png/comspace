@@ -1,9 +1,31 @@
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+interface ProductSitemapItem {
+  _id: string;
+  slug?: string;
+  updatedAt?: string;
+}
+
+async function fetchProducts(): Promise<ProductSitemapItem[]> {
+  try {
+    const res = await fetch(`${API_URL}/products?limit=100&sort=-updatedAt`, {
+      next: { revalidate: 3600 }, // ISR: rebuild every hour
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.data?.products ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://comspace.app';
 
-  return [
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -59,4 +81,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.2,
     },
   ];
+
+  // Dynamic product pages
+  const products = await fetchProducts();
+  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
+    url: `${baseUrl}/products/${p.slug || p._id}`,
+    lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...productPages];
 }

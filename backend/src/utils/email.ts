@@ -30,13 +30,22 @@ const createTransporter = () => {
   });
 };
 
+// Reuse transporter across sends (avoid creating a new TCP connection per email)
+let _transporter: nodemailer.Transporter | null = null;
+const getTransporter = () => {
+  if (!_transporter) _transporter = createTransporter();
+  return _transporter;
+};
+
+// Cap test emails to prevent unbounded memory growth
+const MAX_TEST_EMAILS = 500;
 export const testSentEmails: Array<{ to: string; subject: string; text: string; html?: string; timestamp: string }> = [];
 
 export const getSentEmails = () => testSentEmails;
 export const clearSentEmails = () => { testSentEmails.length = 0; };
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  const transporter = createTransporter();
+  const transporter = getTransporter();
   const mailOptions = {
     from: process.env.EMAIL_FROM || 'noreply@comspace.com',
     to: options.to,
@@ -48,6 +57,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
   // Record emails in-memory for debug/test environments
   try {
     if (process.env.DEBUG_EMAIL === 'true' || process.env.NODE_ENV === 'test') {
+      if (testSentEmails.length >= MAX_TEST_EMAILS) testSentEmails.splice(0, testSentEmails.length - Math.floor(MAX_TEST_EMAILS / 2));
       testSentEmails.push({
         to: mailOptions.to as string,
         subject: mailOptions.subject as string,

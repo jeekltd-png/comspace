@@ -5,7 +5,11 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    domains: ['localhost', 's3.amazonaws.com', 'res.cloudinary.com'],
+    remotePatterns: [
+      { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'https', hostname: 's3.amazonaws.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   env: {
@@ -49,7 +53,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://maps.googleapis.com",
+              "script-src 'self' 'unsafe-inline' https://js.stripe.com https://maps.googleapis.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https://res.cloudinary.com https://s3.amazonaws.com https://*.stripe.com",
               "font-src 'self' https://fonts.gstatic.com",

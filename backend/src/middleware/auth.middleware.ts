@@ -40,7 +40,7 @@ export const protect: RequestHandler = async (req, _res, next) => {
     if (!jwtSecret) {
       return next(new CustomError('Server configuration error', 500));
     }
-    const decoded = jwt.verify(token, jwtSecret) as { id: string; tenant: string };
+    const decoded = jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }) as { id: string; tenant: string };
 
     // Get user from token (no need to load password hash on every request)
     const user = await User.findById(decoded.id);
@@ -73,7 +73,8 @@ export const generateToken = (userId: string, tenant: string = 'default'): strin
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error('JWT_SECRET is not configured');
   return jwt.sign({ id: userId, tenant }, secret as jwt.Secret, {
-    expiresIn: process.env.JWT_EXPIRE || '7d',
+    expiresIn: process.env.JWT_EXPIRE || '15m',
+    algorithm: 'HS256',
   } as jwt.SignOptions);
 };
 
@@ -82,5 +83,6 @@ export const generateRefreshToken = (userId: string, tenant: string = 'default')
   if (!secret) throw new Error('JWT_REFRESH_SECRET is not configured');
   return jwt.sign({ id: userId, tenant }, secret as jwt.Secret, {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d',
+    algorithm: 'HS256',
   } as jwt.SignOptions);
 };

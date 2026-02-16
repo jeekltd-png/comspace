@@ -72,6 +72,12 @@ export function useAnalytics() {
   }, []);
 
   const trackEvent = useCallback((payload: TrackEventPayload) => {
+    // Respect GDPR cookie consent — only track if user accepted cookies
+    if (typeof window !== 'undefined') {
+      const consent = localStorage.getItem('comspace_cookie_consent');
+      if (consent !== 'accepted') return;
+    }
+
     EVENT_BUFFER.push(payload);
     // Flush immediately if buffer is large
     if (EVENT_BUFFER.length >= 10) {

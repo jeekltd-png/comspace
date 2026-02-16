@@ -331,7 +331,8 @@ export const getUserActivityLog: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const { page = 1, limit = 50 } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const limitNum = Math.min(Number(limit) || 50, 200); // Cap at 200
+    const skip = (Number(page) - 1) * limitNum;
 
     const tenant = authReq.tenant;
 
@@ -339,7 +340,7 @@ export const getUserActivityLog: RequestHandler = async (req, res, next) => {
       UserActivity.find({ user: userId, tenant })
         .sort('-createdAt')
         .skip(skip)
-        .limit(Number(limit)),
+        .limit(limitNum),
       UserActivity.countDocuments({ user: userId, tenant }),
     ]);
 
@@ -347,7 +348,7 @@ export const getUserActivityLog: RequestHandler = async (req, res, next) => {
       success: true,
       data: {
         activities,
-        pagination: { page: Number(page), limit: Number(limit), total },
+        pagination: { page: Number(page), limit: limitNum, total },
       },
     });
   } catch (error) {

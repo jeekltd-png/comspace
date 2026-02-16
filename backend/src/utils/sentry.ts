@@ -8,7 +8,7 @@ export const initSentry = () => {
   // (but it's in package.json so it'll be available in install)
   /* eslint-disable @typescript-eslint/no-var-requires */
   const Sentry = require('@sentry/node');
-  Sentry.init({ dsn, tracesSampleRate: 0.0 });
+  Sentry.init({ dsn, tracesSampleRate: 0.1 });
   SentryClient = Sentry;
   return SentryClient;
 };

@@ -17,7 +17,11 @@ export type FeatureName =
   | 'chat'
   | 'socialLogin'
   | 'booking'
-  | 'salon';
+  | 'salon'
+  | 'hotel'
+  | 'reservations'
+  | 'ratePlans'
+  | 'guestMessaging';
 
 /**
  * Default feature values when no white-label config exists or a feature isn't
@@ -36,6 +40,10 @@ const FEATURE_DEFAULTS: Record<FeatureName, boolean> = {
   socialLogin: true,
   booking: false,
   salon: false,
+  hotel: false,
+  reservations: false,
+  ratePlans: false,
+  guestMessaging: false,
 };
 
 /**
@@ -302,6 +310,52 @@ export const SPACE_PRESETS = {
       socialLogin: true,
       booking: true,
       salon: false,
+    },
+  },
+  hotel: {
+    label: 'Hotel',
+    description: 'Full hotel with room listings, reservations, rate plans & guest messaging',
+    icon: '🏨',
+    features: {
+      products: false,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: true,
+      chat: false,
+      socialLogin: true,
+      booking: false,
+      salon: false,
+      hotel: true,
+      reservations: true,
+      ratePlans: true,
+      guestMessaging: true,
+    },
+  },
+  bnb: {
+    label: 'Bed & Breakfast',
+    description: 'Cosy B&B with room booking, seasonal pricing & guest communication',
+    icon: '🛏️',
+    features: {
+      products: false,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: true,
+      chat: false,
+      socialLogin: true,
+      booking: false,
+      salon: false,
+      hotel: true,
+      reservations: true,
+      ratePlans: true,
+      guestMessaging: true,
     },
   },
 } as const;

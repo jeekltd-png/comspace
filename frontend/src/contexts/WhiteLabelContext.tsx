@@ -42,6 +42,11 @@ export interface WhiteLabelConfig {
     // Salon / Booking
     booking?: boolean;
     salon?: boolean;
+    // Hotel / B&B
+    hotel?: boolean;
+    reservations?: boolean;
+    ratePlans?: boolean;
+    guestMessaging?: boolean;
   };
   contact?: {
     email?: string;

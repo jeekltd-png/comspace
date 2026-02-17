@@ -62,6 +62,18 @@ export const register: RequestHandler = async (req, res, next) => {
         delivery: false, pickup: false, reviews: true, wishlist: false,
         chat: true, socialLogin: true, booking: true, salon: false,
       },
+      healthcare: {
+        products: false, pricing: true, cart: false, checkout: false,
+        delivery: false, pickup: false, reviews: true, wishlist: false,
+        chat: true, socialLogin: true, booking: true, salon: false,
+        healthcare: true,
+      },
+      worship: {
+        products: false, pricing: true, cart: false, checkout: false,
+        delivery: false, pickup: false, reviews: true, wishlist: false,
+        chat: true, socialLogin: true, booking: true, salon: false,
+        worship: true,
+      },
     };
 
     // Validate accountType-specific fields

@@ -59,7 +59,9 @@ type RegistrationMode =
   | 'laundry'
   | 'home-services'
   | 'hotel'
-  | 'bnb';
+  | 'bnb'
+  | 'healthcare'
+  | 'worship';
 
 // Which modes are vertical shortcuts (business + spacePreset)
 const VERTICAL_SHORTCUTS: Record<string, string> = {
@@ -72,6 +74,8 @@ const VERTICAL_SHORTCUTS: Record<string, string> = {
   'home-services': 'home-services',
   hotel: 'hotel',
   bnb: 'bnb',
+  healthcare: 'healthcare',
+  worship: 'worship',
 };
 
 const accountTypeOptions: {
@@ -137,6 +141,38 @@ const accountTypeOptions: {
     tooltip: 'Perfect for B&Bs, guesthouses & vacation rentals. List your rooms, set seasonal pricing, manage reservations & chat with guests.',
     icon: FiSun,
     color: 'from-amber-500 to-orange-500',
+  },
+  {
+    value: 'healthcare',
+    label: 'Hospital',
+    description: 'Departments, doctors & patient appointments',
+    tooltip: 'Full hospital management — list departments, specialties, doctors, manage appointments & accept online bookings. Patients can find you by distance & services.',
+    icon: FiActivity,
+    color: 'from-red-500 to-pink-600',
+  },
+  {
+    value: 'healthcare',
+    label: 'Clinic / Practice',
+    description: 'Appointments, services & patient bookings',
+    tooltip: 'Perfect for clinics, dental offices, physiotherapy, optometrists & specialist practices. Manage providers, services, appointments & let patients find you by location.',
+    icon: FiHeart,
+    color: 'from-emerald-500 to-teal-600',
+  },
+  {
+    value: 'worship',
+    label: 'Church',
+    description: 'Services, ministries & community events',
+    tooltip: 'Full church management — service schedules, ministries, community programmes, event management & let members find your church by location.',
+    icon: FiHome,
+    color: 'from-indigo-500 to-blue-600',
+  },
+  {
+    value: 'worship',
+    label: 'Worship Centre',
+    description: 'Multi-faith worship, services & programmes',
+    tooltip: 'For worship centres, chapels & faith communities. Manage service schedules, ministries, programmes, community events & let people find you by location.',
+    icon: FiHeart,
+    color: 'from-purple-500 to-indigo-600',
   },
   {
     value: 'restaurant',
@@ -314,6 +350,10 @@ export default function RegisterPage() {
           router.push('/salon');
         } else if (verticalPreset === 'hotel' || verticalPreset === 'bnb') {
           router.push('/hotel');
+        } else if (verticalPreset === 'healthcare') {
+          router.push('/healthcare');
+        } else if (verticalPreset === 'worship') {
+          router.push('/worship');
         } else if (verticalPreset) {
           // Other verticals (food-store, restaurant, etc.) → admin dashboard
           router.push('/admin');
@@ -655,6 +695,10 @@ export default function RegisterPage() {
                           ? 'e.g. CleanWave Laundry'
                           : registrationMode === 'home-services'
                           ? 'e.g. Dave\u2019s Plumbing'
+                          : registrationMode === 'healthcare'
+                          ? 'e.g. Sunrise Medical Centre'
+                          : registrationMode === 'worship'
+                          ? 'e.g. Grace Community Church'
                           : registrationMode === 'hotel'
                           ? 'e.g. The Grand Hotel'
                           : registrationMode === 'bnb'

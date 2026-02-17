@@ -27,6 +27,9 @@ import vendorRoutes from './routes/vendor.routes';
 import chatRoutes from './routes/chat.routes';
 import salonRoutes from './routes/salon.routes';
 import hotelRoutes from './routes/hotel.routes';
+import healthcareRoutes from './routes/healthcare.routes';
+import worshipRoutes from './routes/worship.routes';
+import discoveryRoutes from './routes/discovery.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -306,6 +309,9 @@ app.use('/api/vendors', vendorRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/salon', salonRoutes);
 app.use('/api/hotel', hotelRoutes);
+app.use('/api/healthcare', healthcareRoutes);
+app.use('/api/worship', worshipRoutes);
+app.use('/api/discover', discoveryRoutes);
 
 // Webhook management routes (admin only)
 import webhookRoutes from './routes/webhook.routes';

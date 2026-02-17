@@ -35,7 +35,7 @@ export const getNearbyStores: RequestHandler = async (req, res, next) => {
     const stores = await Store.find({
       tenant: authReq.tenant,
       isActive: true,
-      coordinates: {
+      location: {
         $nearSphere: {
           $geometry: {
             type: 'Point',

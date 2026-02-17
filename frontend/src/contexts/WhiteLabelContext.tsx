@@ -47,6 +47,10 @@ export interface WhiteLabelConfig {
     reservations?: boolean;
     ratePlans?: boolean;
     guestMessaging?: boolean;
+    // Healthcare
+    healthcare?: boolean;
+    // Worship
+    worship?: boolean;
   };
   contact?: {
     email?: string;

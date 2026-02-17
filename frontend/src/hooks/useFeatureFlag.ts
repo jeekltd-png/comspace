@@ -21,7 +21,9 @@ export type FeatureName =
   | 'hotel'
   | 'reservations'
   | 'ratePlans'
-  | 'guestMessaging';
+  | 'guestMessaging'
+  | 'healthcare'
+  | 'worship';
 
 /**
  * Default feature values when no white-label config exists or a feature isn't
@@ -44,6 +46,8 @@ const FEATURE_DEFAULTS: Record<FeatureName, boolean> = {
   reservations: false,
   ratePlans: false,
   guestMessaging: false,
+  healthcare: false,
+  worship: false,
 };
 
 /**
@@ -356,6 +360,55 @@ export const SPACE_PRESETS = {
       reservations: true,
       ratePlans: true,
       guestMessaging: true,
+    },
+  },
+  healthcare: {
+    label: 'Healthcare',
+    description: 'Hospital, clinic or practice — appointments, providers & patient discovery',
+    icon: '🏥',
+    features: {
+      products: false,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: false,
+      chat: true,
+      socialLogin: true,
+      booking: true,
+      salon: false,
+      hotel: false,
+      reservations: false,
+      ratePlans: false,
+      guestMessaging: false,
+      healthcare: true,
+    },
+  },
+  worship: {
+    label: 'Worship',
+    description: 'Church, worship centre or faith community — services, ministries & discovery',
+    icon: '⛪',
+    features: {
+      products: false,
+      pricing: true,
+      cart: false,
+      checkout: false,
+      delivery: false,
+      pickup: false,
+      reviews: true,
+      wishlist: false,
+      chat: true,
+      socialLogin: true,
+      booking: true,
+      salon: false,
+      hotel: false,
+      reservations: false,
+      ratePlans: false,
+      guestMessaging: false,
+      healthcare: false,
+      worship: true,
     },
   },
 } as const;

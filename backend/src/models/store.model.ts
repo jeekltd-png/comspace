@@ -10,6 +10,12 @@ export interface IStore extends Document {
     country: string;
     postalCode: string;
   };
+  /** GeoJSON Point for geospatial queries (2dsphere index) */
+  location: {
+    type: 'Point';
+    coordinates: [number, number]; // [lng, lat]
+  };
+  /** @deprecated Use location.coordinates — kept for backward compat */
   coordinates: {
     lat: number;
     lng: number;
@@ -22,6 +28,18 @@ export interface IStore extends Document {
     close: string;
     isClosed: boolean;
   }>;
+  /** Space preset / business category (e.g. salon, healthcare, food-store) */
+  spacePreset?: string;
+  /** Discoverable services or tags for public search */
+  serviceTags?: string[];
+  /** Short public description */
+  shortDescription?: string;
+  /** Average rating (denormalized) */
+  rating?: number;
+  /** Number of reviews (denormalized) */
+  reviewCount?: number;
+  /** Whether this store opts in to public discovery directory */
+  isDiscoverable: boolean;
   inventory: Array<{
     product: mongoose.Types.ObjectId;
     quantity: number;
@@ -50,9 +68,20 @@ const StoreSchema: Schema = new Schema(
       country: { type: String, required: true },
       postalCode: { type: String, required: true },
     },
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        default: [0, 0],
+      },
+    },
     coordinates: {
-      lat: { type: Number, required: true },
-      lng: { type: Number, required: true },
+      lat: { type: Number },
+      lng: { type: Number },
     },
     phone: {
       type: String,
@@ -79,6 +108,21 @@ const StoreSchema: Schema = new Schema(
         quantity: { type: Number, default: 0 },
       },
     ],
+    spacePreset: {
+      type: String,
+      index: true,
+    },
+    serviceTags: [{ type: String }],
+    shortDescription: {
+      type: String,
+      maxlength: 500,
+    },
+    rating: { type: Number, default: 0 },
+    reviewCount: { type: Number, default: 0 },
+    isDiscoverable: {
+      type: Boolean,
+      default: false,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -94,9 +138,22 @@ const StoreSchema: Schema = new Schema(
   }
 );
 
-// NOTE: coordinates use { lat, lng } — not GeoJSON, so no 2dsphere index.
-// If geospatial queries are needed in future, convert to GeoJSON format:
-//   location: { type: { type: String, enum: ['Point'] }, coordinates: [Number] } }
+// Sync legacy coordinates → GeoJSON before save
+StoreSchema.pre('save', function (next) {
+  const doc = this as any;
+  if (doc.isModified('coordinates') && doc.coordinates?.lat && doc.coordinates?.lng) {
+    doc.location = {
+      type: 'Point',
+      coordinates: [doc.coordinates.lng, doc.coordinates.lat],
+    };
+  }
+  next();
+});
+
+// 2dsphere index for geospatial queries ($nearSphere, $geoNear)
+StoreSchema.index({ 'location': '2dsphere' });
 StoreSchema.index({ code: 1, tenant: 1 }, { unique: true });
+StoreSchema.index({ isDiscoverable: 1, spacePreset: 1, isActive: 1 });
+StoreSchema.index({ serviceTags: 1 });
 
 export default mongoose.model<IStore>('Store', StoreSchema);

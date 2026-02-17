@@ -13,7 +13,7 @@ export interface IWhiteLabel extends Document {
     fontFamily: string;
   };
   /** Business type drives the default UI layout for this tenant */
-  businessType: 'ecommerce' | 'salon' | 'hotel' | 'bnb';
+  businessType: 'ecommerce' | 'salon' | 'hotel' | 'bnb' | 'worship';
   features: {
     // Shopping
     products: boolean;
@@ -36,6 +36,10 @@ export interface IWhiteLabel extends Document {
     reservations: boolean;
     ratePlans: boolean;
     guestMessaging: boolean;
+    // Healthcare
+    healthcare: boolean;
+    // Worship
+    worship: boolean;
   };
   payment: {
     stripeAccountId: string;
@@ -82,7 +86,7 @@ const WhiteLabelSchema: Schema = new Schema(
     },
     businessType: {
       type: String,
-      enum: ['ecommerce', 'salon', 'hotel', 'bnb'],
+      enum: ['ecommerce', 'salon', 'hotel', 'bnb', 'healthcare', 'worship'],
       default: 'ecommerce',
     },
     branding: {
@@ -132,6 +136,10 @@ const WhiteLabelSchema: Schema = new Schema(
       reservations: { type: Boolean, default: false },
       ratePlans: { type: Boolean, default: false },
       guestMessaging: { type: Boolean, default: false },
+      // Healthcare
+      healthcare: { type: Boolean, default: false },
+      // Worship
+      worship: { type: Boolean, default: false },
     },
     payment: {
       stripeAccountId: String,

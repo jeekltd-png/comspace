@@ -33,6 +33,8 @@ import {
   FiHeart,
   FiPackage,
   FiTool,
+  FiHome,
+  FiSun,
 } from 'react-icons/fi';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { FormStepper } from '@/components/SmartFormGuide';
@@ -55,7 +57,9 @@ type RegistrationMode =
   | 'gym'
   | 'pharmacy'
   | 'laundry'
-  | 'home-services';
+  | 'home-services'
+  | 'hotel'
+  | 'bnb';
 
 // Which modes are vertical shortcuts (business + spacePreset)
 const VERTICAL_SHORTCUTS: Record<string, string> = {
@@ -66,6 +70,8 @@ const VERTICAL_SHORTCUTS: Record<string, string> = {
   pharmacy: 'pharmacy',
   laundry: 'laundry',
   'home-services': 'home-services',
+  hotel: 'hotel',
+  bnb: 'bnb',
 };
 
 const accountTypeOptions: {
@@ -115,6 +121,22 @@ const accountTypeOptions: {
     tooltip: 'Perfect for salons, barbershops & spas. Manage your services, staff schedules, appointments & client bookings all in one place.',
     icon: FiScissors,
     color: 'from-pink-500 to-rose-500',
+  },
+  {
+    value: 'hotel',
+    label: 'Hotel',
+    description: 'Manage rooms, reservations & guests',
+    tooltip: 'Full hotel management — list rooms & suites, manage reservations, set seasonal rate plans, communicate with guests & accept online bookings.',
+    icon: FiHome,
+    color: 'from-violet-500 to-indigo-500',
+  },
+  {
+    value: 'bnb',
+    label: 'Bed & Breakfast',
+    description: 'Cosy stays with online booking & guest messaging',
+    tooltip: 'Perfect for B&Bs, guesthouses & vacation rentals. List your rooms, set seasonal pricing, manage reservations & chat with guests.',
+    icon: FiSun,
+    color: 'from-amber-500 to-orange-500',
   },
   {
     value: 'restaurant',
@@ -290,6 +312,8 @@ export default function RegisterPage() {
           router.push('/admin/merchant');
         } else if (verticalPreset === 'salon') {
           router.push('/salon');
+        } else if (verticalPreset === 'hotel' || verticalPreset === 'bnb') {
+          router.push('/hotel');
         } else if (verticalPreset) {
           // Other verticals (food-store, restaurant, etc.) → admin dashboard
           router.push('/admin');
@@ -631,6 +655,10 @@ export default function RegisterPage() {
                           ? 'e.g. CleanWave Laundry'
                           : registrationMode === 'home-services'
                           ? 'e.g. Dave\u2019s Plumbing'
+                          : registrationMode === 'hotel'
+                          ? 'e.g. The Grand Hotel'
+                          : registrationMode === 'bnb'
+                          ? 'e.g. Rose Cottage B&B'
                           : 'e.g. Acme Corp'
                       }
                     />

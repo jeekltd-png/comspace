@@ -24,7 +24,7 @@ export function Header() {
   const profileRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
-  const { cart: cartEnabled, products: productsEnabled, salon: salonEnabled, booking: bookingEnabled } = useFeatureFlags('cart', 'products', 'salon', 'booking');
+  const { cart: cartEnabled, products: productsEnabled, salon: salonEnabled, booking: bookingEnabled, hotel: hotelEnabled } = useFeatureFlags('cart', 'products', 'salon', 'booking', 'hotel');
 
   // Trap focus inside mobile drawer when open
   useFocusTrap(isMenuOpen, drawerRef);
@@ -143,6 +143,11 @@ export function Header() {
                 Services
               </Link>
               )}
+              {hotelEnabled && (
+              <Link href="/hotel" className="btn-ghost text-sm">
+                Rooms
+              </Link>
+              )}
               <ThemeToggle />
 
               {/* Search toggle for mobile */}
@@ -206,6 +211,12 @@ export function Header() {
                       <Link href="/salon/bookings" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
                         📅
                         My Bookings
+                      </Link>
+                      )}
+                      {hotelEnabled && (
+                      <Link href="/hotel/reservations" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
+                        🏨
+                        My Reservations
                       </Link>
                       )}
                       {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
@@ -321,6 +332,11 @@ export function Header() {
                   💇 Services
                 </Link>
                 )}
+                {hotelEnabled && (
+                <Link href="/hotel" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium">
+                  🏨 Rooms
+                </Link>
+                )}
                 {isAuthenticated ? (
                   <>
                     <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -332,6 +348,11 @@ export function Header() {
                     {(salonEnabled || bookingEnabled) && (
                     <Link href="/salon/bookings" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                       📅 My Bookings
+                    </Link>
+                    )}
+                    {hotelEnabled && (
+                    <Link href="/hotel/reservations" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      🏨 My Reservations
                     </Link>
                     )}
                     {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (

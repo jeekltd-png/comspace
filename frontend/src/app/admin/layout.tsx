@@ -18,9 +18,11 @@ const allNavLinks = [
   { href: '/admin/dues', label: 'Dues', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Track dues, payments, overdue balances & billing history' },
   { href: '/admin/products', label: '🛍️ Products', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'Manage product catalog, inventory, pricing & images' },
   { href: '/admin/orders', label: '📦 Orders', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'View, track & manage customer orders & fulfillment' },
+  { href: '/admin/coupons', label: '🏷️ Coupons', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Create & manage promo codes and discount coupons' },
   { href: '/admin/audit-log', label: '📋 Audit Log', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Full trail of admin actions — who did what, when, from where' },
   { href: '/admin/login-history', label: '🔐 Logins', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Monitor login attempts, devices, IPs & security events' },
   { href: '/admin/merchant', label: '🛒 My Store', roles: ['merchant'], tooltip: 'Manage your store profile, products & orders' },
+  { href: '/admin/settings', label: '⚙️ Settings', roles: ['superadmin', 'admin'], tooltip: 'Platform settings, commerce config & security' },
 ];
 
 const ADMIN_ROLES = ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'];

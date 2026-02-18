@@ -93,6 +93,15 @@ body {
            transition-all duration-200;
     --tw-ring-color: color-mix(in srgb, var(--wl-brand-500, #a855f7) 50%, transparent);
   }
+  /* Settings input (admin) */
+  .settings-input {
+    @apply w-full px-4 py-2.5 rounded-xl
+           bg-white dark:bg-surface-800
+           border border-gray-200 dark:border-surface-700
+           text-sm text-gray-900 dark:text-white
+           focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           transition-colors;
+  }
   /* Badge */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;

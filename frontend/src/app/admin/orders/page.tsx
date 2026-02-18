@@ -145,7 +145,7 @@ export default function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <Link href={`/orders/${order._id}`} className="text-brand-600 hover:text-brand-700">
+                      <Link href={`/admin/orders/${order._id}`} className="text-brand-600 hover:text-brand-700">
                         <FiEye className="w-4 h-4" />
                       </Link>
                     </td>

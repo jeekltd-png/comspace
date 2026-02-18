@@ -319,6 +319,10 @@ app.use('/api/healthcare', healthcareRoutes);
 app.use('/api/worship', worshipRoutes);
 app.use('/api/discover', discoveryRoutes);
 
+// Coupon/promo code routes
+import couponRoutes from './routes/coupon.routes';
+app.use('/api/coupons', couponRoutes);
+
 // Webhook management routes (admin only)
 import webhookRoutes from './routes/webhook.routes';
 app.use('/api/webhooks', webhookRoutes);

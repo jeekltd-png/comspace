@@ -8,6 +8,11 @@ import {
   FiTrendingUp, FiTrendingDown, FiEye, FiSearch,
   FiStar, FiActivity, FiBarChart2, FiRefreshCw,
 } from 'react-icons/fi';
+import {
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
+  ResponsiveContainer, Legend, Funnel, FunnelChart,
+} from 'recharts';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface DashboardData {
@@ -432,29 +437,36 @@ function Stars({ rating }: { rating: number }) {
 function ActivityChart({ data }: { data: Array<{ _id: string; events: number; users: number }> }) {
   if (data.length === 0) return <p className="text-sm text-gray-400 text-center py-8">No activity data yet</p>;
 
-  const maxEvents = Math.max(...data.map(d => d.events), 1);
+  const chartData = data.map(d => ({
+    date: d._id.slice(5),
+    events: d.events,
+    users: d.users,
+  }));
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-end gap-1 h-40">
-        {data.map((d) => (
-          <div key={d._id} className="flex-1 flex flex-col items-center gap-1" title={`${d._id}: ${d.events} events, ${d.users} users`}>
-            <div className="w-full flex flex-col items-center justify-end h-32">
-              <div
-                className="w-full bg-brand-500/80 dark:bg-brand-600 rounded-t-sm min-h-[2px] transition-all"
-                style={{ height: `${(d.events / maxEvents) * 100}%` }}
-              />
-            </div>
-            <span className="text-[9px] text-gray-400 -rotate-45 origin-top-left whitespace-nowrap">
-              {d._id.slice(5)}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center gap-4 text-xs text-gray-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-brand-500" /> Events</span>
-      </div>
-    </div>
+    <ResponsiveContainer width="100%" height={220}>
+      <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+        <defs>
+          <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:opacity-20" />
+        <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+        <YAxis tick={{ fontSize: 11 }} stroke="#9ca3af" />
+        <RechartsTooltip
+          contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '12px' }}
+        />
+        <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+        <Area type="monotone" dataKey="events" stroke="#6366f1" fill="url(#colorEvents)" strokeWidth={2} name="Events" />
+        <Area type="monotone" dataKey="users" stroke="#22c55e" fill="url(#colorUsers)" strokeWidth={2} name="Users" />
+      </AreaChart>
+    </ResponsiveContainer>
   );
 }
 
@@ -462,77 +474,84 @@ function OrderStatusChart({ data }: { data: Record<string, number> }) {
   const entries = Object.entries(data);
   if (entries.length === 0) return <p className="text-sm text-gray-400 text-center py-8">No order data yet</p>;
 
-  const total = entries.reduce((s, [, v]) => s + v, 0);
-
-  const statusColors: Record<string, string> = {
-    pending: 'bg-yellow-400',
-    confirmed: 'bg-blue-400',
-    processing: 'bg-indigo-400',
-    shipped: 'bg-purple-400',
-    'out-for-delivery': 'bg-cyan-400',
-    delivered: 'bg-green-500',
-    'ready-for-pickup': 'bg-teal-400',
-    'picked-up': 'bg-emerald-500',
-    cancelled: 'bg-red-400',
-    refunded: 'bg-gray-400',
+  const PIE_COLORS: Record<string, string> = {
+    pending: '#facc15',
+    confirmed: '#60a5fa',
+    processing: '#818cf8',
+    shipped: '#a78bfa',
+    'out-for-delivery': '#22d3ee',
+    delivered: '#22c55e',
+    'ready-for-pickup': '#2dd4bf',
+    'picked-up': '#34d399',
+    cancelled: '#f87171',
+    refunded: '#9ca3af',
   };
 
+  const chartData = entries.map(([status, count]) => ({
+    name: status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    value: count,
+    fill: PIE_COLORS[status] || '#94a3b8',
+  }));
+
   return (
-    <div className="space-y-3">
-      {/* Stacked bar */}
-      <div className="flex rounded-full h-4 overflow-hidden">
-        {entries.map(([status, count]) => (
-          <div
-            key={status}
-            className={`${statusColors[status] || 'bg-gray-300'} transition-all`}
-            style={{ width: `${(count / total) * 100}%` }}
-            title={`${status}: ${count}`}
-          />
-        ))}
-      </div>
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3">
-        {entries.map(([status, count]) => (
-          <div key={status} className="flex items-center gap-1.5">
-            <span className={`w-2.5 h-2.5 rounded-full ${statusColors[status] || 'bg-gray-300'}`} />
-            <span className="text-xs text-gray-600 dark:text-gray-400 capitalize">{status.replace(/-/g, ' ')}</span>
-            <span className="text-xs font-medium text-gray-900 dark:text-white">{count}</span>
-          </div>
-        ))}
-      </div>
-    </div>
+    <ResponsiveContainer width="100%" height={220}>
+      <PieChart>
+        <Pie
+          data={chartData}
+          cx="50%"
+          cy="50%"
+          innerRadius={55}
+          outerRadius={85}
+          paddingAngle={3}
+          dataKey="value"
+          nameKey="name"
+          stroke="none"
+        >
+          {chartData.map((entry, i) => (
+            <Cell key={`cell-${i}`} fill={entry.fill} />
+          ))}
+        </Pie>
+        <RechartsTooltip
+          contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '12px' }}
+        />
+        <Legend
+          iconType="circle"
+          wrapperStyle={{ fontSize: '11px' }}
+          formatter={(value: string) => <span className="text-gray-600 dark:text-gray-400">{value}</span>}
+        />
+      </PieChart>
+    </ResponsiveContainer>
   );
 }
 
 function ConversionFunnel({ data }: { data: DashboardData['conversion'] }) {
-  const steps = [
-    { label: 'Cart Additions', value: data.cartAdditions, color: 'bg-blue-500' },
-    { label: 'Checkout Started', value: data.checkoutStarts, color: 'bg-indigo-500' },
-    { label: 'Checkout Completed', value: data.checkoutCompletes, color: 'bg-green-500' },
+  const chartData = [
+    { name: 'Cart Additions', value: data.cartAdditions, fill: '#60a5fa' },
+    { name: 'Checkout Started', value: data.checkoutStarts, fill: '#818cf8' },
+    { name: 'Checkout Completed', value: data.checkoutCompletes, fill: '#22c55e' },
   ];
 
-  const maxValue = Math.max(...steps.map(s => s.value), 1);
-
   return (
-    <div className="space-y-3">
-      {steps.map((step, i) => (
-        <div key={step.label} className="flex items-center gap-4">
-          <span className="text-sm text-gray-600 dark:text-gray-400 w-40 shrink-0">{step.label}</span>
-          <div className="flex-1 h-8 bg-gray-100 dark:bg-surface-800 rounded-lg overflow-hidden relative">
-            <div
-              className={`h-full ${step.color} rounded-lg transition-all flex items-center justify-end pr-2`}
-              style={{ width: `${Math.max((step.value / maxValue) * 100, 5)}%` }}
-            >
-              <span className="text-xs font-bold text-white">{step.value}</span>
-            </div>
-          </div>
-          {i > 0 && steps[i - 1].value > 0 && (
-            <span className="text-xs text-gray-500 w-16 text-right">
-              {Math.round((step.value / steps[i - 1].value) * 100)}%
-            </span>
-          )}
+    <div className="flex flex-col md:flex-row items-center gap-6">
+      <ResponsiveContainer width="100%" height={160}>
+        <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:opacity-20" horizontal={false} />
+          <XAxis type="number" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+          <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} stroke="#9ca3af" width={130} />
+          <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '12px' }} />
+          <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={28}>
+            {chartData.map((entry, i) => (
+              <Cell key={`cell-${i}`} fill={entry.fill} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+      <div className="flex flex-col gap-2 text-center md:text-left">
+        <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{data.conversionRate}%</p>
+          <p className="text-xs text-emerald-700 dark:text-emerald-300">Conversion Rate</p>
         </div>
-      ))}
+      </div>
     </div>
   );
 }

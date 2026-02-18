@@ -33,7 +33,7 @@ import discoveryRoutes from './routes/discovery.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
-import { rateLimiter } from './middleware/rate-limit.middleware';
+import { rateLimiter, initRateLimitStore } from './middleware/rate-limit.middleware';
 import { logger } from './utils/logger';
 import { configurePassport } from './config/passport.config';
 // import i18next, { i18nextMiddleware } from './config/i18n';
@@ -190,6 +190,8 @@ const connectRedis = async () => {
       // Some mock implementations may provide a ready flag
     }
     logger.info('Redis connected successfully');
+    // Initialize Redis-backed rate limiting for production
+    await initRateLimitStore(redisClient);
   } catch (error) {
     logger.error('Redis connection error:', error);
   }
@@ -224,6 +226,10 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 // Cookie parser (needed for CSRF double-submit pattern)
 import cookieParser from 'cookie-parser';
 app.use(cookieParser());
+
+// NoSQL injection protection — strips $ and . from req.body/query/params
+import mongoSanitize from 'express-mongo-sanitize';
+app.use(mongoSanitize({ replaceWith: '_' }));
 
 // Sanitize all inputs (XSS prevention)
 import { sanitizeInputs } from './middleware/sanitize.middleware';
@@ -317,16 +323,9 @@ app.use('/api/discover', discoveryRoutes);
 import webhookRoutes from './routes/webhook.routes';
 app.use('/api/webhooks', webhookRoutes);
 
-// Debug routes: NEVER in production. Only in development/test with explicit flag.
-if (
-  process.env.NODE_ENV !== 'production' &&
-  (process.env.DEBUG_SENTRY === 'true' || process.env.DEBUG_EMAIL === 'true' || process.env.NODE_ENV === 'development')
-) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const debugRoutes = require('./routes/debug.routes').default;
-  app.use('/__debug', debugRoutes);
-  logger.warn('⚠️  Debug routes enabled at /__debug — DO NOT use in production');
-}
+// Debug routes: REMOVED for production safety.
+// Debug endpoints that exposed user data have been permanently disabled.
+// Use proper admin endpoints with authentication for diagnostics.
 
 // Root health / welcome endpoint
 app.get('/', (_req: Request, res: Response) => {

@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Use pnpm to match the project's package manager
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -17,7 +17,7 @@ FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # Install curl for healthcheck BEFORE switching to non-root user
 RUN apk add --no-cache curl

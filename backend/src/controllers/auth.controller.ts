@@ -240,7 +240,24 @@ export const register: RequestHandler = async (req, res, next) => {
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
-    const refreshToken = generateRefreshToken(user._id.toString(), authReq.tenant!);
+    const refreshTokenVal = generateRefreshToken(user._id.toString(), authReq.tenant!);
+
+    // Set tokens in HttpOnly cookies for security (prevents XSS token theft)
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+    res.cookie('refresh_token', refreshTokenVal, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      path: '/api/auth',
+    });
 
     res.status(201).json({
       success: true,
@@ -255,7 +272,7 @@ export const register: RequestHandler = async (req, res, next) => {
           accountType: user.accountType,
         },
         token,
-        refreshToken,
+        refreshToken: refreshTokenVal,
       },
     });
   } catch (error) {
@@ -318,7 +335,7 @@ export const login: RequestHandler = async (req, res, next) => {
 
     // Generate tokens
     const token = generateToken(user._id.toString(), authReq.tenant!);
-    const refreshToken = generateRefreshToken(user._id.toString(), authReq.tenant!);
+    const refreshTokenVal = generateRefreshToken(user._id.toString(), authReq.tenant!);
 
     // Record successful login (fire-and-forget)
     const device = parseUserAgent(req.headers['user-agent']);
@@ -333,6 +350,23 @@ export const login: RequestHandler = async (req, res, next) => {
       tenant: authReq.tenant || 'default',
     }).catch(() => {});
 
+    // Set tokens in HttpOnly cookies for security (prevents XSS token theft)
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+    res.cookie('refresh_token', refreshTokenVal, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      path: '/api/auth',
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -346,7 +380,7 @@ export const login: RequestHandler = async (req, res, next) => {
           avatar: user.avatar,
         },
         token,
-        refreshToken,
+        refreshToken: refreshTokenVal,
       },
     });
   } catch (error) {
@@ -374,6 +408,10 @@ export const logout: RequestHandler = async (req, res, next) => {
       }
     }
 
+    // Clear HttpOnly cookies
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/api/auth' });
+
     res.status(200).json({
       success: true,
       message: 'Logged out successfully',
@@ -385,11 +423,14 @@ export const logout: RequestHandler = async (req, res, next) => {
 
 export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { refreshToken } = req.body;
+    // Support both cookie-based and body-based refresh tokens
+    const refreshTokenValue = req.cookies?.refresh_token || req.body?.refreshToken;
 
-    if (!refreshToken) {
+    if (!refreshTokenValue) {
       return next(new CustomError('Refresh token is required', 400));
     }
+    // Alias for backward compatibility
+    const refreshToken = refreshTokenValue;
 
     // Check if refresh token has been revoked
     if (redisClient && redisClient.get) {
@@ -422,6 +463,23 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
     const newToken = generateToken(user._id.toString(), decoded.tenant);
     const newRefreshToken = generateRefreshToken(user._id.toString(), decoded.tenant);
+
+    // Set updated tokens in HttpOnly cookies
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('access_token', newToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
+    });
+    res.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/api/auth',
+    });
 
     res.status(200).json({
       success: true,

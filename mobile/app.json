@@ -40,6 +40,7 @@
       "expo-notifications"
     ],
     "extra": {
+      "stripePublishableKey": "",
       "eas": {
         "projectId": "your-project-id"
       }

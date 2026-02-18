@@ -1,0 +1,28 @@
+{
+  "name": "ComSpace",
+  "short_name": "ComSpace",
+  "description": "Modern E-Commerce Platform with secure payments, worldwide delivery, and multi-currency support.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#7C3AED",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "business"],
+  "lang": "en",
+  "dir": "ltr"
+}

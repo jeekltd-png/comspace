@@ -26,7 +26,15 @@ export const initEmailService = () => {
     },
   });
 
-  logger.info('Email service initialized');
+  // Verify SMTP connection in production
+  transporter.verify((err) => {
+    if (err) {
+      logger.error('SMTP connection failed:', err.message);
+    } else {
+      logger.info('SMTP connection verified — email service ready');
+    }
+  });
+
   return transporter;
 };
 
@@ -126,3 +134,23 @@ export const sendNewsletterConfirmation = async (email: string) => {
 };
 
 export default { initEmailService, sendEmail, sendNewsletterConfirmation };
+
+/**
+ * Standalone SMTP verification utility.
+ * Run with: npx ts-node -e "require('./src/utils/email.service').verifySmtp()"
+ */
+export const verifySmtp = async () => {
+  initEmailService();
+  if (!transporter) {
+    console.error('❌ EMAIL_USER or EMAIL_PASS not set');
+    process.exit(1);
+  }
+  try {
+    await transporter.verify();
+    console.log('✅ SMTP connection successful');
+    process.exit(0);
+  } catch (err: any) {
+    console.error('❌ SMTP verification failed:', err.message);
+    process.exit(1);
+  }
+};

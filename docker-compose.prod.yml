@@ -8,14 +8,16 @@ services:
     image: mongo:7
     container_name: comspace-mongodb
     restart: always
-    ports:
-      - '27017:27017'
+    # SECURITY: Database ports are NOT exposed to host in production.
+    # Only accessible via internal Docker network.
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?MONGO_PASSWORD is required}
       MONGO_INITDB_DATABASE: ${MONGO_DB:-comspace}
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - internal
     deploy:
       resources:
         limits:
@@ -25,11 +27,12 @@ services:
     image: redis:7-alpine
     container_name: comspace-redis
     restart: always
-    ports:
-      - '6379:6379'
+    # SECURITY: Redis port is NOT exposed to host in production.
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD is required} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - internal
     deploy:
       resources:
         limits:
@@ -41,8 +44,9 @@ services:
       dockerfile: Dockerfile
     container_name: comspace-backend
     restart: always
-    ports:
-      - '5000:5000'
+    # SECURITY: Backend only accessible via nginx reverse proxy
+    expose:
+      - '5000'
     environment:
       NODE_ENV: production
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongodb:27017/${MONGO_DB:-comspace}?authSource=admin
@@ -51,6 +55,8 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET is required}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       FRONTEND_URL: ${FRONTEND_URL:-https://comspace.example.com}
       SENTRY_DSN: ${SENTRY_DSN:-}
     depends_on:
@@ -58,6 +64,8 @@ services:
         condition: service_started
       redis:
         condition: service_started
+    networks:
+      - internal
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -75,14 +83,17 @@ services:
       dockerfile: Dockerfile
     container_name: comspace-frontend
     restart: always
-    ports:
-      - '3000:3000'
+    # SECURITY: Frontend only accessible via nginx reverse proxy
+    expose:
+      - '3000'
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:5000/api}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.comspace.example.com}
     depends_on:
       backend:
         condition: service_healthy
+    networks:
+      - internal
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
       interval: 30s
@@ -94,8 +105,36 @@ services:
         limits:
           memory: 512M
 
+  # Fix #8: Nginx reverse proxy with TLS termination
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: comspace-nginx
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
 volumes:
   mongodb_data:
     driver: local
   redis_data:
     driver: local
+
+networks:
+  internal:
+    driver: bridge

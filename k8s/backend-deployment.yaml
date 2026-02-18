@@ -14,7 +14,10 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/jeekltd-png/comspace/backend:latest
+          # Fix #12 & #13: Use Docker Hub registry matching CI/CD pipeline
+          # Image tag should be set via kustomize or helm values, never :latest
+          image: comspace/backend:${IMAGE_TAG:-latest}
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
@@ -54,7 +57,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: comspace-config
-                  key: api-url
+                  key: frontend-url
           livenessProbe:
             httpGet:
               path: /health

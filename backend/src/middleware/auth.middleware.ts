@@ -14,8 +14,10 @@ export const protect: RequestHandler = async (req, _res, next) => {
 
     const authReq = req as AuthRequest;
 
-    // Get token from header
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // Get token from HttpOnly cookie first, then fall back to Authorization header
+    if (req.cookies?.access_token) {
+      token = req.cookies.access_token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
 

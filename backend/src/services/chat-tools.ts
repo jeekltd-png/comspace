@@ -147,11 +147,18 @@ async function executeGetOrderStatus(
 ) {
   const orderNumber = (args.orderNumber as string)?.toUpperCase();
 
-  const filter: any = { orderNumber, tenant: ctx.tenant };
-  // If authenticated, scope to user's orders only
-  if (ctx.userId) {
-    filter.user = ctx.userId;
+  // Security Fix #6: Require authentication to look up order details
+  // This prevents information leakage where any anonymous user could look up
+  // any order's details, tracking info, and items.
+  if (!ctx.userId) {
+    return {
+      found: false,
+      message: 'Please log in to track your order. I can\'t look up order details for guest users for security reasons.',
+    };
   }
+
+  // Always scope to the authenticated user's orders to prevent cross-user data leakage
+  const filter: any = { orderNumber, tenant: ctx.tenant, user: ctx.userId };
 
   const order = await Order.findOne(filter)
     .select('orderNumber status paymentStatus trackingNumber estimatedDelivery items total currency statusHistory')

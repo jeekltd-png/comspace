@@ -14,7 +14,9 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/jeekltd-png/comspace/frontend:latest
+          # Fix #12 & #13: Use Docker Hub registry matching CI/CD pipeline
+          image: comspace/frontend:${IMAGE_TAG:-latest}
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

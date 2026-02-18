@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IReview extends Document {
   productId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
+  tenant: string;
   rating: number;
   title: string;
   comment: string;
@@ -26,6 +27,11 @@ const reviewSchema = new Schema<IReview>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
+    },
+    tenant: {
+      type: String,
+      default: 'default',
       index: true,
     },
     rating: {
@@ -67,16 +73,19 @@ const reviewSchema = new Schema<IReview>(
   }
 );
 
-// Compound index to prevent duplicate reviews
-reviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
+// Compound index to prevent duplicate reviews (tenant-scoped)
+reviewSchema.index({ productId: 1, userId: 1, tenant: 1 }, { unique: true });
 
 // Index for sorting by helpful votes
 reviewSchema.index({ helpful: -1 });
 
+// Index for tenant-scoped product reviews
+reviewSchema.index({ tenant: 1, productId: 1 });
+
 // Static method to calculate average rating for a product
-reviewSchema.statics.getAverageRating = async function(productId: string) {
+reviewSchema.statics.getAverageRating = async function(productId: string, tenant: string = 'default') {
   const result = await this.aggregate([
-    { $match: { productId: new mongoose.Types.ObjectId(productId) } },
+    { $match: { productId: new mongoose.Types.ObjectId(productId), tenant } },
     {
       $group: {
         _id: '$productId',

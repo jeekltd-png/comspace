@@ -127,7 +127,7 @@ export default function OrdersPage() {
           const StatusIcon = status.icon;
 
           return (
-            <div key={order._id} className="glass-card p-5 sm:p-6 hover:shadow-brand transition-shadow">
+            <Link key={order._id} href={`/orders/${order._id}`} className="glass-card p-5 sm:p-6 hover:shadow-brand transition-shadow block cursor-pointer">
               {/* Order header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <div>
@@ -174,7 +174,7 @@ export default function OrdersPage() {
                   <p className="text-xs text-gray-400">{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

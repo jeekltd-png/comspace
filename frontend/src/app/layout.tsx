@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     siteName: 'ComSpace',
     title: 'ComSpace — Modern E-Commerce Platform',
     description: 'Discover amazing products with secure payments, worldwide delivery, and multi-currency support.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'ComSpace' }],
+    images: [{ url: '/og-image.svg', width: 1200, height: 630, alt: 'ComSpace' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ComSpace — Modern E-Commerce Platform',
     description: 'Discover amazing products with secure payments, worldwide delivery, and multi-currency support.',
-    images: ['/og-image.png'],
+    images: ['/og-image.svg'],
   },
   robots: {
     index: true,

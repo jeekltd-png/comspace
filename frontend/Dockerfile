@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Use pnpm to match the project's package manager
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -17,7 +17,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
@@ -25,6 +25,7 @@ RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY next.config.js ./
+COPY next-intl.config.* ./
 
 # Run as non-root user for security
 RUN addgroup -g 1001 -S nodejs && adduser -S comspace -u 1001

@@ -71,11 +71,19 @@ async function callOpenAI(
     body.tool_choice = 'auto';
   }
 
-  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify(body),
-  });
+  // Timeout: abort if LLM doesn't respond within 30 seconds
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
 
   if (!resp.ok) {
     const errText = await resp.text();
@@ -97,6 +105,14 @@ async function callOpenAI(
     toolCalls,
     finishReason: toolCalls.length > 0 ? 'tool_calls' : (choice?.finish_reason ?? 'stop'),
   };
+  } catch (err: any) {
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      logger.error('OpenAI API call timed out after 30s');
+      throw new Error('LLM request timed out');
+    }
+    throw err;
+  }
 }
 
 // ── Anthropic adapter ────────────────────────────────────────
@@ -127,15 +143,23 @@ async function callAnthropic(
     }));
   }
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify(body),
-  });
+  // Timeout: abort if LLM doesn't respond within 30 seconds
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
 
   if (!resp.ok) {
     const errText = await resp.text();
@@ -159,6 +183,14 @@ async function callAnthropic(
     toolCalls,
     finishReason: toolCalls.length > 0 ? 'tool_calls' : (data.stop_reason === 'end_turn' ? 'stop' : 'stop'),
   };
+  } catch (err: any) {
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      logger.error('Anthropic API call timed out after 30s');
+      throw new Error('LLM request timed out');
+    }
+    throw err;
+  }
 }
 
 // ── Demo fallback ────────────────────────────────────────────

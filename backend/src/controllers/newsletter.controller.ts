@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import Newsletter from '../models/Newsletter';
 import { sendNewsletterConfirmation } from '../utils/email.service';
 import { logger } from '../utils/logger';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 /**
  * Subscribe to newsletter
@@ -10,6 +11,7 @@ import { logger } from '../utils/logger';
 export const subscribe: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
     const { email } = req.body;
+    const tenant = (req as AuthRequest).tenant || 'default';
 
     if (!email) {
       return res.status(400).json({ message: 'Email is required' });
@@ -21,8 +23,8 @@ export const subscribe: RequestHandler = async (req: Request, res: Response, nex
       return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    // Check if email already exists
-    const existing = await Newsletter.findOne({ email: email.toLowerCase() });
+    // Check if email already exists for this tenant
+    const existing = await Newsletter.findOne({ email: email.toLowerCase(), tenant });
     if (existing) {
       if (existing.isActive) {
         return res.status(400).json({ message: 'This email is already subscribed' });
@@ -46,6 +48,7 @@ export const subscribe: RequestHandler = async (req: Request, res: Response, nex
     // Create new subscription
     const subscription = new Newsletter({
       email: email.toLowerCase(),
+      tenant,
       subscribedAt: new Date(),
       isActive: true,
     });
@@ -74,12 +77,13 @@ export const subscribe: RequestHandler = async (req: Request, res: Response, nex
 export const unsubscribe: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
     const { email } = req.body;
+    const tenant = (req as AuthRequest).tenant || 'default';
 
     if (!email) {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const subscription = await Newsletter.findOne({ email: email.toLowerCase() });
+    const subscription = await Newsletter.findOne({ email: email.toLowerCase(), tenant });
 
     // Use a generic response to prevent email enumeration
     if (subscription && subscription.isActive) {

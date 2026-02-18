@@ -73,7 +73,7 @@ const OrderSchema: Schema = new Schema(
     orderNumber: {
       type: String,
       required: true,
-      unique: true,
+      // unique removed — compound index below scopes uniqueness per tenant
       uppercase: true,
     },
     user: {
@@ -201,11 +201,11 @@ const OrderSchema: Schema = new Schema(
   }
 );
 
-// Generate order number before saving — atomic, no race condition
+// Generate order number before saving — high-entropy to avoid collisions
 OrderSchema.pre('save', async function (this: any, next) {
   if (!this.orderNumber) {
     const timestamp = Date.now().toString(36).toUpperCase();
-    const random = crypto.randomBytes(3).toString('hex').toUpperCase();
+    const random = crypto.randomBytes(4).toString('hex').toUpperCase();
     this.orderNumber = `ORD-${timestamp}-${random}`;
   }
 
@@ -221,7 +221,8 @@ OrderSchema.pre('save', async function (this: any, next) {
 });
 
 // Indexes
-// Order number index is managed by the schema field (unique) to avoid duplicate index warnings.
+// Order number unique per tenant (multi-tenancy safe)
+OrderSchema.index({ orderNumber: 1, tenant: 1 }, { unique: true });
 OrderSchema.index({ user: 1, tenant: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ createdAt: -1 });

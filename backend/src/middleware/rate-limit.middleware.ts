@@ -1,5 +1,28 @@
 import rateLimit from 'express-rate-limit';
 
+// Redis store for rate limiting in production (prevents bypass in multi-instance deployments)
+let redisStore: any = undefined;
+
+/**
+ * Initialize rate limiter with Redis store for production deployments.
+ * Call this after Redis connection is established.
+ * Falls back to in-memory store if Redis is unavailable.
+ */
+export const initRateLimitStore = async (redisClient: any) => {
+  if (!redisClient || process.env.NODE_ENV === 'test') return;
+  try {
+    // Dynamic import to avoid hard dependency if not installed
+    const { RedisStore } = await import('rate-limit-redis');
+    redisStore = new RedisStore({
+      // Using the redis client's sendCommand for rate-limit-redis v4+
+      sendCommand: (...args: string[]) => redisClient.sendCommand(args),
+    });
+  } catch (e) {
+    // rate-limit-redis not installed — fall back to memory store
+    console.warn('rate-limit-redis not available, using memory store for rate limiting');
+  }
+};
+
 // Global rate limiter — applies to all routes
 export const rateLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
@@ -7,6 +30,8 @@ export const rateLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Use Redis store in production for multi-instance deployments
+  ...(process.env.NODE_ENV === 'production' && redisStore ? { store: redisStore } : {}),
 });
 
 // Strict limiter for authentication endpoints (login/register/forgot-password)

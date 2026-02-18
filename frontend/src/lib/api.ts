@@ -5,6 +5,10 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Fix #1: Send HttpOnly cookies with every request for secure token transport
+  withCredentials: true,
+  // Production fix: Prevent hung connections with 15 second timeout
+  timeout: 15000,
 });
 
 apiClient.interceptors.request.use(

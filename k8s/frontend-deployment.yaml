@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          # Fix #12 & #13: Use Docker Hub registry matching CI/CD pipeline
-          image: comspace/frontend:${IMAGE_TAG:-latest}
+          # Image tag is replaced by CI/CD pipeline sed command or kustomize
+          image: comspace/frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

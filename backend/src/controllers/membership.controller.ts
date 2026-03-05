@@ -6,9 +6,19 @@ import MemberDues from '../models/memberDues.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  apiVersion: '2024-11-20.acacia' as any,
-});
+// Lazy-initialize Stripe so the server doesn't crash if the key is unset
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new CustomError('Payment service is not configured. Set STRIPE_SECRET_KEY.', 503);
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-11-20.acacia' as any,
+    });
+  }
+  return _stripe;
+}
 
 // ─── PLAN MANAGEMENT (Admin) ───────────────────────────
 
@@ -246,7 +256,7 @@ export const payDues: RequestHandler = async (req, res, next) => {
     });
 
     // Create Stripe PaymentIntent
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: Math.round(plan.amount * 100),
       currency: plan.currency.toLowerCase(),
       metadata: {
@@ -288,7 +298,7 @@ export const confirmDuesPayment: RequestHandler = async (req, res, next) => {
     if (!duesRecord) return next(new CustomError('Dues record not found', 404));
 
     if (paymentIntentId) {
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      const paymentIntent = await getStripe().paymentIntents.retrieve(paymentIntentId);
       if (paymentIntent.status !== 'succeeded') {
         return next(new CustomError('Payment has not succeeded', 400));
       }

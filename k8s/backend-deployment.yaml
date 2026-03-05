@@ -14,9 +14,8 @@ spec:
     spec:
       containers:
         - name: backend
-          # Fix #12 & #13: Use Docker Hub registry matching CI/CD pipeline
-          # Image tag should be set via kustomize or helm values, never :latest
-          image: comspace/backend:${IMAGE_TAG:-latest}
+          # Image tag is replaced by CI/CD pipeline sed command or kustomize
+          image: comspace/backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000

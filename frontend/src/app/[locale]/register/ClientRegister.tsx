@@ -61,7 +61,11 @@ type RegistrationMode =
   | 'hotel'
   | 'bnb'
   | 'healthcare'
-  | 'worship';
+  | 'healthcare-hospital'
+  | 'healthcare-clinic'
+  | 'worship'
+  | 'worship-church'
+  | 'worship-centre';
 
 // Which modes are vertical shortcuts (business + spacePreset)
 const VERTICAL_SHORTCUTS: Record<string, string> = {
@@ -75,7 +79,11 @@ const VERTICAL_SHORTCUTS: Record<string, string> = {
   hotel: 'hotel',
   bnb: 'bnb',
   healthcare: 'healthcare',
+  'healthcare-hospital': 'healthcare',
+  'healthcare-clinic': 'healthcare',
   worship: 'worship',
+  'worship-church': 'worship',
+  'worship-centre': 'worship',
 };
 
 const accountTypeOptions: {
@@ -143,7 +151,7 @@ const accountTypeOptions: {
     color: 'from-amber-500 to-orange-500',
   },
   {
-    value: 'healthcare',
+    value: 'healthcare-hospital',
     label: 'Hospital',
     description: 'Departments, doctors & patient appointments',
     tooltip: 'Full hospital management — list departments, specialties, doctors, manage appointments & accept online bookings. Patients can find you by distance & services.',
@@ -151,7 +159,7 @@ const accountTypeOptions: {
     color: 'from-red-500 to-pink-600',
   },
   {
-    value: 'healthcare',
+    value: 'healthcare-clinic',
     label: 'Clinic / Practice',
     description: 'Appointments, services & patient bookings',
     tooltip: 'Perfect for clinics, dental offices, physiotherapy, optometrists & specialist practices. Manage providers, services, appointments & let patients find you by location.',
@@ -159,7 +167,7 @@ const accountTypeOptions: {
     color: 'from-emerald-500 to-teal-600',
   },
   {
-    value: 'worship',
+    value: 'worship-church',
     label: 'Church',
     description: 'Services, ministries & community events',
     tooltip: 'Full church management — service schedules, ministries, community programmes, event management & let members find your church by location.',
@@ -167,7 +175,7 @@ const accountTypeOptions: {
     color: 'from-indigo-500 to-blue-600',
   },
   {
-    value: 'worship',
+    value: 'worship-centre',
     label: 'Worship Centre',
     description: 'Multi-faith worship, services & programmes',
     tooltip: 'For worship centres, chapels & faith communities. Manage service schedules, ministries, programmes, community events & let people find you by location.',

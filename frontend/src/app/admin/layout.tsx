@@ -19,6 +19,8 @@ const allNavLinks = [
   { href: '/admin/products', label: '🛍️ Products', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'Manage product catalog, inventory, pricing & images' },
   { href: '/admin/orders', label: '📦 Orders', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'View, track & manage customer orders & fulfillment' },
   { href: '/admin/coupons', label: '🏷️ Coupons', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Create & manage promo codes and discount coupons' },
+  { href: '/admin/reviews', label: '⭐ Reviews', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Moderate product reviews, filter by rating or verified status' },
+  { href: '/admin/newsletter', label: '📰 Newsletter', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'View subscribers, toggle status & export CSV' },
   { href: '/admin/audit-log', label: '📋 Audit Log', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Full trail of admin actions — who did what, when, from where' },
   { href: '/admin/login-history', label: '🔐 Logins', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Monitor login attempts, devices, IPs & security events' },
   { href: '/admin/merchant', label: '🛒 My Store', roles: ['merchant'], tooltip: 'Manage your store profile, products & orders' },

@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import Review from '../models/Review';
 import Product from '../models/product.model';
+import Order from '../models/order.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
 
@@ -80,8 +81,13 @@ export const createReview: RequestHandler = async (req, res, next) => {
       throw new CustomError('You have already reviewed this product', 400);
     }
 
-    // TODO: Check if user purchased this product (set verified to true)
-    const verified = false;
+    // Check if user purchased this product (verified purchase badge)
+    const purchasedOrder = await Order.findOne({
+      user: userId,
+      'items.product': productId,
+      paymentStatus: 'completed',
+    });
+    const verified = !!purchasedOrder;
 
     const review = await Review.create({
       productId,

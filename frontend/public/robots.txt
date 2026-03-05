@@ -10,5 +10,6 @@ Disallow: /profile
 Disallow: /orders
 Disallow: /cart
 
-# Sitemaps
+# Sitemaps — update this URL to match your production domain
+# The dynamic sitemap is generated at /sitemap.xml by Next.js
 Sitemap: https://comspace.app/sitemap.xml

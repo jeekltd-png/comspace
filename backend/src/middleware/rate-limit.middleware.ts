@@ -17,22 +17,29 @@ export const initRateLimitStore = async (redisClient: any) => {
       // Using the redis client's sendCommand for rate-limit-redis v4+
       sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     });
+    console.log('Rate limiter: Redis store initialized');
   } catch (e) {
     // rate-limit-redis not installed — fall back to memory store
     console.warn('rate-limit-redis not available, using memory store for rate limiting');
   }
 };
 
-// Global rate limiter — applies to all routes
-export const rateLimiter = rateLimit({
+/**
+ * Global rate limiter — applies to all routes.
+ * Uses getter so Redis store is picked up after init.
+ */
+export const getRateLimiter = () => rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  // Use Redis store in production for multi-instance deployments
-  ...(process.env.NODE_ENV === 'production' && redisStore ? { store: redisStore } : {}),
+  ...(redisStore ? { store: redisStore } : {}),
 });
+
+// Backwards-compatible export: lazy proxy that delegates to getRateLimiter()
+import type { RequestHandler } from 'express';
+export const rateLimiter: RequestHandler = (req, res, next) => getRateLimiter()(req, res, next);
 
 // Strict limiter for authentication endpoints (login/register/forgot-password)
 export const authLimiter = rateLimit({

@@ -59,6 +59,13 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       FRONTEND_URL: ${FRONTEND_URL:-https://comspace.example.com}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      # Email / SMTP configuration
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@comspace.example.com}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
     depends_on:
       mongodb:
         condition: service_started

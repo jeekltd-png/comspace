@@ -31,6 +31,9 @@ import healthcareRoutes from './routes/healthcare.routes';
 import worshipRoutes from './routes/worship.routes';
 import discoveryRoutes from './routes/discovery.routes';
 import invoiceRoutes from './routes/invoice.routes';
+import billingRoutes from './routes/billing.routes';
+import promotionRoutes from './routes/promotion.routes';
+import partnerRoutes from './routes/partner.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -323,6 +326,11 @@ app.use('/api/discover', discoveryRoutes);
 // Invoice & receipt routes
 app.use('/api/invoices', invoiceRoutes);
 
+// Billing, subscription & monetization routes
+app.use('/api/billing', billingRoutes);
+app.use('/api/promotions', promotionRoutes);
+app.use('/api/partners', partnerRoutes);
+
 // Coupon/promo code routes
 import couponRoutes from './routes/coupon.routes';
 app.use('/api/coupons', couponRoutes);
@@ -385,6 +393,14 @@ const startServer = async () => {
       logger.warn('Dev seed skipped or failed:', e);
     } finally {
       _seedingInProgress = false;
+    }
+
+    // Seed default platform pricing plans
+    try {
+      const { seedDefaultPlans } = await import('./controllers/billing.controller');
+      await seedDefaultPlans();
+    } catch (e) {
+      logger.warn('Platform plan seed skipped:', e);
     }
   }
 

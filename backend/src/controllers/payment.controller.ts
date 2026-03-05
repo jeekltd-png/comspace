@@ -4,6 +4,7 @@ import Order from '../models/order.model';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { CustomError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+import { recordCommission } from './billing.controller';
 
 // Lazy-initialize Stripe so the server doesn't crash if the key is unset
 let _stripe: Stripe | null = null;
@@ -141,6 +142,14 @@ export const handleStripeWebhook = async (req: any, res: Response, _next: NextFu
         order.paymentStatus = 'completed';
         order.status = 'confirmed';
         await order.save();
+
+        // Record platform commission (fire & forget)
+        recordCommission(
+          order._id.toString(),
+          order.tenant,
+          order.total,
+          order.currency
+        ).catch((err) => logger.error('Commission recording failed:', err));
       }
       break;
 

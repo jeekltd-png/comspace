@@ -23,6 +23,9 @@ const allNavLinks = [
   { href: '/admin/newsletter', label: '📰 Newsletter', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'View subscribers, toggle status & export CSV' },
   { href: '/admin/audit-log', label: '📋 Audit Log', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Full trail of admin actions — who did what, when, from where' },
   { href: '/admin/login-history', label: '🔐 Logins', roles: ['superadmin', 'admin', 'admin1'], tooltip: 'Monitor login attempts, devices, IPs & security events' },
+  { href: '/admin/billing', label: '💰 Billing', roles: ['superadmin', 'admin'], tooltip: 'Subscriptions, commissions, API usage & revenue dashboard' },
+  { href: '/admin/promotions', label: '📢 Promotions', roles: ['superadmin', 'admin', 'admin1', 'merchant'], tooltip: 'Manage promoted listings, ad budgets & performance' },
+  { href: '/admin/partners', label: '🤝 Partners', roles: ['superadmin'], tooltip: 'Affiliate & referral partner management, payouts & approvals' },
   { href: '/admin/merchant', label: '🛒 My Store', roles: ['merchant'], tooltip: 'Manage your store profile, products & orders' },
   { href: '/admin/settings', label: '⚙️ Settings', roles: ['superadmin', 'admin'], tooltip: 'Platform settings, commerce config & security' },
 ];

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import apiClient from '@/lib/api';
 import { useAuth } from '@/lib/useAuth';
@@ -8,6 +8,8 @@ import {
   FiUsers, FiPackage, FiShoppingBag, FiDollarSign,
   FiPlus, FiSearch, FiToggleLeft, FiToggleRight,
   FiChevronRight, FiGlobe, FiShield, FiActivity,
+  FiAlertTriangle, FiTrendingUp, FiBarChart2,
+  FiCheckCircle, FiArrowRight, FiCalendar,
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
@@ -152,13 +154,82 @@ export default function TenantsPage() {
 
       {/* Cross-Tenant Overview Cards */}
       {overview && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
           <StatCard icon={<FiGlobe />} label="Total Tenants" value={overview.totalTenants} sub={`${overview.activeTenants} active`} color="purple" />
           <StatCard icon={<FiUsers />} label="Total Users" value={overview.totalUsers} color="blue" />
           <StatCard icon={<FiPackage />} label="Total Products" value={overview.totalProducts} color="amber" />
-          <StatCard icon={<FiDollarSign />} label="Total Revenue" value={`$${overview.totalRevenue.toLocaleString()}`} sub={`${overview.totalOrders} orders`} color="green" />
+          <StatCard icon={<FiShoppingBag />} label="Total Orders" value={overview.totalOrders} color="blue" />
+          <StatCard icon={<FiDollarSign />} label="Total Revenue" value={`$${overview.totalRevenue.toLocaleString()}`} color="green" />
+          <StatCard icon={<FiActivity />} label="Platform Health"
+            value={overview.activeTenants === overview.totalTenants ? '100%' : `${Math.round((overview.activeTenants / (overview.totalTenants || 1)) * 100)}%`}
+            sub={overview.totalTenants - overview.activeTenants > 0 ? `${overview.totalTenants - overview.activeTenants} inactive` : 'All active'}
+            color={overview.activeTenants === overview.totalTenants ? 'green' : 'amber'} />
         </div>
       )}
+
+      {/* ── Tenant Health Alerts ── */}
+      {(() => {
+        const zeroOrderTenants = tenants.filter(t => t.isActive && t.stats.orders === 0);
+        const zeroUserTenants = tenants.filter(t => t.isActive && t.stats.users === 0);
+        const inactiveTenants = tenants.filter(t => !t.isActive);
+        const hasAlerts = zeroOrderTenants.length > 0 || zeroUserTenants.length > 0 || inactiveTenants.length > 0;
+        if (!hasAlerts) return null;
+        return (
+          <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 rounded-2xl p-5">
+            <h3 className="font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-2 mb-3">
+              <FiAlertTriangle className="w-4 h-4" /> Tenant Health Alerts
+            </h3>
+            <div className="flex flex-wrap gap-3">
+              {zeroOrderTenants.length > 0 && (
+                <span className="text-xs bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-lg font-medium">
+                  {zeroOrderTenants.length} active tenant{zeroOrderTenants.length !== 1 ? 's' : ''} with 0 orders
+                </span>
+              )}
+              {zeroUserTenants.length > 0 && (
+                <span className="text-xs bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-3 py-1.5 rounded-lg font-medium">
+                  {zeroUserTenants.length} active tenant{zeroUserTenants.length !== 1 ? 's' : ''} with 0 users
+                </span>
+              )}
+              {inactiveTenants.length > 0 && (
+                <span className="text-xs bg-gray-200 dark:bg-surface-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg font-medium">
+                  {inactiveTenants.length} inactive tenant{inactiveTenants.length !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Revenue Distribution ── */}
+      {tenants.length > 1 && (() => {
+        const totalRev = tenants.reduce((s, t) => s + t.stats.revenue, 0);
+        const sorted = [...tenants].sort((a, b) => b.stats.revenue - a.stats.revenue);
+        if (totalRev === 0) return null;
+        return (
+          <div className="bg-white dark:bg-surface-900 border border-gray-200 dark:border-surface-700 rounded-2xl p-5">
+            <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+              <FiBarChart2 className="w-4 h-4 text-brand-500" /> Revenue by Tenant
+            </h3>
+            <div className="space-y-2">
+              {sorted.slice(0, 8).map(t => {
+                const pct = (t.stats.revenue / totalRev) * 100;
+                return (
+                  <div key={t.tenantId} className="flex items-center gap-3">
+                    <div className="w-24 text-xs text-gray-600 dark:text-gray-400 truncate shrink-0">{t.name}</div>
+                    <div className="flex-1 h-5 bg-gray-100 dark:bg-surface-800 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-500 flex items-center justify-end pr-2 transition-all"
+                        style={{ width: `${Math.max(pct, 3)}%`, backgroundColor: t.branding.primaryColor || undefined }}>
+                        {pct > 20 && <span className="text-[9px] text-white font-medium">{pct.toFixed(0)}%</span>}
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white w-20 text-right">${t.stats.revenue.toLocaleString()}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -238,7 +309,7 @@ export default function TenantsPage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-4 gap-6 text-center lg:text-right">
+                  <div className="grid grid-cols-5 gap-4 text-center lg:text-right">
                     <div>
                       <p className="text-lg font-bold text-gray-900 dark:text-white">{tenant.stats.users}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Users</p>
@@ -254,6 +325,22 @@ export default function TenantsPage() {
                     <div>
                       <p className="text-lg font-bold text-gray-900 dark:text-white">${tenant.stats.revenue.toLocaleString()}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
+                    </div>
+                    <div>
+                      {(() => {
+                        let score = 0;
+                        if (tenant.stats.users > 0) score += 25;
+                        if (tenant.stats.products > 0) score += 25;
+                        if (tenant.stats.orders > 0) score += 25;
+                        if (tenant.isActive) score += 25;
+                        const color = score === 100 ? 'text-green-600 dark:text-green-400' : score >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400';
+                        return (
+                          <>
+                            <p className={`text-lg font-bold ${color}`}>{score}%</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Health</p>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -305,7 +392,7 @@ function StatCard({
   sub?: string;
   color: 'purple' | 'blue' | 'amber' | 'green';
 }) {
-  const colors = {
+  const colors: Record<string, string> = {
     purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
     blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
     amber: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400',

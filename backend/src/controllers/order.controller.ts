@@ -8,6 +8,7 @@ import { CustomError } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import { dispatchWebhook, WEBHOOK_EVENTS } from '../utils/webhook';
 import { createAuditLog } from '../utils/audit';
+import { createInvoiceForOrder } from './invoice.controller';
 
 // Default tax/shipping — overridable per tenant via white-label config or env vars
 const DEFAULT_TAX_RATE = parseFloat(process.env.DEFAULT_TAX_RATE || '0.10');
@@ -121,6 +122,13 @@ export const createOrder: RequestHandler = async (req, res, next) => {
       currency: order.currency,
       itemCount: order.items.length,
     }).catch(() => {});
+
+    // Auto-generate invoice with QR code (fire & forget)
+    createInvoiceForOrder(
+      order._id.toString(),
+      authReq.tenant || 'default',
+      'invoice'
+    ).catch((err) => logger.error('Auto-invoice generation failed:', err));
 
     res.status(201).json({ success: true, data: { order } });
   } catch (error) {

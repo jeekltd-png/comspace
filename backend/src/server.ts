@@ -30,6 +30,7 @@ import hotelRoutes from './routes/hotel.routes';
 import healthcareRoutes from './routes/healthcare.routes';
 import worshipRoutes from './routes/worship.routes';
 import discoveryRoutes from './routes/discovery.routes';
+import invoiceRoutes from './routes/invoice.routes';
 
 // Import middleware
 import { errorHandler } from './middleware/error.middleware';
@@ -318,6 +319,9 @@ app.use('/api/hotel', hotelRoutes);
 app.use('/api/healthcare', healthcareRoutes);
 app.use('/api/worship', worshipRoutes);
 app.use('/api/discover', discoveryRoutes);
+
+// Invoice & receipt routes
+app.use('/api/invoices', invoiceRoutes);
 
 // Coupon/promo code routes
 import couponRoutes from './routes/coupon.routes';

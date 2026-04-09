@@ -51,6 +51,16 @@ export const protect: RequestHandler = async (req, _res, next) => {
       return next(new CustomError('User not found or inactive', 401));
     }
 
+    // Check if user has been globally invalidated (e.g. deleted by admin)
+    try {
+      if (redisClient) {
+        const userInvalidated = await redisClient.get(`blacklist:user:${decoded.id}`);
+        if (userInvalidated) {
+          return next(new CustomError('Account has been deactivated', 401));
+        }
+      }
+    } catch (_) { /* non-fatal */ }
+
     authReq.user = user;
     authReq.tenant = decoded.tenant || 'default';
     next();

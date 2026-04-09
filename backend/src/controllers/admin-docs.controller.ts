@@ -18,11 +18,19 @@ export const listAdminDocs: RequestHandler = async (_req, res, next) => {
 export const getAdminDoc: RequestHandler = async (req, res, next) => {
   try {
     const { name } = req.params;
-    if (!name || name.includes('..') || !name.endsWith('.md')) {
+
+    // Sanitise: strip path components, reject null bytes, enforce .md extension
+    const safeName = path.basename(name || '');
+    if (!safeName || safeName.includes('\0') || !safeName.endsWith('.md')) {
       return next(new CustomError('Invalid document name', 400));
     }
 
-    const filePath = path.join(ADMIN_DOCS_DIR, name);
+    // Resolve and verify the final path is still inside ADMIN_DOCS_DIR
+    const filePath = path.resolve(ADMIN_DOCS_DIR, safeName);
+    if (!filePath.startsWith(path.resolve(ADMIN_DOCS_DIR) + path.sep)) {
+      return next(new CustomError('Invalid document name', 400));
+    }
+
     const content = await fs.readFile(filePath, 'utf8');
     res.status(200).json({ success: true, data: { name, content } });
   } catch (err) {

@@ -30,7 +30,7 @@ This file tracks the remaining critical items required before promoting ComSpace
 - [x] Duplicate HTML/body tags fixed in locale layout (Assign: @frontend)
 - [x] Frontend env validation with Zod (Assign: @frontend)
 - [x] SEO: robots.txt, sitemap.ts, not-found page (Assign: @frontend)
-- [ ] E2E tests for critical flows (login, checkout, payments, webhooks) (Assign: @qa)
+- [x] E2E tests for critical flows (login, checkout, payments, webhooks) (Assign: @qa)
 - [ ] Centralized logging and dashboards (Assign: @observability)
 - [ ] Dependency vulnerability scanning enabled (Dependabot / Snyk) (Assign: @engineering-lead)
 - [ ] Documented rollback runbook (Assign: @devops)

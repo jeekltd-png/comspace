@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 import { AuthRequest } from '../middleware/auth.middleware';
 import User from '../models/user.model';
 import AuditLog from '../models/auditLog.model';
@@ -500,6 +501,184 @@ export const getLoginHistory: RequestHandler = async (req, res, next) => {
           pages: Math.ceil(total / Math.min(Number(limit), 100)),
         },
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/admin/users/manage - Create a new user (admin-initiated)
+ * superadmin can create any role including admin; admin can create up to admin1/admin2/merchant/customer
+ */
+export const createUser: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const { email, firstName, lastName, phone, role = 'customer', accountType = 'individual', password, sendWelcomeEmail = true } = req.body;
+
+    if (!email || !firstName || !lastName) {
+      return next(new CustomError('email, firstName and lastName are required', 400));
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return next(new CustomError('Invalid email address', 400));
+    }
+
+    const validRoles = ['customer', 'merchant', 'admin2', 'admin1', 'admin', 'superadmin'];
+    if (!validRoles.includes(role)) {
+      return next(new CustomError('Invalid role', 400));
+    }
+
+    // Role hierarchy enforcement
+    const actorLevel = ROLE_HIERARCHY[authReq.user!.role] || 0;
+    const newRoleLevel = ROLE_HIERARCHY[role] || 0;
+    if (authReq.user!.role !== 'superadmin' && newRoleLevel >= actorLevel) {
+      return next(new CustomError('Cannot assign a role equal to or higher than your own', 403));
+    }
+
+    // Check if email already exists for this tenant
+    const existing = await User.findOne({ email: email.toLowerCase().trim(), tenant: authReq.tenant });
+    if (existing) {
+      return next(new CustomError('A user with this email already exists', 409));
+    }
+
+    // Generate a secure temporary password if not provided
+    const tempPassword = password || (crypto.randomBytes(12).toString('base64').slice(0, 14) + '!A1');
+    const hashedPassword = await bcrypt.hash(tempPassword, 12);
+
+    const user = await User.create({
+      email: email.toLowerCase().trim(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      phone: phone?.trim(),
+      role,
+      accountType,
+      password: hashedPassword,
+      tenant: authReq.tenant,
+      isVerified: true, // Admin-created users are pre-verified
+      isActive: true,
+    });
+
+    // Send welcome email with credentials
+    if (sendWelcomeEmail) {
+      const loginUrl = `${process.env.FRONTEND_URL}/auth/login`;
+      await sendEmail({
+        to: user.email,
+        subject: 'Your ComSpace Account Has Been Created',
+        text: `Hello ${user.firstName},\n\nAn administrator has created an account for you.\n\nEmail: ${user.email}\n${!password ? `Temporary Password: ${tempPassword}\n` : ''}Please log in and change your password: ${loginUrl}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #7C3AED;">Welcome to ComSpace</h2>
+            <p>Hello <strong>${user.firstName}</strong>,</p>
+            <p>An administrator has created an account for you.</p>
+            <table style="border-collapse: collapse; margin: 16px 0;">
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Email:</td><td><strong>${user.email}</strong></td></tr>
+              ${!password ? `<tr><td style="padding: 4px 12px 4px 0; color: #666;">Temp Password:</td><td><strong>${tempPassword}</strong></td></tr>` : ''}
+              <tr><td style="padding: 4px 12px 4px 0; color: #666;">Role:</td><td><strong>${role}</strong></td></tr>
+            </table>
+            <p><a href="${loginUrl}" style="background: #7C3AED; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Log In Now</a></p>
+            <p style="color: #e53e3e; font-size: 14px;">&#x26A0;&#xFE0F; Please change your password after first login.</p>
+          </div>
+        `,
+      }).catch(() => {/* Email failure is non-fatal */});
+    }
+
+    await createAuditLog({
+      actor: authReq.user!,
+      action: 'user_created',
+      category: 'user_management',
+      description: `Admin created user: ${user.email} with role ${role}`,
+      targetType: 'user',
+      targetId: user._id.toString(),
+      targetEmail: user.email,
+      changes: [
+        { field: 'email', oldValue: null, newValue: user.email },
+        { field: 'role', oldValue: null, newValue: role },
+      ],
+      req,
+      tenant: authReq.tenant,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: {
+        user: {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          accountType: user.accountType,
+          isActive: user.isActive,
+          isVerified: user.isVerified,
+          createdAt: (user as any).createdAt,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * DELETE /api/admin/users/manage/:id - Delete/deactivate user
+ * Soft delete by default; superadmin can hard-delete with ?hard=true
+ */
+export const deleteUserByAdmin: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const user = await User.findOne({ _id: req.params.id, tenant: authReq.tenant });
+
+    if (!user) {
+      return next(new CustomError('User not found', 404));
+    }
+
+    if (user._id.toString() === authReq.user!._id.toString()) {
+      return next(new CustomError('Cannot delete your own account', 400));
+    }
+
+    const actorLevel = ROLE_HIERARCHY[authReq.user!.role] || 0;
+    const targetLevel = ROLE_HIERARCHY[user.role] || 0;
+    if (targetLevel >= actorLevel) {
+      return next(new CustomError('Insufficient permissions to delete this user', 403));
+    }
+
+    const hardDelete = req.query.hard === 'true' && authReq.user!.role === 'superadmin';
+    const deletedEmail = user.email;
+
+    if (hardDelete) {
+      await User.deleteOne({ _id: user._id });
+    } else {
+      user.isActive = false;
+      user.email = `deleted_${user._id}@deleted.invalid`;
+      user.firstName = 'Deleted';
+      user.lastName = 'User';
+      await user.save();
+    }
+
+    // Invalidate any active sessions for this user
+    if (redisClient?.set) {
+      try { await redisClient.set(`blacklist:user:${req.params.id}`, '1'); } catch (_) {}
+    }
+
+    await createAuditLog({
+      actor: authReq.user!,
+      action: hardDelete ? 'user_hard_deleted' : 'user_soft_deleted',
+      category: 'user_management',
+      description: `Admin ${hardDelete ? 'permanently deleted' : 'soft-deleted'} user: ${deletedEmail}`,
+      targetType: 'user',
+      targetId: req.params.id,
+      targetEmail: deletedEmail,
+      req,
+      tenant: authReq.tenant,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: hardDelete ? 'User permanently deleted' : 'User deactivated and anonymized',
     });
   } catch (error) {
     next(error);

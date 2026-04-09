@@ -12,7 +12,7 @@ COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20-alpine AS production
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -28,10 +28,12 @@ RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/dist ./dist
 
 # Run as non-root user for security
-RUN addgroup -g 1001 -S nodejs && adduser -S comspace -u 1001
+RUN addgroup -g 1001 -S nodejs && adduser -S comspace -u 1001 \
+    && mkdir -p /app/logs /app/uploads \
+    && chown -R comspace:nodejs /app/logs /app/uploads
 USER comspace
 
-EXPOSE 5000
+EXPOSE 6060
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:5000/health || exit 1
+  CMD curl -f http://localhost:6060/health || exit 1
 CMD ["node", "dist/server.js"]

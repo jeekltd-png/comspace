@@ -10,6 +10,7 @@ import { Tooltip } from '@/components/ui/Tooltip';
 // Role-based navigation: each link specifies which roles can see it
 const allNavLinks = [
   { href: '/admin', label: 'Overview', roles: ['superadmin', 'admin', 'admin1', 'admin2', 'merchant'], tooltip: 'Admin panel home — quick access to all sections' },
+  { href: '/admin/super-admin', label: '👑 Control Panel', roles: ['superadmin'], tooltip: 'Super admin: platform-wide stats, tenants, permissions matrix' },
   { href: '/admin/analytics', label: '📊 Analytics', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Revenue, conversions, traffic & user activity metrics' },
   { href: '/admin/users', label: '👤 Users', roles: ['superadmin', 'admin', 'admin1', 'admin2'], tooltip: 'Manage accounts, roles, enable/disable & reset passwords' },
   { href: '/admin/tenants', label: '🏢 Tenants', roles: ['superadmin'], tooltip: 'Manage all platform tenants, features & white-label config' },

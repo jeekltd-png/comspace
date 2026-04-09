@@ -3,6 +3,8 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import User from '../models/user.model';
 import Order from '../models/order.model';
 import Product from '../models/product.model';
+import WhiteLabel from '../models/white-label.model';
+import { CustomError } from '../middleware/error.middleware';
 
 export const getDashboardStats: RequestHandler = async (req, res, next) => {
   const authReq = req as AuthRequest;
@@ -226,6 +228,82 @@ export const generateInventoryReport: RequestHandler = async (req, res, next) =>
         outOfStockCount: outOfStock,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ── Platform / Tenant Settings ─────────────────────────────────────────────
+
+/**
+ * GET /api/admin/settings
+ * Returns the WhiteLabel config (name, contact, seo, features, payment currencies)
+ * treated as the tenant "settings". Superadmin can pass ?tenantId= to fetch any tenant.
+ */
+export const getSettings: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const tenantId = (authReq.user?.role === 'superadmin' && req.query.tenantId)
+      ? (req.query.tenantId as string)
+      : authReq.tenant;
+
+    const wl = await WhiteLabel.findOne({ tenantId });
+    if (!wl) {
+      return next(new CustomError('Tenant settings not found', 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        siteName: wl.name,
+        siteUrl: wl.domain,
+        supportEmail: wl.contact?.email || '',
+        currencies: wl.payment?.currencies || ['USD'],
+        contact: wl.contact,
+        seo: wl.seo,
+        features: wl.features,
+        isActive: wl.isActive,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PATCH /api/admin/settings
+ * Persists contact details, SEO, and feature flags to the tenant's WhiteLabel document.
+ * Restricted to superadmin and admin roles.
+ */
+export const updateSettings: RequestHandler = async (req, res, next) => {
+  const authReq = req as AuthRequest;
+  try {
+    const tenantId = (authReq.user?.role === 'superadmin' && req.body.tenantId)
+      ? (req.body.tenantId as string)
+      : authReq.tenant;
+
+    // Whitelist updatable fields
+    const allowed = ['name', 'domain', 'contact', 'seo', 'features', 'isActive'];
+    const updates: Record<string, any> = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) updates[key] = req.body[key];
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return next(new CustomError('No valid fields to update', 400));
+    }
+
+    const wl = await WhiteLabel.findOneAndUpdate(
+      { tenantId },
+      updates,
+      { new: true, runValidators: true }
+    );
+
+    if (!wl) {
+      return next(new CustomError('Tenant settings not found', 404));
+    }
+
+    res.status(200).json({ success: true, message: 'Settings saved', data: { settings: wl } });
   } catch (error) {
     next(error);
   }

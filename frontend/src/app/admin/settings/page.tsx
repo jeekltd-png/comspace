@@ -50,14 +50,13 @@ export default function AdminSettingsPage() {
   const fetchSettings = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await apiClient.get('/admin/dashboard');
-      // Populate from environment / white-label config where available
-      const data = res.data.data;
+      const res = await apiClient.get('/admin/settings');
+      const d = res.data.data;
       setSettings(prev => ({
         ...prev,
-        siteName: data?.siteName || prev.siteName || process.env.NEXT_PUBLIC_APP_NAME || 'ComSpace',
-        siteUrl: data?.siteUrl || prev.siteUrl || process.env.NEXT_PUBLIC_APP_URL || '',
-        supportEmail: data?.supportEmail || prev.supportEmail || '',
+        siteName: d?.siteName || prev.siteName || process.env.NEXT_PUBLIC_APP_NAME || 'ComSpace',
+        siteUrl: d?.siteUrl || prev.siteUrl || process.env.NEXT_PUBLIC_APP_URL || '',
+        supportEmail: d?.contact?.email || prev.supportEmail || '',
       }));
     } catch {
       // Defaults remain
@@ -72,12 +71,14 @@ export default function AdminSettingsPage() {
     setSaving(true);
     setMessage(null);
     try {
-      // In a production system this would persist to the white-label / tenant config
-      // For now, we display a success confirmation
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await apiClient.patch('/admin/settings', {
+        name: settings.siteName,
+        domain: settings.siteUrl,
+        contact: { email: settings.supportEmail },
+      });
       setMessage({ type: 'success', text: 'Settings saved successfully' });
     } catch (err: any) {
-      setMessage({ type: 'error', text: err?.message || 'Failed to save settings' });
+      setMessage({ type: 'error', text: err?.response?.data?.message || err?.message || 'Failed to save settings' });
     } finally {
       setSaving(false);
     }

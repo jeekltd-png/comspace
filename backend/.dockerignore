@@ -14,7 +14,6 @@ __tests__
 .gitignore
 .eslintrc*
 jest.config.*
-tsconfig.json
 debug-start.js
 simple-server.js
 scripts/

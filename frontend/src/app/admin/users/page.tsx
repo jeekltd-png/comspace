@@ -25,7 +25,19 @@ interface Pagination {
   pages: number;
 }
 
+interface CreateUserForm {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: string;
+  accountType: string;
+  password: string;
+  sendWelcomeEmail: boolean;
+}
+
 const ROLES = ['customer', 'merchant', 'admin2', 'admin1', 'admin', 'superadmin'];
+const ACCOUNT_TYPES = ['individual', 'business', 'association', 'education'];
 const ROLE_COLORS: Record<string, string> = {
   superadmin: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
@@ -33,6 +45,10 @@ const ROLE_COLORS: Record<string, string> = {
   admin2: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
   merchant: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
   customer: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
+};
+
+const ROLE_HIERARCHY: Record<string, number> = {
+  customer: 0, merchant: 1, admin2: 2, admin1: 3, admin: 4, superadmin: 5,
 };
 
 export default function UserManagementPage() {
@@ -46,12 +62,27 @@ export default function UserManagementPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<ManagedUser | null>(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [newRole, setNewRole] = useState('');
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ userId: string; action: string; label: string } | null>(null);
+  const [createForm, setCreateForm] = useState<CreateUserForm>({
+    email: '', firstName: '', lastName: '', phone: '', role: 'customer',
+    accountType: 'individual', password: '', sendWelcomeEmail: true,
+  });
+  const [createLoading, setCreateLoading] = useState(false);
 
+  const isSuperAdmin = currentUser?.role === 'superadmin';
   const isAdmin = currentUser && ['superadmin', 'admin', 'admin1', 'admin2'].includes(currentUser.role);
   const canManage = currentUser && ['superadmin', 'admin', 'admin1'].includes(currentUser.role);
+  const canCreate = currentUser && ['superadmin', 'admin', 'admin1'].includes(currentUser.role);
+  const canDelete = currentUser && ['superadmin', 'admin'].includes(currentUser.role);
+  const canChangeRole = currentUser && ['superadmin', 'admin'].includes(currentUser.role);
+
+  // Roles the current user is allowed to assign
+  const assignableRoles = ROLES.filter(r =>
+    isSuperAdmin ? true : ROLE_HIERARCHY[r] < ROLE_HIERARCHY[currentUser?.role || 'customer']
+  );
 
   const fetchUsers = useCallback(async (page = 1) => {
     setLoading(true);
@@ -60,7 +91,6 @@ export default function UserManagementPage() {
       if (search) params.search = search;
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.status = statusFilter;
-
       const resp = await apiClient.get('/admin/users/manage', { params });
       setUsers(resp.data.data.users);
       setPagination(resp.data.data.pagination);
@@ -136,6 +166,47 @@ export default function UserManagementPage() {
     }
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    setActionLoading(userId);
+    try {
+      await apiClient.delete(`/admin/users/manage/${userId}`);
+      showNotification('success', 'User removed successfully');
+      fetchUsers(pagination.page);
+    } catch (err: any) {
+      showNotification('error', err?.response?.data?.message || 'Failed to delete user');
+    } finally {
+      setActionLoading(null);
+      setConfirmAction(null);
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateLoading(true);
+    try {
+      const payload: any = {
+        email: createForm.email,
+        firstName: createForm.firstName,
+        lastName: createForm.lastName,
+        role: createForm.role,
+        accountType: createForm.accountType,
+        sendWelcomeEmail: createForm.sendWelcomeEmail,
+      };
+      if (createForm.phone) payload.phone = createForm.phone;
+      if (createForm.password) payload.password = createForm.password;
+
+      await apiClient.post('/admin/users/manage', payload);
+      showNotification('success', `User ${createForm.email} created successfully`);
+      setShowCreateModal(false);
+      setCreateForm({ email: '', firstName: '', lastName: '', phone: '', role: 'customer', accountType: 'individual', password: '', sendWelcomeEmail: true });
+      fetchUsers(1);
+    } catch (err: any) {
+      showNotification('error', err?.response?.data?.message || 'Failed to create user');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
   if (!isAdmin) {
     return (
       <main className="p-6 max-w-7xl mx-auto">
@@ -172,6 +243,8 @@ export default function UserManagementPage() {
                     if (u) handleToggleStatus(u._id, u.isActive);
                   } else if (confirmAction.action === 'reset') {
                     handleResetPassword(confirmAction.userId);
+                  } else if (confirmAction.action === 'delete') {
+                    handleDeleteUser(confirmAction.userId);
                   }
                 }}
                 className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700"
@@ -191,13 +264,16 @@ export default function UserManagementPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Change role for <strong>{selectedUser.firstName} {selectedUser.lastName}</strong> ({selectedUser.email})
             </p>
+            <div className="mb-4">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current role: <span className={`inline-block px-2 py-0.5 rounded-full font-medium ${ROLE_COLORS[selectedUser.role]}`}>{selectedUser.role}</span></div>
+            </div>
             <select
               value={newRole}
               onChange={(e) => setNewRole(e.target.value)}
               className="w-full border rounded-lg px-3 py-2 mb-4 dark:bg-surface-700 dark:border-surface-600 dark:text-white"
             >
-              <option value="">Select role...</option>
-              {ROLES.filter(r => currentUser?.role === 'superadmin' || ROLES.indexOf(r) < ROLES.indexOf(currentUser?.role || '')).map(r => (
+              <option value="">Select new role...</option>
+              {assignableRoles.filter(r => r !== selectedUser.role).map(r => (
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
@@ -206,19 +282,152 @@ export default function UserManagementPage() {
                 Cancel
               </button>
               <button onClick={handleChangeRole} disabled={!newRole || actionLoading === selectedUser._id} className="px-4 py-2 text-sm rounded-lg bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50">
-                {actionLoading === selectedUser._id ? 'Saving...' : 'Save'}
+                {actionLoading === selectedUser._id ? 'Saving...' : 'Save Role'}
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 max-w-lg w-full shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New User</h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none">&times;</button>
+            </div>
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">First Name *</label>
+                  <input
+                    required
+                    type="text"
+                    value={createForm.firstName}
+                    onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                    placeholder="John"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name *</label>
+                  <input
+                    required
+                    type="text"
+                    value={createForm.lastName}
+                    onChange={e => setCreateForm(f => ({ ...f, lastName: e.target.value }))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                    placeholder="Doe"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address *</label>
+                <input
+                  required
+                  type="email"
+                  value={createForm.email}
+                  onChange={e => setCreateForm(f => ({ ...f, email: e.target.value }))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                  placeholder="john@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Phone (optional)</label>
+                <input
+                  type="tel"
+                  value={createForm.phone}
+                  onChange={e => setCreateForm(f => ({ ...f, phone: e.target.value }))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                  placeholder="+44 7700 900000"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Role *</label>
+                  <select
+                    value={createForm.role}
+                    onChange={e => setCreateForm(f => ({ ...f, role: e.target.value }))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                  >
+                    {assignableRoles.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Account Type</label>
+                  <select
+                    value={createForm.accountType}
+                    onChange={e => setCreateForm(f => ({ ...f, accountType: e.target.value }))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                  >
+                    {ACCOUNT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Password <span className="text-gray-400">(leave blank to auto-generate)</span>
+                </label>
+                <input
+                  type="password"
+                  value={createForm.password}
+                  onChange={e => setCreateForm(f => ({ ...f, password: e.target.value }))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-surface-700 dark:border-surface-600 dark:text-white"
+                  placeholder="Min 8 chars"
+                  minLength={8}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="sendWelcomeEmail"
+                  checked={createForm.sendWelcomeEmail}
+                  onChange={e => setCreateForm(f => ({ ...f, sendWelcomeEmail: e.target.checked }))}
+                  className="rounded border-gray-300"
+                />
+                <label htmlFor="sendWelcomeEmail" className="text-sm text-gray-700 dark:text-gray-300">
+                  Send welcome email with credentials
+                </label>
+              </div>
+              <div className="flex gap-3 justify-end pt-2 border-t border-gray-100 dark:border-surface-700">
+                <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-surface-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-surface-700">
+                  Cancel
+                </button>
+                <button type="submit" disabled={createLoading} className="px-4 py-2 text-sm rounded-lg bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50 flex items-center gap-2">
+                  {createLoading ? <><span className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></span> Creating...</> : '+ Create User'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">👤 User Management</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Manage user accounts, roles, and access — {pagination.total} total users
-        </p>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">👤 User Management</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Manage accounts, roles and access — <strong>{pagination.total}</strong> total users
+          </p>
+        </div>
+        {canCreate && (
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 flex items-center gap-2"
+          >
+            <span>+</span> Create User
+          </button>
+        )}
+      </div>
+
+      {/* Role legend */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {ROLES.map(r => (
+          <span key={r} className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[r]}`}>
+            {r}
+          </span>
+        ))}
       </div>
 
       {/* Filters */}
@@ -251,7 +460,12 @@ export default function UserManagementPage() {
         {loading ? (
           <div className="p-12 text-center text-gray-500">Loading users...</div>
         ) : users.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">No users found</div>
+          <div className="p-12 text-center">
+            <p className="text-gray-500 mb-3">No users found</p>
+            {canCreate && (
+              <button onClick={() => setShowCreateModal(true)} className="text-brand-600 hover:underline text-sm">+ Create the first user</button>
+            )}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -274,6 +488,7 @@ export default function UserManagementPage() {
                         <div className="font-medium text-gray-900 dark:text-white">{u.firstName} {u.lastName}</div>
                         <div className="text-gray-500 dark:text-gray-400 text-xs">{u.email}</div>
                         {u.phone && <div className="text-gray-400 text-xs">{u.phone}</div>}
+                        <div className="text-gray-400 text-xs capitalize">{u.accountType}</div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -288,12 +503,12 @@ export default function UserManagementPage() {
                     </td>
                     <td className="px-4 py-3">
                       {u.isVerified ? (
-                        <span className="text-green-600 dark:text-green-400">✓</span>
+                        <span className="text-green-600 dark:text-green-400 text-xs font-medium">✓ Verified</span>
                       ) : (
                         <button
                           onClick={() => handleForceVerify(u._id)}
                           disabled={!canManage || actionLoading === u._id}
-                          className="text-xs text-amber-600 hover:underline disabled:opacity-50"
+                          className="text-xs text-amber-600 hover:underline disabled:opacity-50 border border-amber-300 rounded px-1.5 py-0.5"
                         >
                           Verify
                         </button>
@@ -313,7 +528,7 @@ export default function UserManagementPage() {
                             onClick={() => setConfirmAction({
                               userId: u._id,
                               action: 'toggle',
-                              label: `Are you sure you want to ${u.isActive ? 'disable' : 'enable'} ${u.firstName} ${u.lastName}'s account?`,
+                              label: `${u.isActive ? 'Disable' : 'Enable'} ${u.firstName} ${u.lastName}'s account?`,
                             })}
                             disabled={u._id === currentUser?.id || actionLoading === u._id}
                             className={`px-2 py-1 rounded text-xs font-medium disabled:opacity-30 ${u.isActive ? 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20' : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'}`}
@@ -323,9 +538,9 @@ export default function UserManagementPage() {
                           </button>
 
                           {/* Change Role */}
-                          {['superadmin', 'admin'].includes(currentUser?.role || '') && (
+                          {canChangeRole && (
                             <button
-                              onClick={() => { setSelectedUser(u); setNewRole(u.role); setShowRoleModal(true); }}
+                              onClick={() => { setSelectedUser(u); setNewRole(''); setShowRoleModal(true); }}
                               disabled={u._id === currentUser?.id}
                               className="px-2 py-1 rounded text-xs text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 disabled:opacity-30"
                               title="Change role"
@@ -347,6 +562,22 @@ export default function UserManagementPage() {
                           >
                             🔄
                           </button>
+
+                          {/* Delete (admin/superadmin) */}
+                          {canDelete && u._id !== currentUser?.id && (
+                            <button
+                              onClick={() => setConfirmAction({
+                                userId: u._id,
+                                action: 'delete',
+                                label: `Remove ${u.firstName} ${u.lastName} (${u.email})? This will deactivate and anonymize the account.`,
+                              })}
+                              disabled={actionLoading === u._id}
+                              className="px-2 py-1 rounded text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-30"
+                              title="Delete user"
+                            >
+                              🗑️
+                            </button>
+                          )}
                         </div>
                       </td>
                     )}

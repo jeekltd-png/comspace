@@ -3,6 +3,14 @@ import { Tooltip } from '@/components/ui/Tooltip';
 
 const adminCards = [
   {
+    href: '/admin/super-admin',
+    icon: '👑',
+    title: 'Super Admin Panel',
+    description: 'Platform-wide control: all tenants, users, system health and permissions matrix',
+    color: 'from-red-500/10 to-rose-500/10 border-red-200 dark:border-red-800',
+    roles: ['superadmin'],
+  },
+  {
     href: '/admin/analytics',
     icon: '📊',
     title: 'Analytics Dashboard',

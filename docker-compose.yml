@@ -31,9 +31,10 @@ services:
     container_name: comspace-backend
     restart: always
     ports:
-      - '5000:5000'
+      - '6060:6060'
     environment:
       NODE_ENV: ${NODE_ENV:-development}
+      PORT: 6060
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD}@mongodb:27017/${MONGO_DB:-comspace}?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
@@ -56,7 +57,7 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: ${NODE_ENV:-development}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:6060}
     depends_on:
       - backend
     volumes:

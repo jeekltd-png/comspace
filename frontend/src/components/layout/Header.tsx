@@ -219,10 +219,15 @@ export function Header() {
                         My Reservations
                       </Link>
                       )}
+                      {/* User dashboard link for all authenticated users */}
+                      <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
+                        <span className="text-base">📊</span>
+                        My Dashboard
+                      </Link>
                       {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
                         <Link href={user?.role === 'merchant' ? '/admin/merchant' : '/admin'} className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" role="menuitem" onClick={() => setIsProfileOpen(false)}>
                           <FiSettings className="w-4 h-4 text-gray-400" />
-                          {user?.role === 'merchant' ? 'My Dashboard' : 'Admin Panel'}
+                          {user?.role === 'merchant' ? 'Store Dashboard' : 'Admin Panel'}
                         </Link>
                       )}
                       <div className="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1">
@@ -355,9 +360,13 @@ export function Header() {
                       🏨 My Reservations
                     </Link>
                     )}
+                    {/* Dashboard for all authenticated users */}
+                    <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      📊 My Dashboard
+                    </Link>
                     {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'merchant' || user?.role?.startsWith?.('admin')) && (
                       <Link href={user?.role === 'merchant' ? '/admin/merchant' : '/admin'} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <FiSettings className="w-4 h-4" /> {user?.role === 'merchant' ? 'My Dashboard' : 'Admin Panel'}
+                        <FiSettings className="w-4 h-4" /> {user?.role === 'merchant' ? 'Store Dashboard' : 'Admin Panel'}
                       </Link>
                     )}
                     <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">

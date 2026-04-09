@@ -1,17 +1,11 @@
 import { Router } from 'express';
 import { getSentEmails, clearSentEmails } from '../utils/email';
-import User from '../models/user.model';
 
 const router = Router();
 
-// Temporary debug: check user password hash
-router.get('/check-user/:email', async (req, res) => {
-  const user = await User.findOne({ email: req.params.email }).select('+password');
-  if (!user) return res.json({ found: false });
-  const pwStart = user.password ? user.password.substring(0, 20) : 'null';
-  const isBcrypt = user.password ? user.password.startsWith('$2') : false;
-  return res.json({ found: true, tenant: user.tenant, role: user.role, pwStart, isBcrypt, pwLength: user.password?.length });
-});
+// /debug/check-user was permanently removed — it exposed password hashes and
+// user PII without authentication, violating ISO 27001 and OWASP A01/A02.
+// Use the admin user-management API (/api/admin/users/manage) instead.
 
 // Guarded debug endpoint for Sentry testing. Only enabled when DEBUG_SENTRY=true
 router.get('/sentry', (_req, res) => {

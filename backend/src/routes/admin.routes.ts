@@ -6,6 +6,8 @@ import {
   getProductsList,
   generateSalesReport,
   generateInventoryReport,
+  getSettings,
+  updateSettings,
 } from '../controllers/admin.controller';
 import {
   listUsers,
@@ -16,6 +18,8 @@ import {
   forceVerifyUser,
   getAuditLogs,
   getLoginHistory,
+  createUser,
+  deleteUserByAdmin,
 } from '../controllers/user-management.controller';
 import { protect, authorize } from '../middleware/auth.middleware';
 import { tenantMiddleware } from '../middleware/tenant.middleware';
@@ -35,16 +39,22 @@ router.get('/reports/sales', generateSalesReport);
 router.get('/reports/inventory', generateInventoryReport);
 
 // ── User Management (admin+ only) ─────────────────────────────────────────
+router.post('/users/manage', authorize('superadmin', 'admin', 'admin1'), createUser);
 router.get('/users/manage', authorize('superadmin', 'admin', 'admin1', 'admin2'), listUsers);
 router.get('/users/manage/:id', authorize('superadmin', 'admin', 'admin1', 'admin2'), getUserDetail);
 router.patch('/users/manage/:id/status', authorize('superadmin', 'admin', 'admin1'), toggleUserStatus);
 router.patch('/users/manage/:id/role', authorize('superadmin', 'admin'), changeUserRole);
 router.post('/users/manage/:id/reset-password', authorize('superadmin', 'admin', 'admin1'), adminResetPassword);
 router.patch('/users/manage/:id/verify', authorize('superadmin', 'admin', 'admin1'), forceVerifyUser);
+router.delete('/users/manage/:id', authorize('superadmin', 'admin'), deleteUserByAdmin);
 
 // ── Audit & Security Logs ──────────────────────────────────────────────────
 router.get('/audit-logs', authorize('superadmin', 'admin', 'admin1'), getAuditLogs);
 router.get('/login-history', authorize('superadmin', 'admin', 'admin1'), getLoginHistory);
+
+// ── Platform Settings ──────────────────────────────────────────────────────
+router.get('/settings', authorize('superadmin', 'admin'), getSettings);
+router.patch('/settings', authorize('superadmin', 'admin'), updateSettings);
 
 // Admin docs (accessible to tiered admins and superadmins)
 import { listAdminDocs, getAdminDoc } from '../controllers/admin-docs.controller';

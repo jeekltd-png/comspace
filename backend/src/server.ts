@@ -46,13 +46,13 @@ import { configurePassport } from './config/passport.config';
 // Load environment variables
 dotenv.config();
 
-// Validate required env vars when running in production
+// Validate required env vars when running in production or staging
 const validateRequiredEnv = () => {
-  if (process.env.NODE_ENV !== 'production') return;
+  if (!['production', 'staging'].includes(process.env.NODE_ENV || '')) return;
   const required = ['MONGODB_URI', 'JWT_SECRET', 'JWT_REFRESH_SECRET', 'FRONTEND_URL'];
   const missing = required.filter((k) => !process.env[k]);
   if (missing.length) {
-    logger.error(`Missing required production environment variables: ${missing.join(', ')}`);
+    logger.error(`Missing required environment variables: ${missing.join(', ')}`);
     process.exit(1);
   }
   if (!process.env.REDIS_URL) {
@@ -211,9 +211,9 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',')
   : process.env.FRONTEND_URL
     ? [process.env.FRONTEND_URL]
-    : process.env.NODE_ENV === 'production'
-      ? [] // no origins allowed if not configured in production
-      : ['http://localhost:3000'];
+    : process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+      ? [] // no origins allowed if not configured in production/staging
+      : ['http://localhost:3000', 'http://localhost:6060'];
 app.use(cors({
   origin: allowedOrigins.length > 0 ? allowedOrigins : false,
   credentials: true,
